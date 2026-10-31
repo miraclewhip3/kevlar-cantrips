@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kevlar &amp; Cantrips</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e131d'/><path d='M16 4 L27 8 V16 C27 22 22 26.5 16 28.5 C10 26.5 5 22 5 16 V8 Z' fill='%23243049' stroke='%23f0b23c' stroke-width='2'/><rect x='10.5' y='10.5' width='11' height='11' rx='2.5' fill='%23e4e8f0'/><circle cx='13.5' cy='13.5' r='1.4' fill='%230e131d'/><circle cx='18.5' cy='18.5' r='1.4' fill='%230e131d'/><path d='M22 4 L19 10 H23 L20 16' stroke='%23c77dff' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0e131d; --panel:#161e2c; --panel2:#1f2a3d; --line:#2e3b54; --fg:#e4e8f0; --muted:#8e9ab3;
+  --hud:#f0b23c; --hud-dim:#6e5420; --arcane:#c77dff; --arcane-dim:#4b2f6b;
+  --ally:#5aa9ff; --foe:#ff6b5b; --ok:#5fd28a;
+  --dmg:#ff8a73; --ward:#7fb2ff; --heal:#7be39a; --pierce:#ffd166; --arc:#9be7ff; --chg:#d4a8ff; --stun:#ffb3e6; --sight:#7fe0d0; --blk:#68748c;
+  --display:"Chakra Petch","Trebuchet MS",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.4;min-height:100vh}
+h1,h2,h3,h4{font-family:var(--display);margin:0;line-height:1.15;letter-spacing:.02em}
+h2{font-size:1.45rem;color:var(--hud)}
+h3{font-size:1.1rem}
+h4{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+.wrap{max-width:1120px;margin:0 auto;padding:10px 16px 40px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+.btn{font:700 .9rem var(--display);letter-spacing:.04em;background:var(--hud);color:#231702;border:0;border-radius:4px;padding:.45rem .95rem;cursor:pointer;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:var(--panel2);color:var(--fg);border:1px solid var(--line)}
+.btn.sm{font-size:.78rem;padding:.25rem .6rem}
+.btn:disabled{opacity:.4;cursor:default;filter:none}
+.icon-btn{background:var(--panel2);border:1px solid var(--line);color:var(--fg);border-radius:4px;width:2.1rem;height:2.1rem;font-size:1rem;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--hud);outline-offset:2px}
+input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:.4rem .6rem}
+.tag{display:inline-block;font:600 .68rem var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--panel2);color:var(--muted)}
+.chip{font:600 .78rem var(--mono);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:3px 9px;white-space:nowrap}
+.chip.hud{color:var(--hud);border-color:var(--hud-dim)}
+.chip.arc{color:var(--arcane);border-color:var(--arcane-dim);cursor:help}
+.banner{background:#2a2412;border:1px solid var(--hud-dim);color:#ffe7b3;padding:.35rem .8rem;border-radius:4px;font-size:.9rem}
+.err{color:var(--foe)}
+
+/* faces + dice */
+.f{display:inline-flex;align-items:center;justify-content:center;gap:1px;min-width:1.9rem;height:1.6rem;padding:0 4px;border-radius:4px;background:#0b1018;border:1px solid var(--line);font:700 .78rem var(--mono);cursor:help}
+.f-D{color:var(--dmg)}.f-W{color:var(--ward)}.f-H{color:var(--heal)}.f-R{color:var(--pierce)}.f-A{color:var(--arc)}.f-C{color:var(--chg)}.f-S{color:var(--stun)}.f-E{color:var(--sight)}.f-B{color:var(--blk)}.f-U{color:var(--hud)}.f-X{color:var(--dmg)}
+.faces{display:flex;gap:3px;flex-wrap:wrap}
+.facepick .f{cursor:pointer}.facepick .f:hover{outline:2px solid var(--hud)}
+.facepick .f.no{opacity:.35;cursor:not-allowed;outline:none}
+.die{width:3.7rem;height:3.7rem;border-radius:9px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);color:#1b2230;display:flex;align-items:center;justify-content:center;gap:2px;font:800 1.2rem var(--mono);border:2px solid #9aa5b8;box-shadow:0 3px 0 #5d6779;position:relative;user-select:none;flex:none;transition:transform .12s}
+.die.f-D{color:#c4361f}.die.f-W{color:#2862c4}.die.f-H{color:#1f8f44}.die.f-R{color:#a86f00}.die.f-A{color:#0a7ea0}.die.f-C{color:#7440c9}.die.f-S{color:#b0287a}.die.f-E{color:#0f7c8c}.die.f-B{color:#8892a3;font-size:1.8rem}
+.die.mine{cursor:pointer}
+.die.kept{border-color:var(--hud);box-shadow:0 0 0 3px var(--hud),0 3px 0 #5d6779;transform:translateY(-2px)}
+.die.sel{box-shadow:0 0 0 4px #fff,0 3px 0 #5d6779;transform:scale(1.06)}
+.die.used{opacity:.55}
+.die.empty{background:#1b2436;border-color:var(--line);box-shadow:none;color:var(--muted);font-size:.9rem}
+.die.roll{animation:roll .42s ease-out}
+@keyframes roll{0%{transform:rotate(-25deg) scale(.75)}60%{transform:rotate(10deg) scale(1.06)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.die.roll{animation:none}}
+.die .gears{position:absolute;top:-8px;right:-8px;display:flex;gap:2px}
+.die .gear{width:1.35rem;height:1.35rem;border-radius:50%;background:var(--panel2);border:1px solid #7fd3e6;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.die em.kws{position:absolute;bottom:2px;left:0;right:0;text-align:center;font:700 .5rem var(--mono);font-style:normal;color:#5b2d8a;letter-spacing:.02em;line-height:1}
+.foe .die em.kws{color:var(--arcane)}
+.f{position:relative}
+.f .kwdot{position:absolute;top:-6px;right:-6px;min-width:.85rem;height:.85rem;border-radius:50%;background:var(--arcane);color:#160d2c;font:700 .55rem/.85rem var(--mono);font-style:normal;text-align:center}
+.psnb{font:700 .7rem var(--mono);color:#9be37b}
+.log tr.sys td{color:var(--hud);font:600 .72rem var(--mono);letter-spacing:.08em;padding-top:8px}
+
+/* top bar */
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0 10px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.topbar .title{font-family:var(--display);font-size:1.15rem;color:var(--hud);display:flex;align-items:center;gap:8px}
+.topbar .sp{flex:1}
+
+/* enemies */
+.enemyrow{display:flex;gap:12px;flex-wrap:wrap}
+.foe{background:var(--panel);border:1px solid #4a2b30;border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:7px;align-items:center;width:10rem;position:relative}
+.foe.boss{width:13rem;border-color:#7a2b2b;background:#1d1519}
+.foe.dead{opacity:.3;filter:grayscale(1)}
+.foe .nm{font:600 .9rem var(--display);text-align:center;line-height:1.1}
+.foe .ic{font-size:1.3rem}
+.foe .ints{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.foe .int{display:flex;flex-direction:column;align-items:center;gap:2px}
+.foe .die{width:2.9rem;height:2.9rem;font-size:.95rem;background:linear-gradient(160deg,#3a2226,#2a181b);border-color:#6b3a3f;box-shadow:0 2px 0 #1b0f11;color:var(--dmg)}
+.foe .die.f-W{color:var(--ward)}.foe .die.f-H{color:var(--heal)}.foe .die.f-U{color:var(--hud)}.foe .die.f-B{color:var(--blk);font-size:1.4rem}
+.foe .die.stun{opacity:.35}
+.foe .to{font:500 .7rem var(--mono);color:var(--muted)}
+.foe .inc{font:600 .72rem var(--mono);color:var(--hud);min-height:1rem;text-align:center}
+.hp{width:100%;height:.95rem;background:#0b1018;border:1px solid var(--line);border-radius:3px;position:relative;overflow:hidden}
+.hp i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#b8432f,#ff6b5b);transition:width .3s}
+.hp.ally i{background:linear-gradient(90deg,#2f7bb8,#5aa9ff)}
+.hp span{position:relative;display:block;text-align:center;font:600 .66rem/.85rem var(--mono)}
+.wardb{font:700 .7rem var(--mono);color:var(--ward)}
+.stunb{font:700 .7rem var(--mono);color:var(--stun)}
+.tg-ok{border-color:var(--hud)!important;box-shadow:0 0 0 2px var(--hud-dim);cursor:crosshair}
+.tg-ok:hover{background:#221d10}
+
+/* squad */
+.ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:10px}
+.op{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.op.me{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
+.op.down{opacity:.55}
+.op .hh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.op .hh b{font-family:var(--display);font-size:1.05rem}
+.op .sub{font-size:.8rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.op .dice{display:flex;gap:12px;flex-wrap:wrap;min-height:5.2rem}
+.op .dcol{display:flex;flex-direction:column;align-items:center;gap:4px;width:4.2rem}
+.op .tg{font:500 .68rem var(--mono);color:var(--muted);text-align:center;line-height:1.2;min-height:.85rem}
+.op .badges{display:flex;gap:4px;flex-wrap:wrap;min-height:1.2rem}
+.bdg{font:700 .7rem var(--mono);padding:1px 6px;border-radius:3px;background:#0b1018;border:1px solid var(--line)}
+.bdg.D{color:var(--dmg);border-color:#6b3329}.bdg.W{color:var(--ward)}.bdg.H{color:var(--heal)}
+.status{font:700 .7rem var(--mono);letter-spacing:.08em}
+.status.ready{color:var(--ok)}.status.roll,.status.aim{color:var(--hud)}.status.down,.status.gone{color:var(--foe)}
+.sigbtn{font:700 .78rem var(--display);background:#2d2350;color:#e2d4ff;border:1px solid #5a4796;border-radius:4px;padding:.3rem .6rem;cursor:pointer;align-self:flex-start}
+.sigbtn.on{background:var(--arcane);color:#160d2c}
+.sigbtn:disabled{opacity:.4;cursor:default}
+.sigtxt{font-size:.78rem;color:#e6cfff}
+.center{margin:12px 0;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
+.phase{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.phase span{font:600 .74rem var(--mono);padding:3px 9px;border-radius:3px;background:var(--panel2);color:var(--muted)}
+.phase span.on{background:var(--hud);color:#231702}
+.hint{font-size:.9rem;color:var(--muted);max-width:46rem;min-height:1.3rem}
+.log{max-width:820px;margin:12px auto 0}
+.log table{width:100%;border-collapse:collapse;font-size:.82rem}
+.log td,.log th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left}
+.log th{font-family:var(--display);color:var(--muted)}
+.float{position:fixed;pointer-events:none;font:800 1.35rem var(--mono);z-index:50;animation:floatup 1.1s ease-out forwards;text-shadow:0 2px 3px #000}
+@keyframes floatup{0%{opacity:0;transform:translateY(6px)}15%{opacity:1}100%{opacity:0;transform:translateY(-38px)}}
+
+/* tiles (lobby, upgrades) */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:7px}
+.tile.taken{opacity:.45}
+.tile.picked{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
+.tile .hh{display:flex;gap:8px;align-items:center}
+.tile .hh .ic{font-size:1.4rem}
+.tile .hh b{font-family:var(--display);font-size:1.08rem;flex:1}
+.tile .desc{font-size:.85rem;color:var(--muted);flex:1}
+.tile .btn{align-self:flex-start}
+.dl{display:flex;flex-direction:column;gap:3px}
+.dl .dn{color:var(--muted);font:600 .7rem var(--mono)}
+.slots{display:flex;gap:8px;flex-wrap:wrap}
+.slot{background:var(--panel);border:1px dashed var(--line);border-radius:5px;padding:7px 10px;font-size:.85rem;min-width:11rem}
+.slot.full{border-style:solid}
+.mydie{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px}
+
+/* menu */
+.menu{max-width:660px;margin:26px auto;display:flex;flex-direction:column;gap:16px}
+.logo{display:flex;justify-content:center}
+.menu .box{display:flex;flex-direction:column;gap:10px}
+.code{font:700 2.6rem var(--mono);letter-spacing:.3em;color:var(--hud);text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(4,6,10,.78);z-index:40;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:30px 16px}
+.overlay .box{max-width:780px;width:100%;display:flex;flex-direction:column;gap:10px}
+.overlay table{border-collapse:collapse;font-size:.86rem}
+.overlay td,.overlay th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px}
+#tip{position:fixed;z-index:60;background:#070b11;border:1px solid var(--hud-dim);color:var(--fg);font-size:.82rem;padding:6px 9px;border-radius:4px;max-width:18rem;pointer-events:none;display:none}
+.dev{border:1px dashed #7a5;border-radius:4px;padding:3px 7px;font-size:.78rem}
+@media (max-width:640px){.foe{width:calc(50% - 6px)}.foe.boss{width:100%}}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<div id="tip"></div>
+<div id="overlay" class="overlay hidden"></div>
+
+<script>
+'use strict';
+// ================= DATA =================
+// Faces are codes: type letter, number, then optional keywords, e.g. 'D2:cleave,engage'.
+// Each die has a base set and a "+" set (from the die upgrade after floors 2, 5 and 8).
+const CLASSES = {
+  breach:{ name:'Breach Mage', icon:'💥', hp:14, role:'Piercing burst', sig:'doorkick', dice:[
+    { name:'Scattershot',      faces:['D2:cleave','D2','D3','R1','R2:engage','B'],      plus:['D3:cleave','D3','D3:cleave','R2','R2:engage','R1'] },
+    { name:'Breaching Charge', faces:['D4:engage','R3','R2','D1','B','B'],              plus:['D5:engage','R4','R3','D2','R1:engage','B'] },
+    { name:'Kevlar Ward',      faces:['W2','W2','W3','W1','C1','B'],                    plus:['W3','W3','W4','W2:selfshield','C2','C1'] } ] },
+  storm:{ name:'Storm Witch', icon:'⚡', hp:11, role:'Chain damage', sig:'thunder', dice:[
+    { name:'Arc Lash',  faces:['A2','A2','A3:charged','A1:cantrip','C1','B'],           plus:['A3','A3','A4:charged','A2:cantrip','C2','A1'] },
+    { name:'Downdraft', faces:['W2','W1','A1','S','B','B'],                             plus:['W3','W2','A2','S','S:cantrip','W1'] },
+    { name:'Squall',    faces:['C2','C1:cantrip','A2','D2:cruel','W1','B'],             plus:['C3','C2:cantrip','A3','D3:cruel','W2','C1'] } ] },
+  necro:{ name:'Necromedic', icon:'🦴', hp:12, role:'Healer, revives', sig:'rise', dice:[
+    { name:'Stim Hex',    faces:['H3','H2','H2:cantrip','H1','C1','B'],                 plus:['H4','H3','H3:cantrip','H2','C2','H1'] },
+    { name:'Bone Splint', faces:['W2','H2','W1','H1','B','B'],                          plus:['W3','H3','W2','H2:pristine','H1','W1'] },
+    { name:'Lifetap',     faces:['D2:selfheal','D2:selfheal','D3:cruel','C1','C2','B'], plus:['D3:selfheal','D3:selfheal','D4:cruel','C2','C2','D1:selfheal'] } ] },
+  precog:{ name:'Precog', icon:'👁', hp:10, role:'Control: stuns, rewrites intents', sig:'toldyou', dice:[
+    { name:'Foresight',    faces:['S','S','E','E:cantrip','C1','B'],                    plus:['S','S:cantrip','E','E:cantrip','C2','C1'] },
+    { name:'Second Guess', faces:['E','W2','W1','C2','C1','B'],                         plus:['E','W3','W2','C3','C2','E'] },
+    { name:'Sidearm',      faces:['D2:patient','D2','D3','D1','D1:echo','B'],           plus:['D3:patient','D3','D4','D2','D2:echo','D1:echo'] } ] },
+  riot:{ name:'Riot Cleric', icon:'🛡️', hp:16, role:'Tank, wards, taunt', sig:'riotline', dice:[
+    { name:'Riot Ward', faces:['W3','W2','W2','W1','C1','B'],                           plus:['W4','W3','W3','W2','C2','W1:steel'] },
+    { name:'Flashbang', faces:['S','S:cantrip','D1','D1','W1','B'],                     plus:['S','S:cantrip','D2','D2:engage','W2','S'] },
+    { name:'Censure',   faces:['D3:steel','D2:steel','D2','H1','C1','B'],               plus:['D4:steel','D3:steel','D3','H2','C2','D1:steel'] } ] },
+  hexer:{ name:'Drone Hexer', icon:'🛸', hp:10, role:'Turrets and hacks', sig:'turret', dice:[
+    { name:'Turret',      faces:['D2','D2','D2:growth','D1:growth','C1','B'],           plus:['D3','D3','D3:growth','D2:growth','C2','D1:growth'] },
+    { name:'Hack',        faces:['S','S','C2','C1','B','B'],                            plus:['S','S:cantrip','C3','C2','C1:cantrip','B'] },
+    { name:'Sparkcaster', faces:['A2:charged','A1','D3','D1','W1','B'],                 plus:['A3:charged','A2','D4','D2','W2','A1:charged'] } ] },
+};
+const SIGS = {
+  doorkick:{ name:'Door Kick',      cost:3, text:'2 piercing damage to every enemy.' },
+  thunder: { name:'Thunderhead',    cost:4, text:'2 damage to every enemy.' },
+  rise:    { name:'Rise and Grind', cost:4, text:'Revive a downed teammate at 50% HP.' },
+  toldyou: { name:'Told You So',    cost:3, text:'Stun the 2 enemies with the biggest intents.' },
+  riotline:{ name:'Riot Line',      cost:3, text:'🛡2 on every operative, and every enemy attack this turn hits you instead.' },
+  turret:  { name:'Deploy Turret',  cost:4, text:'A turret shoots a random enemy for 2 before enemies act, every turn this floor.' },
+  // abilities granted by die equipment
+  zap:     { name:'Zap',            cost:2, text:'Stun a random enemy.' },
+  flare:   { name:'Flare',          cost:3, text:'3 damage to the enemy with the most HP.' },
+  triage:  { name:'Triage',         cost:2, text:'Heal the most hurt operative 3.' },
+};
+const FACE = {
+  D:{ icon:'⚔', name:'Damage',    num:true,  text:n=>`Deal ${n} damage to one enemy.` },
+  R:{ icon:'➹', name:'Pierce',    num:true,  text:n=>`Deal ${n} damage to one enemy, ignoring its ward.` },
+  A:{ icon:'⚡', name:'Arc',       num:true,  text:n=>`Deal ${n} damage to one enemy and 1 to each enemy next to it.` },
+  W:{ icon:'🛡', name:'Ward',      num:true,  text:n=>`Give any operative ${n} ward this turn.` },
+  H:{ icon:'✚', name:'Patch',     num:true,  text:n=>`Heal any standing operative ${n}.` },
+  S:{ icon:'◉', name:'Stun',      num:false, text:()=>'Cancel every intent of one enemy this turn.' },
+  E:{ icon:'👁', name:'Foresight', num:false, text:()=>'Reroll one enemy\'s intent.' },
+  C:{ icon:'✦', name:'Charge',    num:true,  text:n=>`Add ${n} charge (lasts the floor).` },
+  B:{ icon:'✕', name:'Blank',     num:false, text:()=>'Does nothing.' },
+  U:{ icon:'📎', name:'Summon',    num:false, text:()=>'Summons an Intern Familiar.' },
+  X:{ icon:'💥', name:'Shockwave', num:true,  text:n=>`${n} damage to every operative.` },
+};
+// Keywords, after Slice & Dice. 'tag' is the short label shown on dice.
+const KW = {
+  cleave:    { tag:'CLV', name:'Cleave',      text:'Also hits the enemies on both sides of the target for the same amount.' },
+  engage:    { tag:'ENG', name:'Engage',      text:'Double if the target is at full HP.' },
+  cruel:     { tag:'CRU', name:'Cruel',       text:'Double if the target is at half HP or less.' },
+  cantrip:   { tag:'CAN', name:'Cantrip',     text:'Fires on a random target the moment it lands face up while rolling. You can still use the die afterward.' },
+  pristine:  { tag:'PRI', name:'Pristine',    text:'Double if you are at full HP.' },
+  steel:     { tag:'STL', name:'Steel',       text:'+1 for each point of ward you have.' },
+  charged:   { tag:'CHG', name:'Charged',     text:'+1 for each ✦ charge you have.' },
+  echo:      { tag:'ECH', name:'Echo',        text:'Its number becomes the number of the last die you used this turn.' },
+  patient:   { tag:'PAT', name:'Patient',     text:'Double if this die was not used last turn.' },
+  growth:    { tag:'GRO', name:'Growth',      text:'This face gets +1 every time it is used, for the rest of the floor.' },
+  selfshield:{ tag:'SSH', name:'Self-shield', text:'Also gives you ward equal to its number.' },
+  selfheal:  { tag:'SHL', name:'Self-heal',   text:'Also heals you by its number.' },
+  poison:    { tag:'PSN', name:'Poison',      text:'The target takes 1 more damage at the end of every turn this floor (stacks).' },
+  pain:      { tag:'PAIN',name:'Pain',        text:'You take 1 damage when you use it.' },
+};
+const NUMERIC = t => FACE[t].num;
+const DMG = t => t === 'D' || t === 'R' || t === 'A';
+// Die equipment: up to 2 per die. 'fx' edits one face; 'ability' adds a ✦ button.
+const GEAR = {
+  laser:    { name:'Laser Sight',        icon:'🔴', text:'⚔ faces +1.',                                fx:f => { if (f.t === 'D') f.n++; } },
+  gauntlet: { name:'Breaching Gauntlet', icon:'🧤', text:'➹ faces +1.',                                fx:f => { if (f.t === 'R') f.n++; } },
+  fork:     { name:'Tuning Fork',        icon:'🎚️', text:'⚡ faces +1.',                                fx:f => { if (f.t === 'A') f.n++; } },
+  medgel:   { name:'Med-Gel Cartridge',  icon:'💉', text:'✚ faces +1.',                                fx:f => { if (f.t === 'H') f.n++; } },
+  plate:    { name:'Ceramic Plate',      icon:'🧱', text:'Blank faces become 🛡2.',                     pre:true, fx:f => { if (f.t === 'B') { f.t = 'W'; f.n = 2; } } },
+  battery:  { name:'Battery Pack',       icon:'🔋', text:'Blank faces become ✦1.',                      pre:true, fx:f => { if (f.t === 'B') { f.t = 'C'; f.n = 1; } } },
+  echoch:   { name:'Echo Chamber',       icon:'🔁', text:'Blank faces become ⚔1 with Echo.',            pre:true, fx:f => { if (f.t === 'B') { f.t = 'D'; f.n = 1; f.kw.push('echo'); } } },
+  foam:     { name:'Riot Foam',          icon:'🫧', text:'⚔ faces become 🛡 of the same number +1.',    pre:true, fx:f => { if (f.t === 'D') { f.t = 'W'; f.n++; } } },
+  convert:  { name:'Conversion Rig',     icon:'♻️', text:'✚ faces become ⚔ of the same number, with Cruel.', pre:true, fx:f => { if (f.t === 'H') { f.t = 'D'; f.kw.push('cruel'); } } },
+  serrated: { name:'Serrated Edge',      icon:'🪚', text:'⚔ faces gain Cruel.',                         fx:f => { if (f.t === 'D') f.kw.push('cruel'); } },
+  salvo:    { name:'Opening Salvo',      icon:'🎺', text:'Number faces gain Engage.',                   fx:f => { if (NUMERIC(f.t) && f.t !== 'C') f.kw.push('engage'); } },
+  broadhead:{ name:'Broadhead Rounds',   icon:'🪓', text:'⚔ and ➹ faces gain Cleave.',                  fx:f => { if (f.t === 'D' || f.t === 'R') f.kw.push('cleave'); } },
+  spellwire:{ name:'Spellwire',          icon:'🧵', text:'Every face gains Cantrip.',                   fx:f => { if (f.t !== 'B') f.kw.push('cantrip'); } },
+  polish:   { name:'Mirror Polish',      icon:'🪞', text:'Number faces gain Pristine.',                 fx:f => { if (NUMERIC(f.t)) f.kw.push('pristine'); } },
+  capacitor:{ name:'Capacitor',          icon:'🔌', text:'Number faces gain Charged.',                  fx:f => { if (NUMERIC(f.t) && f.t !== 'C') f.kw.push('charged'); } },
+  lining:   { name:'Kevlar Lining',      icon:'🦺', text:'⚔ and ➹ faces gain Self-shield.',             fx:f => { if (f.t === 'D' || f.t === 'R') f.kw.push('selfshield'); } },
+  leech:    { name:'Leech Coil',         icon:'🩸', text:'⚔ and ⚡ faces gain Self-heal.',              fx:f => { if (f.t === 'D' || f.t === 'A') f.kw.push('selfheal'); } },
+  hourglass:{ name:'Hourglass',          icon:'⏳', text:'Number faces gain Patient.',                  fx:f => { if (NUMERIC(f.t)) f.kw.push('patient'); } },
+  bonsai:   { name:'Bonsai Chip',        icon:'🌱', text:'Number faces gain Growth.',                   fx:f => { if (NUMERIC(f.t)) f.kw.push('growth'); } },
+  toxin:    { name:'Toxin Vial',         icon:'🧪', text:'⚔, ➹ and ⚡ faces gain Poison.',              fx:f => { if (DMG(f.t)) f.kw.push('poison'); } },
+  glass:    { name:'Glass Rune',         icon:'🔮', text:'Doubles every number. Faces gain Pain.',     post:true, fx:f => { if (NUMERIC(f.t)) { f.n *= 2; f.kw.push('pain'); } } },
+  taser:    { name:'Taser Spellcard',    icon:'💳', text:'Grants Zap (2✦): stun a random enemy.',       ability:'zap' },
+  flarerune:{ name:'Flare Rune',         icon:'🎇', text:'Grants Flare (3✦): 3 damage to the enemy with the most HP.', ability:'flare' },
+  sigil:    { name:'Triage Sigil',       icon:'⚕️', text:'Grants Triage (2✦): heal the most hurt operative 3.', ability:'triage' },
+};
+// Player equipment: up to 2 per operative, never on a die.
+const EQUIP = {
+  thermos: { name:'Thermos of Dark Roast', icon:'☕', text:'+1 reroll every turn.' },
+  flask:   { name:'Hip Flask of Ether',    icon:'🧉', text:'Start every floor with 2 ✦.' },
+  union:   { name:'Union Card',            icon:'🪪', text:'+5 max HP.' },
+  vest:    { name:'Spare Vest',            icon:'🦺', text:'Start every turn with 🛡1.' },
+  warrant: { name:'Expired Warrant',       icon:'📎', text:'+1 damage against bosses.' },
+  overtime:{ name:'Overtime Pay',          icon:'💼', text:'Each enemy you kill gives you 1 ✦.' },
+  radio:   { name:'Squad Radio',           icon:'📻', text:'Your 🛡 and ✚ dice give +1 when used on a teammate.' },
+  adrenal: { name:'Adrenaline Shot',       icon:'💉', text:'Once per floor, survive a hit that would down you, at 1 HP.' },
+  bodycam: { name:'Body Cam',              icon:'📹', text:'Your signature costs 1 less ✦.' },
+  pouch:   { name:'Hex Ammo Pouch',        icon:'🎒', text:'The first damage die you use each turn gets +1.' },
+};
+const ENEMIES = {
+  guard: { name:'Hexsec Guard',   icon:'👮', hp:6,  ints:['D2','D3','D2','D3','D2','D1'] },
+  drone: { name:'Ward Drone',     icon:'🛰️', hp:4,  ints:['W3','W3','W2','D1','W2','D1'] },
+  necro: { name:'Riot Necro',     icon:'🧟', hp:7,  ints:['H3','H2','D2','D2','H3','D1'] },
+  sniper:{ name:'Sniper Seer',    icon:'🎯', hp:5,  ints:['D5','D4','D5','B','D4','D3'], sniper:true },
+  heavy: { name:'Mag-Boot Heavy', icon:'🦾', hp:12, ints:['D4','D3','D4','D4','D3','D2'], selfWard:2 },
+  intern:{ name:'Intern Familiar',icon:'🐀', hp:2,  ints:['D1','D1','D1','D2','D1','D1'] },
+  vex:   { name:'Regional Manager Vex', icon:'🧛', hp:24, boss:true, ints:['D4','D3','D5','U','D3','W4'] },
+  grieve:{ name:'Halcyon Grieve, CEO',  icon:'💀', hp:40, boss:true, ints:['D5','D6','D4','U','W5','X3'] },
+};
+const FLOORS = [
+  { name:'Lobby',                pool:['guard','guard','drone'] },
+  { name:'Mailroom',             pool:['guard','drone','necro'] },
+  { name:'Open-Plan Office',     pool:['guard','drone','necro','sniper'] },
+  { name:'Server Farm',          pool:['guard','drone','necro','sniper'] },
+  { name:'Regional Manager Vex', pool:['drone'], boss:'vex' },
+  { name:'Executive Gym',        pool:['guard','necro','sniper','guard'] },
+  { name:'R&D Ritual Lab',       pool:['guard','drone','necro','sniper','heavy'] },
+  { name:'Legal Department',     pool:['guard','drone','necro','sniper','heavy'] },
+  { name:'Glass Atrium',         pool:['guard','drone','sniper','sniper','heavy'] },
+  { name:'Halcyon Grieve, CEO',  pool:['heavy'], boss:'grieve' },
+];
+const UPGRADE_FLOORS = [2, 5, 8];   // die+ upgrade after these floors; gear or equipment after the rest
+const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:2, equipPerPlayer:2 };
+// Enemy HP by squad size, tuned with bot runs so 1-4 operatives reach a similar floor on average.
+const HP_MULT = [1.0, 1.6, 2.4, 3.4];
+const enemyCount = (n, floor) => Math.min(6, n + 1 + (floor >= 7 && n > 1 ? 1 : 0));
+const PREFIX = 'cheezy-kc-';
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+const DEV = new URLSearchParams(location.search).has('dev');
+
+// ================= ENGINE =================
+// Host-authoritative state machine: act(st, playerIndex, action). Dice apply the moment they are used.
+function rnd(st) { let t = (st.seed = (st.seed + 0x6D2B79F5) | 0); t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+const ri = (st, n) => Math.floor(rnd(st) * n);
+const pick = (st, a) => a[ri(st, a.length)];
+function shuffle(st, a) { for (let i = a.length - 1; i > 0; i--) { const j = ri(st, i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function parse(c) { const [head, kws] = c.split(':'); return { t: head[0], n: +head.slice(1) || 0, kw: kws ? kws.split(',') : [] }; }
+const living = st => st.players.map((p, i) => i).filter(i => !st.players[i].gone && !st.players[i].down);
+const foesAlive = st => st.enemies.map((e, i) => i).filter(i => st.enemies[i].hp > 0);
+const hasEq = (st, p, id) => st.players[p].equip.includes(id);
+const maxHp = (st, p) => { const P = st.players[p]; return CLASSES[P.cls].hp + (P.equip.includes('union') ? 5 : 0); };
+const floorDef = st => FLOORS[st.floor - 1];
+const dieDef = (P, di) => CLASSES[P.cls].dice[di];
+const facesOf = (P, di) => P.dice[di].plus ? dieDef(P, di).plus : dieDef(P, di).faces;
+const dieName = (P, di) => dieDef(P, di).name + (P.dice[di].plus ? '+' : '');
+
+function newRun(mode, seed) {
+  return { v:2, mode, seed: seed | 0, phase:'lobby', floor:0, players:[], enemies:[], turrets:[], taunt:null, turn:0, log:[], result:null, rollN:0, resolveN:0, msg:'' };
+}
+function addPlayer(st, name) {
+  st.players.push({ name, cls:null, hp:0, dice:[], equip:[], charge:0, ward:0, down:false, gone:false, step:'wait', roll:[], rerolls:0, lastN:null, usedLast:[], dmgUsed:false, adrenalUsed:false, offers:[], picked:true });
+  return st.players.length - 1;
+}
+function removePlayer(st, i) { st.players.splice(i, 1); }
+function setupOperative(st, p) {
+  const P = st.players[p];
+  P.dice = CLASSES[P.cls].dice.map(() => ({ plus:false, gear:[], grow:[0,0,0,0,0,0] }));
+  P.equip = []; P.hp = CLASSES[P.cls].hp; P.down = false; P.charge = 0;
+}
+
+// The face as it plays right now: gear face changes, then pips and keywords, then doubling; plus Growth bonuses.
+function effFace(st, p, di, fi) {
+  const P = st.players[p], die = P.dice[di], f = parse(facesOf(P, di)[fi]);
+  const gears = die.gear.map(g => GEAR[g]).filter(g => g.fx);
+  gears.filter(g => g.pre).forEach(g => g.fx(f));
+  gears.filter(g => !g.pre && !g.post).forEach(g => g.fx(f));
+  gears.filter(g => g.post).forEach(g => g.fx(f));
+  if (NUMERIC(f.t)) f.n += die.grow[fi] || 0;
+  f.kw = [...new Set(f.kw)];
+  return f;
+}
+const abilitiesOf = (P) => { const a = []; P.dice.forEach(d => d.gear.forEach(g => { if (GEAR[g].ability) a.push(GEAR[g].ability); })); return [...new Set(a)]; };
+const sigCost = (st, p, s) => Math.max(1, SIGS[s].cost - (s === CLASSES[st.players[p].cls].sig && hasEq(st, p, 'bodycam') ? 1 : 0));
+
+function scaleFor(st) {
+  const n = Math.max(1, st.players.filter(p => !p.gone).length);
+  return { n, hp: HP_MULT[n - 1] * (1 + 0.1 * (st.floor - 1)) };
+}
+function makeEnemy(st, type) {
+  const E = ENEMIES[type], s = scaleFor(st);
+  const hp = E.boss ? E.hp * s.n : Math.max(1, Math.round(E.hp * s.hp));
+  return { type, hp, mx: hp, ward: 0, poison: 0, ints: [], stun: false, acts: E.boss ? s.n : 1 };
+}
+function startFloor(st) {
+  st.phase = 'battle'; st.turn = 0; st.log = []; st.turrets = []; st.msg = '';
+  const F = floorDef(st), s = scaleFor(st);
+  st.enemies = [];
+  if (F.boss) { st.enemies.push(makeEnemy(st, F.boss)); for (let i = 1; i < s.n; i++) st.enemies.push(makeEnemy(st, pick(st, F.pool))); }
+  else { const count = enemyCount(s.n, st.floor); for (let i = 0; i < count; i++) st.enemies.push(makeEnemy(st, pick(st, F.pool))); }
+  st.players.forEach(P => { P.charge = P.equip.includes('flask') ? 2 : 0; P.dice.forEach(d => d.grow = [0,0,0,0,0,0]); P.usedLast = []; P.adrenalUsed = false; });
+  startTurn(st);
+}
+
+// Enemy numbers grow with the floor and, for bigger squads, with squad size (big squads share wards and heals).
+const SQUAD_DMG = [0, 0, 1, 1];
+const intentBonus = st => (st.floor >= 8 ? 2 : st.floor >= 4 ? 1 : 0) + SQUAD_DMG[scaleFor(st).n - 1];
+function rollIntent(st, ei) {
+  const e = st.enemies[ei], E = ENEMIES[e.type], lv = living(st);
+  let { t, n } = parse(pick(st, E.ints));
+  if (NUMERIC(t)) n += intentBonus(st);
+  let tg = null;
+  if (t === 'D') tg = E.sniper ? lv.reduce((b, i) => b == null || st.players[i].hp < st.players[b].hp ? i : b, null) : (lv.length ? pick(st, lv) : null);
+  else if (t === 'W') tg = pick(st, foesAlive(st));
+  else if (t === 'H') { const al = foesAlive(st); tg = al.reduce((b, i) => b == null || (st.enemies[i].mx - st.enemies[i].hp) > (st.enemies[b].mx - st.enemies[b].hp) ? i : b, null); }
+  return { c: t + (NUMERIC(t) ? n : ''), tg };
+}
+function rollIntents(st, ei) {
+  const e = st.enemies[ei];
+  let acts = e.acts;
+  if (e.type === 'grieve' && e.hp * 2 < e.mx) acts++;
+  e.ints = []; for (let k = 0; k < acts; k++) e.ints.push(rollIntent(st, ei));
+}
+
+function startTurn(st) {
+  st.turn++; st.taunt = null;
+  st.log.push({ side:'sys', src:`Turn ${st.turn}`, tgt:'', res:'' });
+  st.enemies.forEach((e, i) => { e.stun = false; if (e.hp > 0) rollIntents(st, i); else e.ints = []; });
+  st.players.forEach((P, p) => {
+    if (P.gone || P.down) { P.step = P.gone ? 'gone' : 'down'; P.roll = []; return; }
+    P.step = 'roll'; P.lastN = null; P.dmgUsed = false;
+    P.ward = hasEq(st, p, 'vest') ? 1 : 0;
+    P.rerolls = RULES.rerolls + (hasEq(st, p, 'thermos') ? 1 : 0);
+    P.roll = P.dice.map(() => ({ fi: 0, k: false, used: false, r: 0 }));
+    P.roll.forEach((d, di) => rollDie(st, p, di));
+  });
+  trimLog(st);
+  if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; }
+  else if (!foesAlive(st).length) floorCleared(st);
+}
+function rollDie(st, p, di) {
+  const d = st.players[p].roll[di];
+  if (!d) return;   // a Pain cantrip can down you mid-roll
+  d.fi = ri(st, 6); d.r = ++st.rollN;
+  const f = effFace(st, p, di, d.fi);
+  if (f.kw.includes('cantrip') && f.t !== 'B') applyFace(st, p, di, f, null, true);
+}
+const trimLog = st => { if (st.log.length > 40) st.log.splice(0, st.log.length - 40); };
+
+// Effects ------------------------------------------------------------------
+const pn = (st, i) => st.players[i].name;
+function en(st, i) { const t = st.enemies[i].type, same = st.enemies.map((x, j) => j).filter(j => st.enemies[j].type === t); return ENEMIES[t].name + (same.length > 1 ? ' ' + 'ABCDEFG'[same.indexOf(i)] : ''); }
+const L = (st, side, src, tgt, res) => st.log.push({ side, src, tgt, res });
+
+function hitEnemy(st, p, i, n, pierce, src) {
+  const e = st.enemies[i]; if (!e || e.hp <= 0) return 0;
+  if (p != null && ENEMIES[e.type].boss && hasEq(st, p, 'warrant')) n++;
+  const b = pierce ? 0 : Math.min(e.ward, n); e.ward -= b;
+  const before = e.hp; e.hp = Math.max(0, e.hp - (n - b));
+  L(st, 'ally', src, en(st, i), `${b ? b + ' blocked · ' : ''}${before} → ${e.hp}${e.hp === 0 ? ' ✖' : ''}`);
+  if (e.hp === 0 && p != null && hasEq(st, p, 'overtime')) st.players[p].charge++;
+  return before - e.hp;
+}
+function hurtPlayer(st, pi, v, src, wardable) {
+  const T = st.players[pi]; if (!T || T.gone || T.down) return;
+  const b = wardable ? Math.min(T.ward, v) : 0; T.ward -= b;
+  const before = T.hp; T.hp = Math.max(0, T.hp - (v - b));
+  if (T.hp === 0 && hasEq(st, pi, 'adrenal') && !T.adrenalUsed) { T.hp = 1; T.adrenalUsed = true; }
+  L(st, src.startsWith(T.name) ? 'ally' : 'foe', src, T.name, `${b ? b + ' blocked · ' : ''}${before} → ${T.hp}${T.hp === 0 ? ' (down)' : ''}`);
+  if (T.hp === 0) { T.down = true; T.roll = []; T.step = 'down'; }
+}
+function healPlayer(st, pi, v, src) {
+  const T = st.players[pi]; if (!T || T.gone || T.down) return;
+  const before = T.hp; T.hp = Math.min(maxHp(st, pi), T.hp + v); L(st, 'ally', src, T.name, `${before} → ${T.hp}`);
+}
+function pickRandomTarget(st, p, t) {
+  const al = foesAlive(st), lv = living(st);
+  if (DMG(t) || t === 'S' || t === 'E') return al.length ? { k:'e', i: pick(st, al) } : null;
+  if (t === 'W' || t === 'H') return lv.length ? { k:'p', i: lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b, lv[0]) } : null;
+  return null;
+}
+// The final number a face resolves for, given its keywords and target.
+function faceValue(st, p, di, f, tg) {
+  const P = st.players[p];
+  let v = f.n;
+  if (f.kw.includes('echo') && P.lastN != null) v = P.lastN;
+  if (f.kw.includes('steel')) v += P.ward;
+  if (f.kw.includes('charged')) v += P.charge;
+  if (DMG(f.t) && hasEq(st, p, 'pouch') && !P.dmgUsed) v++;
+  if ((f.t === 'W' || f.t === 'H') && tg && tg.k === 'p' && tg.i !== p && hasEq(st, p, 'radio')) v++;
+  let mult = 1;
+  if (tg) {
+    const T = tg.k === 'e' ? st.enemies[tg.i] : st.players[tg.i];
+    const hp = T.hp, mx = tg.k === 'e' ? T.mx : maxHp(st, tg.i);
+    if (f.kw.includes('engage') && hp === mx) mult *= 2;
+    if (f.kw.includes('cruel') && hp * 2 <= mx) mult *= 2;
+  }
+  if (f.kw.includes('pristine') && P.hp === maxHp(st, p)) mult *= 2;
+  if (f.kw.includes('patient') && !P.usedLast[di]) mult *= 2;
+  return v * mult;
+}
+function applyFace(st, p, di, f, tg, cantrip) {
+  const P = st.players[p];
+  if (cantrip) tg = pickRandomTarget(st, p, f.t);
+  if (!tg && !['C', 'B'].includes(f.t)) return;
+  const v = NUMERIC(f.t) ? faceValue(st, p, di, f, tg) : 0;
+  const src = `${P.name} · ${dieName(P, di)} ${FACE[f.t].icon}${NUMERIC(f.t) ? v : ''}${cantrip ? ' (cantrip)' : ''}`;
+  if (f.t === 'D' || f.t === 'R') {
+    const al = foesAlive(st), pos = al.indexOf(tg.i);
+    hitEnemy(st, p, tg.i, v, f.t === 'R', src);
+    if (f.kw.includes('cleave') && pos >= 0) [al[pos - 1], al[pos + 1]].forEach(j => { if (j != null) hitEnemy(st, p, j, v, f.t === 'R', src + ' (cleave)'); });
+  } else if (f.t === 'A') {
+    const al = foesAlive(st), pos = al.indexOf(tg.i);
+    hitEnemy(st, p, tg.i, v, false, src);
+    if (pos >= 0) [al[pos - 1], al[pos + 1]].forEach(j => { if (j != null) hitEnemy(st, p, j, f.kw.includes('cleave') ? v : 1, false, src + ' (arc)'); });
+  } else if (f.t === 'W') { st.players[tg.i].ward += v; L(st, 'ally', src, pn(st, tg.i), `+${v} ward`); }
+  else if (f.t === 'H') healPlayer(st, tg.i, v, src);
+  else if (f.t === 'S') { st.enemies[tg.i].stun = true; L(st, 'ally', src, en(st, tg.i), 'Stunned'); }
+  else if (f.t === 'E') { rollIntents(st, tg.i); L(st, 'ally', src, en(st, tg.i), 'Intent rewritten'); }
+  else if (f.t === 'C') { P.charge += v; L(st, 'ally', src, P.name, `+${v} ✦`); }
+  if (DMG(f.t)) {
+    P.dmgUsed = true;
+    if (f.kw.includes('poison') && st.enemies[tg.i].hp > 0) { st.enemies[tg.i].poison++; L(st, 'ally', src, en(st, tg.i), 'Poisoned'); }
+  }
+  if (NUMERIC(f.t) && f.t !== 'C') {
+    if (f.kw.includes('selfshield')) { P.ward += v; L(st, 'ally', src, P.name, `+${v} ward (self)`); }
+    if (f.kw.includes('selfheal')) healPlayer(st, p, v, src + ' (self-heal)');
+  }
+  if (!cantrip) {
+    P.lastN = NUMERIC(f.t) ? f.n : P.lastN;
+    if (f.kw.includes('growth')) P.dice[di].grow[P.roll[di].fi]++;
+  }
+  if (f.kw.includes('pain')) hurtPlayer(st, p, 1, `${P.name} · Pain`, false);
+}
+function castAbility(st, p, s) {
+  const P = st.players[p], src = `${P.name} ✦ ${SIGS[s].name}`;
+  const al = foesAlive(st);
+  if (s === 'doorkick') al.forEach(i => hitEnemy(st, p, i, 2, true, src));
+  if (s === 'thunder') al.forEach(i => hitEnemy(st, p, i, 2, false, src));
+  if (s === 'rise') { const t = st.players.findIndex((x, i) => i !== p && x.down && !x.gone); if (t >= 0) { const T = st.players[t]; T.down = false; T.hp = Math.ceil(maxHp(st, t) / 2); T.step = 'ready'; T.roll = []; L(st, 'ally', src, T.name, `Back up at ${T.hp} HP (rolls next turn)`); } }
+  if (s === 'toldyou') al.filter(i => !st.enemies[i].stun).sort((a, b) => intentSize(st.enemies[b]) - intentSize(st.enemies[a])).slice(0, 2).forEach(i => { st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); });
+  if (s === 'riotline') { st.taunt = p; living(st).forEach(i => st.players[i].ward += 2); L(st, 'ally', src, 'Squad', `+2 ward each; enemies target ${P.name}`); }
+  if (s === 'turret') { st.turrets.push(p); L(st, 'ally', src, '—', 'Turret online'); }
+  if (s === 'zap') { const c = al.filter(i => !st.enemies[i].stun); if (c.length) { const i = pick(st, c); st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); } }
+  if (s === 'flare' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp > st.enemies[b].hp ? i : b), 3, false, src);
+  if (s === 'triage') { const lv = living(st); if (lv.length) healPlayer(st, lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b), 3, src); }
+}
+const intentSize = e => e.ints.reduce((s, it) => { const { t, n } = parse(it.c); return s + (t === 'D' ? n : t === 'X' ? n * 2 : t === 'U' ? 2 : n * 0.5); }, 0);
+function incomingTo(st, p) {
+  let n = 0;
+  st.enemies.forEach(e => { if (e.hp <= 0 || e.stun) return; e.ints.forEach(it => { const { t, n: v } = parse(it.c); if (t === 'D' && (st.taunt != null ? st.taunt : it.tg) === p) n += v; if (t === 'X') n += v; }); });
+  return n;
+}
+function validTarget(st, t, tg) {
+  if (!tg) return false;
+  if (DMG(t) || t === 'S' || t === 'E') return tg.k === 'e' && st.enemies[tg.i] && st.enemies[tg.i].hp > 0;
+  if (t === 'W' || t === 'H') { const P = st.players[tg.i]; return tg.k === 'p' && P && !P.gone && !P.down; }
+  return false;
+}
+const needsTarget = t => !['C', 'B'].includes(t);
+function abilityUsable(st, p, s) {
+  if (s === 'rise') return st.players.some((x, i) => i !== p && x.down && !x.gone);
+  if (s === 'riotline' || s === 'triage') return true;
+  return foesAlive(st).length > 0;
+}
+// After anything that can end the fight or down someone.
+function checkState(st) {
+  if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; return true; }
+  if (!foesAlive(st).length) { floorCleared(st); return true; }
+  if (living(st).every(i => st.players[i].step === 'ready')) { enemyPhase(st); return true; }
+  return false;
+}
+
+function act(st, p, a) {
+  const P = st.players[p]; if (!P) return 'Unknown player';
+  switch (a.t) {
+    case 'class': {
+      if (st.phase !== 'lobby') return 'The run already started';
+      if (!CLASSES[a.cls]) return 'bad';
+      if (st.players.some((x, i) => i !== p && x.cls === a.cls)) return 'Another operative already took that class';
+      P.cls = a.cls; return null;
+    }
+    case 'start': {
+      if (st.phase !== 'lobby' || p !== 0) return 'Only the host can start';
+      if (st.players.some(x => !x.cls)) return 'Everyone needs a class first';
+      st.players.forEach((x, i) => setupOperative(st, i));
+      st.floor = 1; startFloor(st); return null;
+    }
+    case 'keep': case 'reroll': case 'done': case 'use': case 'cast': case 'ready': case 'unready': {
+      if (st.phase !== 'battle') return 'Not in a fight';
+      if (P.down || P.gone) return 'You are down';
+      if (a.t === 'keep') { if (P.step !== 'roll' || !P.roll[a.i]) return 'bad'; P.roll[a.i].k = !P.roll[a.i].k; return null; }
+      if (a.t === 'reroll') {
+        if (P.step !== 'roll' || P.rerolls <= 0) return 'No rerolls left';
+        P.rerolls--;
+        P.roll.forEach((d, di) => { if (!d.k) rollDie(st, p, di); });
+        trimLog(st);
+        if (P.rerolls === 0 || P.roll.every(d => d.k)) P.step = 'use';
+        checkState(st); return null;
+      }
+      if (a.t === 'done') { if (P.step !== 'roll') return 'bad'; P.step = 'use'; return null; }
+      if (a.t === 'unready') { if (P.step !== 'ready') return 'bad'; P.step = 'use'; return null; }
+      if (P.step !== 'use') return P.step === 'roll' ? 'Finish rolling first' : 'You are already ready';
+      if (a.t === 'use') {
+        const d = P.roll[a.i]; if (!d || d.used) return 'That die is already used';
+        const f = effFace(st, p, a.i, d.fi);
+        if (f.t === 'B') return 'Blank';
+        if (needsTarget(f.t) && !validTarget(st, f.t, a.tg)) return 'Invalid target';
+        d.used = true;
+        applyFace(st, p, a.i, f, needsTarget(f.t) ? a.tg : null, false);
+        trimLog(st); checkState(st); return null;
+      }
+      if (a.t === 'cast') {
+        const own = CLASSES[P.cls].sig === a.s, gear = abilitiesOf(P).includes(a.s);
+        if (!own && !gear) return 'bad';
+        if ((P.cast || []).includes(a.s)) return 'Already used this turn';
+        if (P.charge < sigCost(st, p, a.s)) return 'Not enough charge';
+        if (!abilityUsable(st, p, a.s)) return 'Nothing to use it on';
+        P.charge -= sigCost(st, p, a.s); P.cast = [...(P.cast || []), a.s];
+        castAbility(st, p, a.s); trimLog(st); checkState(st); return null;
+      }
+      if (a.t === 'ready') { P.step = 'ready'; checkState(st); return null; }
+      return 'bad';
+    }
+    case 'take': {
+      if (st.phase !== 'upgrade' || P.picked) return 'Not picking now';
+      const o = P.offers[a.i]; if (!o) return 'bad';
+      if (o.k === 'plus') {
+        const d = P.dice[a.d]; if (!d || d.plus) return 'Pick a die that is not upgraded yet';
+        d.plus = true;
+      } else if (o.k === 'gear') {
+        const d = P.dice[a.d]; if (!d) return 'Pick a die';
+        if (d.gear.length >= RULES.gearPerDie) { if (!(a.r >= 0 && a.r < d.gear.length)) return 'Pick gear to replace'; d.gear.splice(a.r, 1); }
+        d.gear.push(o.id);
+      } else if (o.k === 'equip') {
+        if (P.equip.length >= RULES.equipPerPlayer) { if (!(a.r >= 0 && a.r < P.equip.length)) return 'Pick equipment to replace'; P.equip.splice(a.r, 1); }
+        P.equip.push(o.id);
+        P.hp = Math.min(P.hp + (o.id === 'union' ? 5 : 0), maxHp(st, p));
+      }
+      P.picked = true;
+      if (st.players.every(x => x.picked || x.gone)) { st.floor++; startFloor(st); }
+      return null;
+    }
+    case 'restart': {
+      if (st.phase !== 'over' || p !== 0) return 'Only the host can restart';
+      st.phase = 'lobby'; st.floor = 0; st.result = null; st.enemies = []; st.log = [];
+      st.players = st.players.filter(x => !x.gone);
+      return null;
+    }
+  }
+  return 'Unknown action';
+}
+
+function enemyPhase(st) {
+  st.players.forEach(P => P.cast = []);
+  st.turrets.forEach(p => { const al = foesAlive(st); if (al.length) hitEnemy(st, p, pick(st, al), 2, false, `${pn(st, p)}'s turret`); });
+  st.enemies.forEach(e => { e.ward = 0; });
+  st.enemies.forEach((e, i) => {
+    if (e.hp <= 0) return;
+    if (ENEMIES[e.type].selfWard) e.ward += ENEMIES[e.type].selfWard;
+    if (e.stun) { L(st, 'foe', en(st, i), '—', 'Stunned, does nothing'); return; }
+    e.ints.forEach(it => {
+      const { t, n } = parse(it.c);
+      if (t === 'D') {
+        let tg = st.taunt != null && st.players[st.taunt].hp > 0 && !st.players[st.taunt].down ? st.taunt : it.tg;
+        if (tg == null || st.players[tg].gone || st.players[tg].down) { const lv = living(st); tg = lv.length ? pick(st, lv) : null; }
+        if (tg != null) hurtPlayer(st, tg, n, `${en(st, i)} ⚔${n}`, true);
+      } else if (t === 'X') living(st).forEach(pi => hurtPlayer(st, pi, n, `${en(st, i)} 💥${n}`, true));
+      else if (t === 'W') { const tg = st.enemies[it.tg] && st.enemies[it.tg].hp > 0 ? it.tg : i; st.enemies[tg].ward += n; L(st, 'foe', `${en(st, i)} 🛡${n}`, en(st, tg), `+${n} ward`); }
+      else if (t === 'H') { const tg = st.enemies[it.tg] && st.enemies[it.tg].hp > 0 ? it.tg : i, T = st.enemies[tg], before = T.hp; T.hp = Math.min(T.mx, T.hp + n); L(st, 'foe', `${en(st, i)} ✚${n}`, en(st, tg), `${before} → ${T.hp}`); }
+      else if (t === 'U') { if (foesAlive(st).length < 7) { st.enemies.push(makeEnemy(st, 'intern')); L(st, 'foe', `${en(st, i)} 📎`, 'Intern Familiar', 'Summoned'); } }
+    });
+  });
+  st.enemies.forEach((e, i) => { if (e.hp > 0 && e.poison) { const before = e.hp; e.hp = Math.max(0, e.hp - e.poison); L(st, 'ally', 'Poison', en(st, i), `${before} → ${e.hp}${e.hp === 0 ? ' ✖' : ''}`); } });
+  st.players.forEach(P => { P.ward = 0; P.usedLast = P.roll.map(d => d.used); });
+  st.resolveN++;
+  if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; return; }
+  if (!foesAlive(st).length) { floorCleared(st); return; }
+  startTurn(st);
+}
+
+function floorCleared(st) {
+  st.resolveN++;
+  if (st.floor >= RULES.floors) { st.phase = 'over'; st.result = 'won'; return; }
+  st.phase = 'upgrade';
+  st.players.forEach((P, p) => {
+    if (P.gone) { P.picked = true; return; }
+    const mx = maxHp(st, p);
+    if (P.down) { P.down = false; P.hp = Math.ceil(mx / 2); }
+    else P.hp = Math.min(mx, P.hp + Math.ceil((mx - P.hp) / 2));
+    P.picked = false; P.step = 'wait'; P.roll = []; P.ward = 0; P.cast = [];
+    if (UPGRADE_FLOORS.includes(st.floor) && P.dice.some(d => !d.plus)) P.offers = [{ k:'plus' }];
+    else {
+      const gear = shuffle(st, Object.keys(GEAR)), eq = shuffle(st, Object.keys(EQUIP).filter(e => !P.equip.includes(e)));
+      P.offers = [{ k:'gear', id: gear[0] }, { k:'gear', id: gear[1] }, eq.length ? { k:'equip', id: eq[0] } : { k:'gear', id: gear[2] }];
+    }
+  });
+}
+
+// ================= TEST BOT (dev harness and auto-play) =================
+function botNext(st, p) {
+  const P = st.players[p]; if (!P) return null;
+  if (st.phase === 'upgrade' && !P.picked) {
+    const o = P.offers[0];
+    if (o.k === 'plus') return { t:'take', i: 0, d: P.dice.findIndex(d => !d.plus) };
+    const ei = P.offers.findIndex(x => x.k === 'equip');
+    if (ei >= 0 && P.equip.length < RULES.equipPerPlayer) return { t:'take', i: ei };
+    const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0);
+    return { t:'take', i: 0, d, r: P.dice[d].gear.length >= RULES.gearPerDie ? 0 : undefined };
+  }
+  if (st.phase !== 'battle' || P.down || P.gone) return null;
+  if (P.step === 'roll') {
+    const want = P.roll.map((d, di) => { const f = effFace(st, p, di, d.fi); return f.t !== 'B' && (!NUMERIC(f.t) || f.n >= 2); });
+    const tog = P.roll.findIndex((d, i) => d.k !== want[i]);
+    if (tog >= 0) return { t:'keep', i: tog };
+    if (P.rerolls > 0 && want.includes(false)) return { t:'reroll' };
+    return { t:'done' };
+  }
+  if (P.step === 'use') {
+    const al = foesAlive(st), lv = living(st);
+    const order = ['S', 'E', 'W', 'D', 'R', 'A', 'H', 'C'];
+    let best = null;
+    P.roll.forEach((d, di) => { if (d.used) return; const f = effFace(st, p, di, d.fi); if (f.t === 'B') return; const r = order.indexOf(f.t); if (best == null || r < best.r) best = { di, f, r }; });
+    if (best) {
+      const t = best.f.t; let tg = null;
+      if (t === 'S' || t === 'E') tg = { k:'e', i: al.reduce((b, i) => intentSize(st.enemies[i]) > intentSize(st.enemies[b]) ? i : b, al[0]) };
+      else if (DMG(t)) tg = { k:'e', i: al.reduce((b, i) => st.enemies[i].hp < st.enemies[b].hp ? i : b, al[0]) };
+      else if (t === 'W') tg = { k:'p', i: lv.reduce((b, i) => incomingTo(st, i) - st.players[i].ward > incomingTo(st, b) - st.players[b].ward ? i : b, p) };
+      else if (t === 'H') tg = { k:'p', i: lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b, p) };
+      return { t:'use', i: best.di, tg };
+    }
+    for (const s of [CLASSES[P.cls].sig, ...abilitiesOf(P)]) if (!(P.cast || []).includes(s) && P.charge >= sigCost(st, p, s) && abilityUsable(st, p, s)) return { t:'cast', s };
+    return { t:'ready' };
+  }
+  return null;
+}
+
+// ================= AUDIO =================
+let actx = null, master = null, musicGain = null;
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
+let muted = store.get('kc-mute') === '1', musicOn = store.get('kc-music') !== '0';
+function ac() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; }
+    master = actx.createGain(); master.connect(actx.destination); musicGain = actx.createGain(); musicGain.connect(master); applyVol(); }
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+function applyVol() { if (!master) return; master.gain.value = muted ? 0 : 0.8; musicGain.gain.value = musicOn ? 0.16 : 0; }
+function tone(f, d, type = 'sine', vol = .15, slide = 0, delay = 0, dest) {
+  const a = ac(); if (!a || muted) return;
+  const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f + slide), t + d);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+  o.connect(g).connect(dest || master); o.start(t); o.stop(t + d + .02);
+}
+function noise(d, vol = .2, freq = 1800, delay = 0) {
+  const a = ac(); if (!a || muted) return;
+  const t = a.currentTime + delay, len = Math.floor(a.sampleRate * d), buf = a.createBuffer(1, len, a.sampleRate), ch = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / len);
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  s.buffer = buf; f.type = 'bandpass'; f.frequency.value = freq; g.gain.value = vol;
+  s.connect(f).connect(g).connect(master); s.start(t);
+}
+const sfx = {
+  roll() { for (let i = 0; i < 4; i++) noise(.04, .22, 2400 + Math.random() * 1500, i * .05 + Math.random() * .02); },
+  click() { tone(700, .05, 'square', .05); },
+  zap() { tone(1200, .12, 'sawtooth', .07, -900); noise(.1, .15, 4000); },
+  hit() { tone(130, .18, 'sawtooth', .13, -70); noise(.08, .2, 700); },
+  ward() { tone(880, .12, 'triangle', .07); tone(1320, .15, 'triangle', .05, 0, .03); },
+  heal() { tone(520, .15, 'sine', .1, 200); tone(780, .2, 'sine', .07, 200, .08); },
+  charge() { [988, 1319, 1760].forEach((f, i) => tone(f, .1, 'sine', .06, 0, i * .05)); },
+  clear() { [392, 523, 659, 784].forEach((f, i) => tone(f, .22, 'square', .07, 0, i * .1)); },
+  win() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, .28, 'triangle', .12, 0, i * .12)); },
+  lose() { [330, 294, 262, 196].forEach((f, i) => tone(f, .32, 'triangle', .12, 0, i * .16)); },
+  join() { tone(600, .1, 'sine', .12); tone(900, .14, 'sine', .1, 0, .1); },
+};
+// Low synth pulse with a minor arpeggio: tactical, a little spooky.
+const PROG = [[110, 131, 165], [98, 123, 147], [87, 110, 131], [98, 117, 147]];
+let musicT = 0, musicBar = 0;
+setInterval(() => {
+  if (!actx || muted || !musicOn) return;
+  if (musicT < actx.currentTime) musicT = actx.currentTime + .05;
+  while (musicT < actx.currentTime + .6) {
+    const ch = PROG[musicBar % PROG.length], off = musicT - actx.currentTime;
+    for (let k = 0; k < 8; k++) tone(ch[[0, 1, 2, 1][k % 4]] * 2, .22, 'square', .05, 0, off + k * .25, musicGain);
+    tone(ch[0] / 2, 1.9, 'triangle', .3, 0, off, musicGain);
+    musicT += 2; musicBar++;
+  }
+}, 300);
+
+// ================= APP STATE =================
+let st = null, me = 0, screen = 'menu';
+const ui = { sel: null, pend: null, err: '', joinCode: '' };
+const net = { peer: null, role: null, code: '', conns: new Map(), host: null, myName: '' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const myName = () => (store.get('kc-name') || 'Operative').slice(0, 14);
+
+function dispatch(a) {
+  ac();
+  if (net.role === 'client') { if (net.host && net.host.open) net.host.send({ t:'act', a }); return; }
+  if (!st) return;
+  const err = act(st, me, a);
+  if (err) { ui.err = err; render(); return; }
+  ui.err = '';
+  afterChange();
+}
+function afterChange() {
+  if (st.mode === 'solo') saveSolo();
+  if (net.role === 'host') broadcastState();
+  render();
+}
+
+// ================= SAVE =================
+const SAVE_KEY = 'kc-solo-v1';
+function saveSolo() { if (st && st.mode === 'solo') store.set(SAVE_KEY, JSON.stringify(st)); }
+function exportSave() { const s = store.get(SAVE_KEY); return s ? 'KC1:' + btoa(unescape(encodeURIComponent(s))) : ''; }
+function importSave(txt) {
+  txt = txt.trim(); if (!txt.startsWith('KC1:')) throw new Error('Not a Kevlar & Cantrips save');
+  const s = JSON.parse(decodeURIComponent(escape(atob(txt.slice(4)))));
+  if (!s || s.mode !== 'solo' || !s.players || s.v !== 2) throw new Error('Save looks broken or is from an older version');
+  store.set(SAVE_KEY, JSON.stringify(s));
+}
+
+// ================= NETWORK =================
+function randCode() { let c = ''; for (let i = 0; i < 4; i++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]; return c; }
+function publicState() { const { seed, ...rest } = st; return rest; }
+function broadcastState() { const s = publicState(); for (const c of net.conns.values()) if (c.conn.open) c.conn.send({ t:'state', s }); }
+function startHost(tries = 0) {
+  if (!window.Peer) { ui.err = 'Could not load the PeerJS library. Check your internet connection.'; render(); return; }
+  const code = randCode();
+  net.myName = myName(); screen = 'lobby'; ui.err = ''; ui.lobbyMsg = 'Contacting the PeerJS broker…'; render();
+  const peer = new Peer(PREFIX + code, { debug: 1 });
+  net.peer = peer;
+  peer.on('open', () => {
+    net.role = 'host'; net.code = code; ui.lobbyMsg = '';
+    st = newRun('mp', (Math.random() * 2 ** 31) | 0); addPlayer(st, net.myName); me = 0; screen = 'game'; afterChange();
+  });
+  peer.on('connection', conn => {
+    conn.on('open', () => {
+      if (!st || st.phase !== 'lobby') { conn.send({ t:'full', msg:'That squad already started its run.' }); setTimeout(() => conn.close(), 300); return; }
+      if (st.players.length >= RULES.maxPlayers) { conn.send({ t:'full', msg:'That squad is full (4 operatives).' }); setTimeout(() => conn.close(), 300); return; }
+      net.conns.set(conn.peer, { conn, pi: null });
+    });
+    conn.on('data', d => hostOnData(conn, d));
+    conn.on('close', () => dropGuest(conn.peer));
+  });
+  peer.on('error', e => {
+    if (net.peer !== peer) return;
+    if (e.type === 'unavailable-id' && tries < 5) { peer.destroy(); startHost(tries + 1); return; }
+    netError(e);
+  });
+  peer.on('disconnected', () => { if (net.peer === peer && net.role === 'host') peer.reconnect(); });
+}
+function hostOnData(conn, d) {
+  const g = net.conns.get(conn.peer); if (!g || !st) return;
+  if (d.t === 'hello' && g.pi == null) {
+    if (st.phase !== 'lobby' || st.players.length >= RULES.maxPlayers) { conn.send({ t:'full', msg:'Could not join.' }); return; }
+    g.pi = addPlayer(st, String(d.name || 'Operative').slice(0, 14));
+    conn.send({ t:'you', pi: g.pi }); sfx.join(); afterChange();
+  } else if (d.t === 'act' && g.pi != null) {
+    const err = act(st, g.pi, d.a);
+    if (err) { conn.send({ t:'err', msg: err }); return; }
+    afterChange();
+  }
+}
+function dropGuest(id) {
+  const g = net.conns.get(id); net.conns.delete(id);
+  if (!g || g.pi == null || !st) return;
+  if (st.phase === 'lobby') {
+    removePlayer(st, g.pi);
+    for (const o of net.conns.values()) if (o.pi != null && o.pi > g.pi) { o.pi--; if (o.conn.open) o.conn.send({ t:'you', pi: o.pi }); }
+  } else {
+    const P = st.players[g.pi]; P.gone = true; P.picked = true; P.step = 'gone';
+    if (st.phase === 'battle') checkState(st);
+    if (st.phase === 'upgrade' && st.players.every(x => x.picked || x.gone)) { st.floor++; startFloor(st); }
+    st.msg = `${P.name} left the run.`;
+  }
+  afterChange();
+}
+function startJoin(code) {
+  code = (code || '').trim().toUpperCase();
+  if (!/^[A-Z]{4}$/.test(code)) { ui.err = 'Enter the 4-letter room code.'; render(); return; }
+  if (!window.Peer) { ui.err = 'Could not load the PeerJS library. Check your internet connection.'; render(); return; }
+  screen = 'lobby'; ui.err = ''; ui.lobbyMsg = 'Contacting the PeerJS broker…'; render();
+  const peer = new Peer({ debug: 1 });
+  net.peer = peer;
+  peer.on('open', () => {
+    ui.lobbyMsg = `Connecting to squad ${code}…`; render();
+    const conn = peer.connect(PREFIX + code, { serialization:'json', reliable:true });
+    net.host = conn; net.code = code;
+    net.joinTimer = setTimeout(() => { if (net.peer === peer && !conn.open) netError({ type:'timeout', message:'Could not reach the host. Their network (or yours) may block direct connections.' }); }, 15000);
+    conn.on('open', () => { clearTimeout(net.joinTimer); net.role = 'client'; conn.send({ t:'hello', name: myName() }); ui.lobbyMsg = 'Connected. Joining the squad…'; render(); });
+    conn.on('data', d => {
+      if (d.t === 'you') { me = d.pi; render(); }
+      else if (d.t === 'state') { const first = !st; st = d.s; screen = 'game'; ui.err = ''; if (first) sfx.join(); render(); }
+      else if (d.t === 'full') endSession(d.msg || 'Could not join that squad.');
+      else if (d.t === 'err') { ui.err = d.msg; render(); }
+    });
+    conn.on('close', () => { if (net.peer === peer) endSession('The host left, so the run ended.'); });
+  });
+  peer.on('error', e => { if (net.peer === peer) netError(e); });
+}
+function netError(e) {
+  const msgs = { 'peer-unavailable':'Squad not found. Check the code, and make sure the host still has the game open.', 'network':'Could not reach the PeerJS broker. Check your internet connection.', 'browser-incompatible':'This browser does not support WebRTC.', 'server-error':'The PeerJS broker had a problem. Try again in a moment.' };
+  endSession(msgs[e.type] || e.message || String(e.type));
+}
+function teardown() {
+  clearTimeout(net.joinTimer);
+  if (net.peer) { try { net.peer.destroy(); } catch {} }
+  Object.assign(net, { peer:null, role:null, code:'', host:null }); net.conns.clear();
+}
+function endSession(msg) { teardown(); st = null; me = 0; screen = 'menu'; ui.err = msg || ''; ui.sel = ui.pend = null; render(); }
+
+// ================= RENDER HELPERS =================
+const kwTip = kw => kw.length ? ' · ' + kw.map(k => `${KW[k].name}: ${KW[k].text}`).join(' · ') : '';
+function faceTip(f) { const F = FACE[f.t]; return `${F.name}${F.num ? ' ' + f.n : ''}: ${F.text(f.n)}${kwTip(f.kw)}`; }
+function faceChip(f, extra = '', attrs = '') {
+  const F = FACE[f.t];
+  return `<span class="f f-${f.t} ${f.kw.length ? 'haskw' : ''} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}>${F.icon}${F.num ? f.n : ''}${f.kw.length ? `<i class="kwdot">${f.kw.length}</i>` : ''}</span>`;
+}
+const codeHtml = (c, extra, attrs) => faceChip(parse(c), extra, attrs);
+const effHtml = (p, di, fi, extra, attrs) => faceChip(effFace(st, p, di, fi), extra, attrs);
+const dieInner = f => `${FACE[f.t].icon}${FACE[f.t].num ? `<span>${f.n}</span>` : ''}${f.kw && f.kw.length ? `<em class="kws">${f.kw.map(k => KW[k].tag).join(' ')}</em>` : ''}`;
+const gearBadges = gear => gear.length ? `<span class="gears">${gear.map(g => `<span class="gear" data-tip="${esc(GEAR[g].name + ': ' + GEAR[g].text)}">${GEAR[g].icon}</span>`).join('')}</span>` : '';
+const pname = i => i === me ? 'You' : esc(st.players[i].name);
+function foeLabel(i, short) {   // "Guard B" when several enemies share a type
+  const e = st.enemies[i], E = ENEMIES[e.type], same = st.enemies.map((x, j) => j).filter(j => st.enemies[j].type === e.type);
+  const base = short ? E.name.split(/[ ,]/).filter(Boolean).slice(-1)[0] : E.name;
+  return esc(same.length > 1 ? `${base} ${'ABCDEFG'[same.indexOf(i)]}` : base);
+}
+function selFace() {
+  if (ui.sel == null || !st || st.phase !== 'battle') return null;
+  const P = st.players[me]; if (!P || P.step !== 'use') return null;
+  const d = P.roll[ui.sel]; if (!d || d.used) return null;
+  return effFace(st, me, ui.sel, d.fi);
+}
+function canTarget(k, i) { const f = selFace(); return !!f && needsTarget(f.t) && validTarget(st, f.t, { k, i }); }
+const renderCache = { roll: {}, rollNext: {}, vals: {}, sig: null };
+
+// ================= SCREENS =================
+function render() {
+  const app = $('app');
+  if (screen === 'menu') app.innerHTML = menuHtml();
+  else if (screen === 'lobby') app.innerHTML = connectingHtml();
+  else if (st) {
+    const body = { lobby: lobbyHtml, battle: battleHtml, upgrade: upgradeHtml, over: overHtml }[st.phase]();
+    app.innerHTML = topbar() + (ui.err ? `<div class="banner err" style="margin-bottom:8px">${esc(ui.err)}</div>` : '') + body;
+  }
+  postRender();
+}
+function topbar() {
+  const F = st.floor ? floorDef(st) : null;
+  const dev = DEV && net.role !== 'client' && st.phase === 'battle' ? `<span class="dev">Dev: <button class="btn sm ghost" data-dev="win">Clear floor</button> <button class="btn sm ghost" data-dev="charge">+5 ✦</button> <button class="btn sm ghost" data-dev="heal">Heal</button> <button class="btn sm ghost" data-dev="auto">Auto-play</button></span>` : '';
+  return `<div class="topbar">
+    <div class="title">${logoSvg(30)} Kevlar &amp; Cantrips</div>
+    ${F ? `<span class="chip hud">Floor ${st.floor} / ${RULES.floors}</span><span class="chip">${esc(F.name)}</span>` : `<span class="chip">${st.mode === 'solo' ? 'Solo' : 'Squad ' + esc(net.code)}</span>`}
+    ${dev}
+    <span class="sp"></span>
+    <button class="icon-btn" data-ui="help" aria-label="Help" data-tip="How to play">?</button>
+    <button class="icon-btn" data-ui="music" aria-label="Music" data-tip="Music on/off">${musicOn ? '🎵' : '🎶'}</button>
+    <button class="icon-btn" data-ui="mute" aria-label="Mute" data-tip="Sound on/off">${muted ? '🔇' : '🔊'}</button>
+    <button class="btn ghost sm" data-ui="leave">Leave</button>
+  </div>`;
+}
+
+function menuHtml() {
+  const hasSave = !!store.get(SAVE_KEY);
+  return `<div class="menu">
+    <div class="logo">${logoBig()}</div>
+    <p class="muted" style="text-align:center;margin:0">Wizards in kevlar breach a cursed corporate tower, one floor at a time. Co-op dice tactics for 1 to 4 friends.</p>
+    ${ui.err ? `<div class="banner err">${esc(ui.err)}</div>` : ''}
+    <div class="box">
+      <h3>Your callsign</h3>
+      <div class="row"><input id="nameIn" maxlength="14" value="${esc(myName())}" style="width:12rem" aria-label="Your name"></div>
+    </div>
+    <div class="box">
+      <h3>Solo</h3>
+      <p class="muted" style="margin:0">One operative, 10 floors. The tower scales to a squad of one.</p>
+      <div class="row">
+        <button class="btn" data-ui="solo">New run</button>
+        ${hasSave ? '<button class="btn ghost" data-ui="continue">Continue run</button>' : ''}
+        <button class="btn ghost sm" data-ui="export" ${hasSave ? '' : 'disabled'}>Export save</button>
+        <button class="btn ghost sm" data-ui="import">Import save</button>
+      </div>
+    </div>
+    <div class="box">
+      <h3>Squad up (2 to 4)</h3>
+      <p class="muted" style="margin:0">One player hosts and shares a 4-letter code. The more operatives, the more enemies.</p>
+      <div class="row">
+        <button class="btn" data-ui="host">Host a squad</button>
+        <input id="codeIn" maxlength="4" placeholder="CODE" style="width:6rem;text-transform:uppercase;font-family:var(--mono)" value="${esc(ui.joinCode)}" aria-label="Room code">
+        <button class="btn ghost" data-ui="join">Join</button>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="btn ghost sm" data-ui="help">How to play</button>
+      <button class="icon-btn" data-ui="music" aria-label="Music">${musicOn ? '🎵' : '🎶'}</button>
+      <button class="icon-btn" data-ui="mute" aria-label="Mute">${muted ? '🔇' : '🔊'}</button>
+    </div>
+  </div>`;
+}
+function connectingHtml() {
+  return `<div class="menu"><div class="logo">${logoBig()}</div><div class="box" style="align-items:center;text-align:center"><p>${esc(ui.lobbyMsg || '')}</p><button class="btn ghost" data-ui="leave">Cancel</button></div></div>`;
+}
+
+function classTile(id, takenBy, mine) {
+  const C = CLASSES[id], S = SIGS[C.sig];
+  return `<div class="tile ${takenBy != null ? 'taken' : ''} ${mine ? 'picked' : ''}">
+    <div class="hh"><span class="ic">${C.icon}</span><b>${C.name}</b><span class="tag">HP ${C.hp}</span></div>
+    <span class="muted" style="font-size:.82rem">${C.role}</span>
+    <div class="dl">${C.dice.map(d => `<span class="dn">${d.name}</span><div class="faces">${d.faces.map(c => codeHtml(c)).join('')}</div>`).join('')}</div>
+    <span class="sigtxt">✦ ${S.name} (${S.cost}): ${S.text}</span>
+    ${takenBy != null ? `<span class="tag" style="align-self:flex-start">Taken by ${esc(st.players[takenBy].name)}</span>` : `<button class="btn sm" data-cls="${id}">${mine ? 'Picked' : 'Pick'}</button>`}
+  </div>`;
+}
+function lobbyHtml() {
+  const P = st.players[me];
+  const slots = [0, 1, 2, 3].slice(0, st.mode === 'solo' ? 1 : 4).map(i => {
+    const x = st.players[i];
+    if (!x) return `<div class="slot"><span class="muted">Open slot<br>Share code <b class="mono" style="color:var(--hud)">${esc(net.code)}</b></span></div>`;
+    return `<div class="slot full"><b style="color:var(--ally)">${i === me ? 'You' : esc(x.name)}${i === 0 && st.mode === 'mp' ? ' ★' : ''}</b><br><span class="muted">${x.cls ? CLASSES[x.cls].icon + ' ' + CLASSES[x.cls].name : 'Choosing…'}</span></div>`;
+  }).join('');
+  const tiles = Object.keys(CLASSES).map(id => { const by = st.players.findIndex((x, i) => i !== me && x.cls === id); return classTile(id, by >= 0 ? by : null, P && P.cls === id); }).join('');
+  const ready = st.players.every(x => x.cls), n = st.players.length;
+  return `<div class="stack">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div class="stack" style="gap:6px"><h2>${st.mode === 'solo' ? 'Pick your operative' : 'Squad select'}</h2>
+        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Hover any face for details; a small number on a face counts its keywords.</p>'}
+      </div>
+      <div class="row">${me === 0 ? `<button class="btn" data-ui="start" ${ready ? '' : 'disabled'}>Breach floor 1</button>${ready ? '' : '<span class="muted" style="font-size:.85rem">Everyone needs a class.</span>'}` : '<span class="muted">The host starts the run.</span>'}</div>
+    </div>
+    <div class="slots">${slots}</div>
+    <p class="muted" style="font-size:.85rem;margin:0">Squad of ${n}: ${enemyCount(n, 1)} enemies per floor${n > 1 ? ' (+1 on floors 7 to 9)' : ''}, enemy HP ×${HP_MULT[n - 1]}, bosses ×${n} HP and ${n} action${n > 1 ? 's' : ''} a turn.</p>
+    <div class="tiles">${tiles}</div>
+  </div>`;
+}
+
+function foeCard(i) {
+  const e = st.enemies[i], E = ENEMIES[e.type], dead = e.hp <= 0;
+  const ints = dead ? '' : e.ints.map(it => {
+    const f = parse(it.c);
+    const to = f.t === 'D' ? `→ ${pname(st.taunt != null ? st.taunt : it.tg)}` : f.t === 'W' || f.t === 'H' ? `→ ${foeLabel(it.tg, true)}` : f.t === 'X' ? '→ everyone' : f.t === 'U' ? 'summon' : '';
+    return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-tip="${esc('Intent: ' + faceTip(f))}">${dieInner(f)}</div><span class="to">${to}</span></div>`;
+  }).join('');
+  const ok = canTarget('e', i) ? 'tg-ok' : '';
+  return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
+    <span class="ic">${E.icon}</span><span class="nm">${foeLabel(i)}</span>
+    <div class="hp"><i style="width:${e.hp / e.mx * 100}%"></i><span>${dead ? 'Down' : `${e.hp}/${e.mx}`}</span></div>
+    <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.66rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}</div>
+    <div class="ints">${ints}</div>
+  </div>`;
+}
+function opCard(p) {
+  const P = st.players[p], C = CLASSES[P.cls], mx = maxHp(st, p), mine = p === me;
+  const status = P.gone ? 'gone' : P.down ? 'down' : P.step;
+  const statusTxt = { roll:'ROLLING', use:'IN ACTION', ready:'READY', down:'DOWN', gone:'LEFT', wait:'' }[status] || '';
+  const dice = P.dice.map((dd, di) => {
+    const d = P.roll[di];
+    if (!d) return `<div class="dcol"><div class="die empty">${gearBadges(dd.gear)}</div><span class="tg">${esc(dieName(P, di))}</span></div>`;
+    const f = effFace(st, p, di, d.fi);
+    const key = p + ':' + di, isRoll = renderCache.roll[key] !== d.r; renderCache.rollNext[key] = d.r;
+    const usable = mine && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
+    const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', d.k && P.step === 'roll' ? 'kept' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : ''].join(' ');
+    const tl = P.step === 'roll' ? (d.k ? 'kept' : esc(dieName(P, di))) : d.used ? 'used' : f.t === 'B' ? '—' : esc(dieName(P, di));
+    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(dieName(P, di) + ' · ' + faceTip(f))}">${dieInner(f)}${gearBadges(dd.gear)}</div><span class="tg">${tl}</span></div>`;
+  }).join('');
+  const abil = [C.sig, ...abilitiesOf(P)];
+  let sig;
+  if (mine && st.phase === 'battle' && !P.down) {
+    sig = `<div class="row" style="gap:6px">${abil.map(s => {
+      const used = (P.cast || []).includes(s), cost = sigCost(st, p, s);
+      const can = P.step === 'use' && !used && P.charge >= cost && abilityUsable(st, p, s);
+      return `<button class="sigbtn" data-cast="${s}" ${can ? '' : 'disabled'} data-tip="${esc(SIGS[s].name + ' (' + cost + '✦): ' + SIGS[s].text)}">✦ ${SIGS[s].name} ${cost}${used ? ' · used' : ''}</button>`;
+    }).join('')}</div>`;
+  } else sig = `<span class="sigtxt">${abil.map(s => `<span data-tip="${esc(SIGS[s].text)}">✦ ${SIGS[s].name} ${sigCost(st, p, s)}</span>`).join(' · ')}</span>`;
+  const equip = P.equip.map(r => `<span data-tip="${esc(EQUIP[r].name + ': ' + EQUIP[r].text)}">${EQUIP[r].icon}</span>`).join(' ');
+  const ok = canTarget('p', p) ? 'tg-ok' : '';
+  return `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
+    <div class="hh"><b>${pname(p)}</b><span class="status ${status}">${statusTxt}</span></div>
+    <div class="sub"><span>${C.icon} ${C.name}</span><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
+    <div class="hp ally"><i style="width:${P.hp / mx * 100}%"></i><span>${P.down ? 'Down' : `${P.hp}/${mx}`}</span></div>
+    <div class="dice">${dice}</div>
+    ${sig}
+  </div>`;
+}
+function logTable(lines, title) {
+  const rows = lines.map(l => l.side === 'sys' ? `<tr class="sys"><td colspan="3">${esc(l.src)}</td></tr>` : `<tr><td style="color:${l.side === 'ally' ? 'var(--ally)' : 'var(--foe)'}">${esc(l.src)}</td><td>${esc(l.tgt)}</td><td>${esc(l.res)}</td></tr>`).join('');
+  return rows ? `<h3 style="font-size:1rem;margin-bottom:4px">${title}</h3><table>${rows}</table>` : '';
+}
+function battleHtml() {
+  const P = st.players[me];
+  let hint = '', buttons = '';
+  const waiting = living(st).filter(i => st.players[i].step !== 'ready' && i !== me).map(i => esc(st.players[i].name));
+  if (!P || P.gone) hint = 'You left this run.';
+  else if (P.down) hint = 'You\'re down. Your squad fights on, and you\'re back next floor at 50% HP.';
+  else if (P.step === 'roll') {
+    hint = 'Click dice to keep them, then reroll the rest. Cantrip faces fire as soon as they land.';
+    buttons = `<button class="btn" data-ui="reroll" ${P.rerolls > 0 ? '' : 'disabled'}>Reroll unkept (${P.rerolls} left)</button><button class="btn ghost" data-ui="done">Done rolling</button>`;
+  } else if (P.step === 'use') {
+    const f = selFace();
+    hint = f ? (needsTarget(f.t) ? 'Click a highlighted enemy or operative. It happens right away.' : '') : 'Click a die to use it: it hits right away. ✦ dice charge on click. Press Ready when you\'re done.';
+    const left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
+    buttons = `<button class="btn" data-ui="ready">${left ? `Ready (${left} unused)` : 'Ready'}</button>${ui.sel != null ? '<button class="btn ghost" data-ui="desel">Cancel</button>' : ''}`;
+  } else {
+    hint = waiting.length ? `Waiting for ${waiting.join(', ')}…` : 'Enemies are acting…';
+    buttons = '<button class="btn ghost" data-ui="unready">Not ready yet</button>';
+  }
+  return `
+    <h4>Enemies · intent and target</h4>
+    <div class="enemyrow" style="margin-top:6px">${st.enemies.map((_, i) => foeCard(i)).join('')}</div>
+    <div class="center">
+      <div class="phase"><span>Turn ${st.turn}</span><span class="on">Squad rolls &amp; acts</span><span>Enemies act when all are ready</span></div>
+      ${st.msg ? `<div class="banner">${esc(st.msg)}</div>` : ''}
+      <div class="hint">${hint}</div>
+      <div class="row" style="justify-content:center;min-height:2.2rem">${buttons}</div>
+    </div>
+    <h4>Squad</h4>
+    <div class="ops" style="margin-top:6px">${st.players.map((_, p) => opCard(p)).join('')}</div>
+    <div class="log box">${logTable(st.log.slice(-16), 'Combat log') || '<span class="muted">Dice you use show up here as they land.</span>'}</div>`;
+}
+
+function offerDesc(o) {
+  if (o.k === 'plus') return { icon:'⬆', name:'Die upgrade', tag:'One die becomes its + version', text:'Pick one of your dice to upgrade for the rest of the run.' };
+  if (o.k === 'gear') return { icon: GEAR[o.id].icon, name: GEAR[o.id].name, tag:'Die equipment · 2 per die', text: GEAR[o.id].text };
+  return { icon: EQUIP[o.id].icon, name: EQUIP[o.id].name, tag:'Player equipment · 2 max', text: EQUIP[o.id].text };
+}
+function dieBlock(p, di, extra) {
+  const P = st.players[p], d = P.dice[di];
+  return `<div class="mydie"><b style="font-family:var(--display)">${esc(dieName(P, di))}</b>
+    <div class="faces">${[0, 1, 2, 3, 4, 5].map(fi => effHtml(p, di, fi)).join('')}</div>
+    <span class="muted" style="font-size:.78rem">Gear: ${d.gear.length ? d.gear.map(g => `<span data-tip="${esc(GEAR[g].text)}">${GEAR[g].icon} ${GEAR[g].name}</span>`).join(', ') : 'none'} (${d.gear.length}/${RULES.gearPerDie})</span>${extra || ''}</div>`;
+}
+function upgradeHtml() {
+  const P = st.players[me];
+  const status = st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}">${pname(i)} ${x.gone ? '· left' : x.picked ? '✓' : '· choosing'}</span>`).join(' ');
+  const next = FLOORS[st.floor];
+  let body = '';
+  if (P && !P.picked && !P.gone) {
+    if (P.offers[0].k === 'plus') {
+      body = `<p class="muted" style="margin:0">Upgrade floor: pick one die to become its + version.</p><div class="tiles">${P.dice.map((d, di) => {
+        const D = dieDef(P, di);
+        return `<div class="tile ${d.plus ? 'taken' : ''}"><div class="hh"><b>${esc(D.name)} → ${esc(D.name)}+</b></div>
+          <div class="dl"><span class="dn">Now</span><div class="faces">${[0, 1, 2, 3, 4, 5].map(fi => effHtml(me, di, fi)).join('')}</div>
+          <span class="dn">After</span><div class="faces">${D.plus.map(c => codeHtml(c)).join('')}</div></div>
+          ${d.plus ? '<span class="tag">Already upgraded</span>' : `<button class="btn sm" data-plus="${di}">Upgrade</button>`}</div>`;
+      }).join('')}</div>`;
+    } else {
+      const tiles = P.offers.map((o, i) => { const d = offerDesc(o); return `<div class="tile ${ui.pend === i ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${d.text}</div><button class="btn sm" data-offer="${i}">Choose</button></div>`; }).join('');
+      let chooser = '';
+      if (ui.pend != null) {
+        const o = P.offers[ui.pend];
+        if (o.k === 'gear') chooser = `<div class="box stack"><h3>Which die gets the ${GEAR[o.id].icon} ${GEAR[o.id].name}?</h3><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, d.gear.length < RULES.gearPerDie ? `<button class="btn sm" data-gear="${di}">Install here</button>` : `<div class="row" style="gap:6px">${d.gear.map((g, r) => `<button class="btn sm ghost" data-gear="${di}" data-r="${r}">Replace ${GEAR[g].icon} ${GEAR[g].name}</button>`).join('')}</div>`)).join('')}</div><div><button class="btn ghost sm" data-ui="unpend">Cancel</button></div></div>`;
+        else chooser = `<div class="box stack"><h3>You already carry 2 pieces of player equipment. Replace one?</h3><div class="row">${P.equip.map((e, r) => `<button class="btn ghost" data-equip="${r}">Replace ${EQUIP[e].icon} ${EQUIP[e].name}</button>`).join('')}<button class="btn ghost sm" data-ui="unpend">Cancel</button></div></div>`;
+      }
+      body = `<p class="muted" style="margin:0">Pick 1 of your 3 offers.</p><div class="tiles">${tiles}</div>${chooser}`;
+    }
+  } else body = `<p class="muted">${P && P.gone ? 'You left this run.' : 'Picked. Waiting for your squad…'}</p>`;
+  const mine = P && !P.gone && ui.pend == null ? `<div class="box stack"><h3>Your loadout · ${CLASSES[P.cls].icon} ${CLASSES[P.cls].name}</h3><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di)).join('')}</div>
+    <div class="muted" style="font-size:.85rem">HP ${P.hp}/${maxHp(st, me)} · Player equipment (${P.equip.length}/${RULES.equipPerPlayer}): ${P.equip.map(r => EQUIP[r].icon + ' ' + EQUIP[r].name).join(', ') || 'none'}</div></div>` : '';
+  const nextUp = UPGRADE_FLOORS.includes(st.floor + 1) ? ' After it: a die upgrade.' : '';
+  return `<div class="stack">
+    <div class="row" style="justify-content:space-between"><div><h2>Floor ${st.floor} cleared</h2><p class="muted" style="margin:4px 0 0">Everyone healed half their missing HP; downed operatives are back at 50%. Next: floor ${st.floor + 1}, ${esc(next.name)}.${nextUp}</p></div><div class="row">${status}</div></div>
+    ${body}
+    ${mine}
+  </div>`;
+}
+function overHtml() {
+  const won = st.result === 'won';
+  const btn = me === 0 ? '<button class="btn" data-ui="restart">New run with this squad</button>' : '<span class="muted">The host can start a new run.</span>';
+  return `<div class="stack" style="align-items:center;text-align:center;margin-top:16px">
+    ${logoBig()}
+    <h2>${won ? 'Tower cleared. Halcyon Grieve is out of office, permanently.' : `Squad down on floor ${st.floor}`}</h2>
+    <p class="muted" style="margin:0">${won ? 'All 10 floors breached.' : esc(floorDef(st).name) + ' held. Regroup and breach again.'}</p>
+    <div class="row" style="justify-content:center">${btn}<button class="btn ghost" data-ui="leave">Menu</button></div>
+    <div class="log box" style="width:100%">${logTable(st.log.slice(-12), 'Last moments')}</div>
+  </div>`;
+}
+
+function postRender() {
+  if (!st || screen !== 'game') { renderCache.vals = {}; renderCache.sig = null; return; }
+  const sig = { rollN: st.rollN, resolveN: st.resolveN, phase: st.phase, floor: st.floor, log: st.log.length ? st.log[st.log.length - 1] : null };
+  const prev = renderCache.sig;
+  if (prev) {
+    if (sig.rollN !== prev.rollN) sfx.roll();
+    if (sig.log && sig.log !== prev.log && prev.log && JSON.stringify(sig.log) !== JSON.stringify(prev.log)) {
+      const s = sig.log.src + ' ' + sig.log.res;
+      if (/ward/.test(s)) sfx.ward(); else if (/✦/.test(s)) sfx.charge(); else if (/⚡|➹/.test(s)) sfx.zap(); else if (/✚|heal/.test(s)) sfx.heal(); else if (/→/.test(s)) sfx.hit();
+    }
+    if (sig.phase !== prev.phase) { if (sig.phase === 'upgrade') sfx.clear(); if (sig.phase === 'over') st.result === 'won' ? sfx.win() : sfx.lose(); }
+  }
+  renderCache.sig = sig;
+  Object.assign(renderCache.roll, renderCache.rollNext);
+  const vals = {};
+  st.players.forEach((P, p) => vals['p:' + p] = P.hp);
+  st.enemies.forEach((e, i) => vals['e:' + i] = e.hp);
+  if (prev && prev.floor === sig.floor && st.phase !== 'lobby') {
+    for (const k in vals) {
+      const old = renderCache.vals[k]; if (old == null || old === vals[k]) continue;
+      const el = document.querySelector(`[data-key="${k}"]`); if (!el) continue;
+      const r = el.getBoundingClientRect(), f = document.createElement('div'), dv = vals[k] - old;
+      f.className = 'float'; f.textContent = (dv > 0 ? '+' : '') + dv; f.style.color = dv > 0 ? 'var(--heal)' : 'var(--dmg)';
+      f.style.left = (r.left + r.width / 2 - 14) + 'px'; f.style.top = (r.top + 24) + 'px';
+      document.body.appendChild(f); setTimeout(() => f.remove(), 1200);
+    }
+  }
+  renderCache.vals = vals;
+}
+
+// ================= LOGO =================
+function logoSvg(size) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4 L56 12 V31 C56 45 45 55 32 60 C19 55 8 45 8 31 V12 Z" fill="#243049" stroke="#f0b23c" stroke-width="3"/><rect x="20" y="20" width="24" height="24" rx="5" fill="#e4e8f0" transform="rotate(-8 32 32)"/><g fill="#0e131d" transform="rotate(-8 32 32)"><circle cx="26" cy="26" r="2.7"/><circle cx="32" cy="32" r="2.7"/><circle cx="38" cy="38" r="2.7"/></g><path d="M47 2 L41 14 H49 L43 26" stroke="#c77dff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function logoBig() {
+  return `<svg width="380" height="120" viewBox="0 0 380 120" role="img" aria-label="Kevlar and Cantrips"><g transform="translate(4,14) scale(1.45)">${logoSvg(64).replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g><text x="110" y="54" font-family="Chakra Petch, Trebuchet MS, sans-serif" font-weight="700" font-size="40" fill="#f0b23c" letter-spacing="1">KEVLAR</text><text x="110" y="96" font-family="Chakra Petch, Trebuchet MS, sans-serif" font-weight="700" font-size="34" fill="#e4e8f0" letter-spacing="1">&amp; <tspan fill="#c77dff">CANTRIPS</tspan></text></svg>`;
+}
+
+// ================= HELP =================
+function showHelp() {
+  const o = $('overlay');
+  const faces = ['D2', 'R2', 'A2', 'W2', 'H2', 'S', 'E', 'C2', 'B'].map(c => { const { t } = parse(c); return `<tr><td>${codeHtml(c)}</td><td><b>${FACE[t].name}</b></td><td>${FACE[t].text('N')}</td></tr>`; }).join('');
+  const kws = Object.values(KW).map(k => `<tr><td class="mono">${k.tag}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between">${logoBig()}<button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <h3>How to play</h3>
+    <ul>
+      <li>You are one operative with <b>3 class dice</b>. Up to 4 friends breach a 10-floor tower; each floor is one fight, and bosses wait on floors 5 and 10.</li>
+      <li><b>Each turn</b> every enemy shows its intent (what it will do and to whom). Everyone rolls at once: click dice to keep, reroll the rest (2 rerolls).</li>
+      <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>Ready</b> when you're done.</li>
+      <li>When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then.</li>
+      <li><b>✦ Charge</b> pays for your class signature and any abilities your gear grants.</li>
+      <li>At 0 HP you're <b>down</b>. You're back next floor at 50% HP (or sooner if a Necromedic revives you). The run ends if the whole squad is down.</li>
+      <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 you upgrade one whole die (Riot Ward → Riot Ward+). After the others you pick die equipment (2 per die) or player equipment (2 per operative).</li>
+    </ul>
+    <h3>Faces</h3><table>${faces}</table>
+    <h3>Keywords</h3><table>${kws}</table>
+    <p class="muted" style="font-size:.85rem">Hover anything for details. Solo runs autosave. Add ?dev to the URL for test buttons.</p>
+  </div>`;
+  o.classList.remove('hidden');
+}
+function showText(title, text, importing) {
+  const o = $('overlay');
+  o.innerHTML = `<div class="box"><h3>${esc(title)}</h3><textarea id="saveTxt" aria-label="Save text">${esc(text)}</textarea><div class="row">${importing ? '<button class="btn" data-ui="importok">Import</button>' : ''}<button class="btn ghost" data-ui="closehelp">Close</button><span id="saveErr" class="err"></span></div></div>`;
+  o.classList.remove('hidden');
+}
+
+// ================= INPUT =================
+let autoTimer = null;
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-ui],[data-cls],[data-die],[data-cast],[data-offer],[data-plus],[data-gear],[data-equip],[data-dev]');
+  ac();
+  if (el) {
+    const d = el.dataset;
+    if (d.ui) return uiAction(d.ui);
+    if (d.dev) return devAction(d.dev);
+    if (d.cls) { sfx.click(); return dispatch({ t:'class', cls: d.cls }); }
+    if (d.cast) { ui.sel = null; return dispatch({ t:'cast', s: d.cast }); }
+    if (d.die != null && +d.p === me && st && st.phase === 'battle') {
+      const P = st.players[me], di = +d.die;
+      if (P.step === 'roll') { sfx.click(); return dispatch({ t:'keep', i: di }); }
+      if (P.step === 'use') {
+        const dd = P.roll[di]; if (dd.used) return;
+        const f = effFace(st, me, di, dd.fi);
+        if (f.t === 'B') return;
+        if (!needsTarget(f.t)) { ui.sel = null; return dispatch({ t:'use', i: di }); }
+        ui.sel = ui.sel === di ? null : di; return render();
+      }
+    }
+    if (d.offer != null) {
+      const P = st.players[me], o = P.offers[+d.offer];
+      if (o.k === 'equip' && P.equip.length < RULES.equipPerPlayer) return dispatch({ t:'take', i: +d.offer });
+      ui.pend = +d.offer; return render();
+    }
+    if (d.plus != null) return dispatch({ t:'take', i: 0, d: +d.plus });
+    if (d.gear != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, d: +d.gear, r: d.r != null ? +d.r : undefined }); }
+    if (d.equip != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, r: +d.equip }); }
+  }
+  const card = e.target.closest('[data-tk]');
+  if (card && ui.sel != null && canTarget(card.dataset.tk, +card.dataset.ti)) {
+    const i = ui.sel; ui.sel = null;
+    return dispatch({ t:'use', i, tg: { k: card.dataset.tk, i: +card.dataset.ti } });
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'nameIn') store.set('kc-name', e.target.value.trim().slice(0, 14));
+  if (e.target.id === 'codeIn') ui.joinCode = e.target.value.toUpperCase();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { $('overlay').classList.add('hidden'); if (ui.sel != null) { ui.sel = null; render(); } }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.die.mine')) { e.preventDefault(); e.target.click(); }
+  if (e.key === 'Enter' && e.target.id === 'codeIn') uiAction('join');
+});
+function devAction(k) {
+  if (!st || st.phase !== 'battle') return;
+  if (k === 'win') { st.enemies.forEach(x => x.hp = 0); floorCleared(st); }
+  if (k === 'charge') st.players[me].charge += 5;
+  if (k === 'heal') st.players.forEach((P, p) => { if (!P.gone) { P.hp = maxHp(st, p); } });
+  if (k === 'auto') { clearInterval(autoTimer); autoTimer = setInterval(() => { if (!st || net.role === 'client') return clearInterval(autoTimer); const a = botNext(st, me); if (a) dispatch(a); else if (st.phase === 'over') clearInterval(autoTimer); }, 250); return; }
+  afterChange();
+}
+function uiAction(k) {
+  switch (k) {
+    case 'solo':
+      teardown(); st = newRun('solo', (Math.random() * 2 ** 31) | 0); addPlayer(st, myName());
+      me = 0; screen = 'game'; ui.err = ''; renderCache.sig = null; afterChange(); break;
+    case 'continue': try { const s = JSON.parse(store.get(SAVE_KEY)); if (s.v !== 2) throw 0; st = s; me = 0; screen = 'game'; renderCache.sig = null; afterChange(); } catch { ui.err = 'That save is from an older version and can\'t be loaded.'; render(); } break;
+    case 'export': showText('Export save', exportSave()); break;
+    case 'import': showText('Paste a save', '', true); break;
+    case 'importok': try { importSave($('saveTxt').value); $('overlay').classList.add('hidden'); render(); } catch (err) { $('saveErr').textContent = err.message; } break;
+    case 'host': ui.joinCode = ''; startHost(); break;
+    case 'join': startJoin(ui.joinCode || ($('codeIn') && $('codeIn').value)); break;
+    case 'leave':
+      clearInterval(autoTimer);
+      if (st && st.mode === 'solo') saveSolo();
+      if (net.peer) endSession('');
+      else { st = null; screen = 'menu'; ui.err = ''; render(); }
+      break;
+    case 'help': showHelp(); break;
+    case 'closehelp': $('overlay').classList.add('hidden'); break;
+    case 'mute': muted = !muted; store.set('kc-mute', muted ? '1' : '0'); applyVol(); render(); break;
+    case 'music': musicOn = !musicOn; store.set('kc-music', musicOn ? '1' : '0'); applyVol(); render(); break;
+    case 'start': dispatch({ t:'start' }); break;
+    case 'reroll': dispatch({ t:'reroll' }); break;
+    case 'done': dispatch({ t:'done' }); break;
+    case 'ready': ui.sel = null; dispatch({ t:'ready' }); break;
+    case 'unready': dispatch({ t:'unready' }); break;
+    case 'desel': ui.sel = null; render(); break;
+    case 'unpend': ui.pend = null; render(); break;
+    case 'restart': dispatch({ t:'restart' }); break;
+  }
+}
+
+// tooltips
+const tipEl = $('tip');
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tipEl.style.display = 'none'; return; }
+  tipEl.textContent = t.dataset.tip; tipEl.style.display = 'block';
+});
+document.addEventListener('mousemove', e => {
+  if (tipEl.style.display !== 'block') return;
+  tipEl.style.left = Math.min(e.clientX + 14, innerWidth - tipEl.offsetWidth - 8) + 'px';
+  tipEl.style.top = (e.clientY + 18 + tipEl.offsetHeight > innerHeight ? e.clientY - tipEl.offsetHeight - 10 : e.clientY + 18) + 'px';
+});
+document.addEventListener('focusin', e => {
+  const t = e.target.closest('[data-tip]'); if (!t) return;
+  const r = t.getBoundingClientRect(); tipEl.textContent = t.dataset.tip; tipEl.style.display = 'block';
+  tipEl.style.left = Math.min(r.left, innerWidth - tipEl.offsetWidth - 8) + 'px'; tipEl.style.top = (r.bottom + 6) + 'px';
+});
+document.addEventListener('focusout', () => tipEl.style.display = 'none');
+
+// exposed for the playtest harness
+window.KC = { get st() { return st; }, set st(v) { st = v; }, act, botNext, newRun, addPlayer, dispatch, uiAction, CLASSES, RULES, GEAR, EQUIP };
+render();
+</script>
+</body>
+</html>
