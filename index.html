@@ -118,6 +118,11 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 /* unfolded die: top, a row of four, bottom */
 .net{display:grid;grid-template-columns:repeat(4,var(--s,3rem));grid-auto-rows:var(--s,3rem);gap:5px}
 .net .nf{border-radius:8px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);border:2px solid var(--ok);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(var(--s,3rem) * .32) var(--mono);color:#1b2230;position:relative;cursor:help}
+.net .nf .ico{font-size:calc(var(--s,3rem) * .5);line-height:1;margin-right:calc(var(--s,3rem) * .12)}
+.net .nf .pips{position:absolute;right:calc(var(--s,3rem) * .08);bottom:calc(var(--s,3rem) * .14);display:flex;gap:calc(var(--s,3rem) * .05);align-items:flex-end;font-style:normal}
+.net .nf .pips .ticks{display:flex;flex-direction:column-reverse;gap:calc(var(--s,3rem) * .05)}
+.net .nf .pips b{display:block;width:calc(var(--s,3rem) * .13);height:calc(var(--s,3rem) * .08);background:currentColor;border-radius:1px}
+.net .nf .pips b.p5{height:calc(var(--s,3rem) * .52)}
 .net .nf.f-D{color:#c4361f}.net .nf.f-W{color:#2862c4}.net .nf.f-H{color:#1f8f44}.net .nf.f-R{color:#a86f00}.net .nf.f-A{color:#0a7ea0}.net .nf.f-C{color:#7440c9}.net .nf.f-S{color:#b0287a}.net .nf.f-E{color:#0f7c8c}.net .nf.f-B{color:#8892a3}
 .net .nf .kwg{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 calc(var(--s,3rem) * .25) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px;line-height:1}
 .net .p0{grid-area:1/2}.net .p1{grid-area:2/1}.net .p2{grid-area:2/2}.net .p3{grid-area:2/3}.net .p4{grid-area:2/4}.net .p5{grid-area:3/2}
@@ -171,6 +176,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .overlay td,.overlay th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px}
 #tip .net{margin:6px 0;white-space:normal}
+#tip:has(.net){max-width:none}
 #tip{white-space:pre-line;position:fixed;z-index:60;background:#070b11;border:1px solid var(--hud-dim);color:var(--fg);font-size:.82rem;padding:6px 9px;border-radius:4px;max-width:18rem;pointer-events:none;display:none}
 .dev{border:1px dashed #7a5;border-radius:4px;padding:3px 7px;font-size:.78rem}
 @media (max-width:640px){.foe{width:calc(50% - 6px)}.foe.boss{width:100%}}
@@ -1173,8 +1179,13 @@ function offerDesc(o) {
   if (o.k === 'gear') return { icon: GEAR[o.id].icon, name: GEAR[o.id].name, tag:'Die equipment · 2 per die', text: GEAR[o.id].text };
   return { icon: EQUIP[o.id].icon, name: EQUIP[o.id].name, tag:'Player equipment · 2 max', text: EQUIP[o.id].text };
 }
+// Pips like Slice & Dice: a short tick is 1, a full-height bar is 5.
+function pipBars(n) {
+  if (!n) return '';
+  return `<i class="pips">${'<b class="p5"></b>'.repeat(Math.floor(n / 5))}${n % 5 ? `<span class="ticks">${'<b></b>'.repeat(n % 5)}</span>` : ''}</i>`;
+}
 function netHtml(faces, size) {   // faces: effective face objects, laid out like an unfolded die
-  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}"><span>${faceIcon(f)}${FACE[f.t].num ? f.n : ''}</span>${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
+  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}"><span class="ico">${faceIcon(f)}</span>${FACE[f.t].num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
 }
 const effFaces = (p, di) => [0, 1, 2, 3, 4, 5].map(fi => effFace(st, p, di, fi));
 const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(GEAR[g].text)}">${GEAR[g].icon} <b style="color:var(--fg)">${GEAR[g].name}</b>: ${GEAR[g].text}</div>`).join('')}</div>` : '';
@@ -1412,7 +1423,7 @@ function uiAction(k) {
 const tipEl = $('tip');
 function diePreview(p, di) {
   const P = st.players[p], d = P.dice[di];
-  return `<b>${esc(dieName(P, di))}</b>${netHtml(effFaces(p, di), '1.9rem')}${d.gear.length ? `<div>${d.gear.map(g => GEAR[g].icon + ' ' + GEAR[g].name).join('<br>')}</div>` : ''}<div class="muted">Click to inspect each side</div>`;
+  return `<b>${esc(dieName(P, di))}</b>${netHtml(effFaces(p, di), '3.2rem')}${d.gear.length ? `<div>${d.gear.map(g => GEAR[g].icon + ' ' + GEAR[g].name).join('<br>')}</div>` : ''}<div class="muted">Click to inspect each side</div>`;
 }
 document.addEventListener('mouseover', e => {
   const ins = e.target.closest('[data-inspect]');
