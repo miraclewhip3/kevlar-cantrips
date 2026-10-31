@@ -55,7 +55,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .facepick .f{cursor:pointer}.facepick .f:hover{outline:2px solid var(--hud)}
 .facepick .f.no{opacity:.35;cursor:not-allowed;outline:none}
 .die{width:3.7rem;height:3.7rem;border-radius:9px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);color:#1b2230;display:flex;align-items:center;justify-content:center;gap:2px;font:800 1.2rem var(--mono);border:2px solid #9aa5b8;box-shadow:0 3px 0 #5d6779;position:relative;user-select:none;flex:none;transition:transform .12s}
-.die.f-D{color:#c4361f}.die.f-W{color:#2862c4}.die.f-H{color:#1f8f44}.die.f-R{color:#a86f00}.die.f-A{color:#0a7ea0}.die.f-C{color:#7440c9}.die.f-S{color:#b0287a}.die.f-E{color:#0f7c8c}.die.f-B{color:#8892a3;font-size:1.8rem}
+.die.f-D{color:#c4361f}.die.f-W{color:#2862c4}.die.f-H{color:#1f8f44}.die.f-R{color:#a86f00}.die.f-A{color:#0a7ea0}.die.f-C{color:#7440c9}.die.f-S{color:#b0287a}.die.f-E{color:#0f7c8c}.die.f-B{color:#8892a3}
 .die.mine{cursor:pointer}
 .die.kept{border-color:var(--hud);box-shadow:0 0 0 3px var(--hud),0 3px 0 #5d6779;transform:translateY(-2px)}
 .die.sel{box-shadow:0 0 0 4px #fff,0 3px 0 #5d6779;transform:scale(1.06)}
@@ -69,7 +69,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .die em.kws{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 .72rem var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:2px;line-height:1}
 .foe .die em.kws{color:var(--arcane)}
 .f{position:relative;height:2.3rem;min-width:2.5rem;align-items:flex-start;justify-content:flex-start;padding:3px 0 0 5px}
-.f .ico{font-size:1rem;margin:0}
+.f .ico{font-size:1.15rem;margin:0}
 .f .kwg{position:absolute;bottom:1px;left:0;right:0;text-align:center;font:700 .7rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
 .psnb{font:700 .7rem var(--mono);color:#9be37b}
 .log tr.sys td{color:var(--hud);font:600 .72rem var(--mono);letter-spacing:.08em;padding-top:8px}
@@ -122,13 +122,15 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .net{display:grid;grid-template-columns:repeat(4,var(--s,3rem));grid-auto-rows:var(--s,3rem);gap:5px}
 .net .nf{border-radius:8px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);border:2px solid var(--ok);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(var(--s,3rem) * .32) var(--mono);color:#1b2230;position:relative;cursor:help}
 .die{--s:3.7rem}.foe .die{--s:2.9rem}.f{--s:2.1rem}
-.ico{font-size:calc(var(--s,3rem) * .5);line-height:1;margin-right:calc(var(--s,3rem) * .14);font-style:normal}
-.ico.combo{border-radius:50%;box-shadow:0 0 0 2px currentColor;padding:1px}   /* built-in pairing: ring in the face-type color */
+.ico{font-size:calc(var(--s,3rem) * .64);line-height:1;margin-right:calc(var(--s,3rem) * .14);font-style:normal}
+.ico svg{width:1em;height:1em;display:block}
+.portrait{display:block;flex:none;border-radius:10px}
+.tower{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
 .pips{position:absolute;right:calc(var(--s,3rem) * .08);bottom:calc(var(--s,3rem) * .14);display:flex;gap:calc(var(--s,3rem) * .05);align-items:flex-end;font-style:normal}
 .pips .ticks{display:flex;flex-direction:column-reverse;gap:calc(var(--s,3rem) * .05)}
 .pips b{display:block;width:calc(var(--s,3rem) * .13);height:calc(var(--s,3rem) * .08);background:currentColor;border-radius:1px}
 .pips b.p5{height:calc(var(--s,3rem) * .52)}
-.f .pips{bottom:auto;top:calc(var(--s) * .12)}
+.f .pips{bottom:3px;right:3px}
 .f .pips b{min-width:2px;min-height:2px}
 .net .nf.f-D{color:#c4361f}.net .nf.f-W{color:#2862c4}.net .nf.f-H{color:#1f8f44}.net .nf.f-R{color:#a86f00}.net .nf.f-A{color:#0a7ea0}.net .nf.f-C{color:#7440c9}.net .nf.f-S{color:#b0287a}.net .nf.f-E{color:#0f7c8c}.net .nf.f-B{color:#8892a3}
 .net .nf .kwg{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 calc(var(--s,3rem) * .25) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px;line-height:1}
@@ -164,6 +166,8 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .tile.picked{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
 .tile .hh{display:flex;gap:8px;align-items:center}
 .tile .hh .ic{font-size:1.4rem}
+.ctile .hh b{font-size:1.25rem}
+.ctiles{grid-template-columns:repeat(auto-fill,minmax(22rem,1fr))}
 .tile .hh b{font-family:var(--display);font-size:1.08rem;flex:1}
 .tile .desc{font-size:.85rem;color:var(--muted);flex:1}
 .tile .btn{align-self:flex-start}
@@ -202,7 +206,7 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
 // Faces are codes: type letter, number, then optional keywords, e.g. 'D2:cleave,engage'.
 // Each die has a base set and a "+" set (from the die upgrade after floors 2, 5 and 8).
 const CLASSES = {
-  breach:{ name:'Breach Mage', icon:'💥', hp:15, role:'Piercing burst', sig:'doorkick', dice:[
+  breach:{ name:'Breach Mage', icon:'💥', hp:15, role:'Piercing burst', blurb:'Door-kicker in ceramic plate. Hex rounds that punch straight through enemy wards.', sig:'doorkick', dice:[
     { name:'Scattershot', faces:['D2:cleave','D2','D3','R1','R2:engage','B'], plus:[
       { label:'Heavy Load',    faces:['D3:cleave','D3','D3:cleave','R2','R2:engage','R1'] },
       { label:'Wide Spread',   faces:['D2:cleave','D2:cleave','D3:cleave','R1:cleave','R2:engage','D1:cleave'] } ] },
@@ -212,7 +216,7 @@ const CLASSES = {
     { name:'Kevlar Ward', faces:['W2','W2','W3','W1','C1','B'], plus:[
       { label:'Thicker Plates', faces:['W3','W3','W4','W2:selfshield','C2','C1'] },
       { label:'Reactive Armor', faces:['W2:steel','W2:selfshield','W3','W2','C2','D2:steel'] } ] } ] },
-  storm:{ name:'Storm Witch', icon:'⚡', hp:13, role:'Chain damage', sig:'thunder', dice:[
+  storm:{ name:'Storm Witch', icon:'⚡', hp:13, role:'Chain damage', blurb:'Ex-Navy weather witch. Lightning that jumps from target to target.', sig:'thunder', dice:[
     { name:'Arc Lash', faces:['A2','A2','A3:charged','A1:cantrip','C1','B'], plus:[
       { label:'Overload',        faces:['A3','A3','A4:charged','A2:cantrip','C2','A1'] },
       { label:'Chain Lightning', faces:['A2:cleave','A2','A3:charged','A2:cantrip','C2','A1:cantrip'] } ] },
@@ -222,7 +226,7 @@ const CLASSES = {
     { name:'Squall', faces:['C2','C1:cantrip','A2','D2:cruel','W1','B'], plus:[
       { label:'Downpour',        faces:['C3','C2:cantrip','A3','D3:cruel','W2','C1'] },
       { label:'Static Build-up', faces:['C2:cantrip','C2:cantrip','A2:charged','D2:cruel','W1','C1'] } ] } ] },
-  precog:{ name:'Precog', icon:'👁', hp:12, role:'Control: stuns, rewrites intents', sig:'toldyou', dice:[
+  precog:{ name:'Precog', icon:'👁', hp:12, role:'Control', blurb:'Sees the next five seconds. Stuns enemies and rewrites what they are about to do.', sig:'toldyou', dice:[
     { name:'Foresight', faces:['S','D2','E','E:cantrip','C1','D1'], plus:[
       { label:'Deep Trance',  faces:['S','D3','E','E:cantrip','C2','D2'] },
       { label:'Clear Vision', faces:['S','D2','E:cantrip','E:cantrip','C2:cantrip','D2'] } ] },
@@ -232,7 +236,7 @@ const CLASSES = {
     { name:'Sidearm', faces:['D3:patient','D2','D3','D2','D1:echo','D1'], plus:[
       { label:'Extended Mag', faces:['D4:patient','D3','D4','D3','D2:echo','D2'] },
       { label:'Called Shot',  faces:['D3:patient','D3:patient','D3:cruel','D2:echo','D2:echo','R2'] } ] } ] },
-  riot:{ name:'Riot Cleric', icon:'🛡️', hp:13, role:'Tank, wards, taunt', sig:'riotline', dice:[
+  riot:{ name:'Riot Cleric', icon:'🛡️', hp:13, role:'Tank, wards, taunt', blurb:'Shield-first riot chaplain. Wards the squad and pulls enemy fire onto herself.', sig:'riotline', dice:[
     { name:'Riot Ward', faces:['W2','W2','W1','W1','C1','B'], plus:[
       { label:'Reinforced', faces:['W3','W3','W2','W2','C2','W1:steel'] },
       { label:'Shield Wall', faces:['W2:steel','W2','W2','W1','H1','C1'] } ] },
@@ -337,7 +341,7 @@ const ENEMIES = {
   grieve:{ name:'Halcyon Grieve, CEO',  icon:'💀', hp:40, boss:true, ints:['D5','D6','D4','U','W5','X3'] },
 };
 const FLOORS = [
-  { name:'Lobby',                pool:['guard','guard','drone'] },
+  { name:'Reception',            pool:['guard','guard','drone'] },
   { name:'Mailroom',             pool:['guard','drone','necro'] },
   { name:'Open-Plan Office',     pool:['guard','drone','necro','sniper'] },
   { name:'Server Farm',          pool:['guard','drone','necro','sniper'] },
@@ -388,8 +392,9 @@ const COMBO = {
 function comboOf(f) { return f.base && f.base.length ? COMBO[f.t + ':' + f.base.slice().sort().join(',')] || null : null; }
 // Keywords drawn as indicators: everything not covered by the face's own combo icon.
 function shownKw(f) { const c = comboOf(f); return c ? f.kw.filter(k => !f.base.includes(k)) : f.kw; }
-const faceIcon = f => { const c = comboOf(f); return c ? c.icon : FACE[f.t].icon; };
-const iconHtml = f => `<i class="ico${comboOf(f) ? ' combo' : ''}">${faceIcon(f)}</i>`;
+const faceIcon = f => { const c = comboOf(f); return c ? c.icon : FACE[f.t].icon; };   // text glyph (logs, tooltips)
+const artKey = f => { const c = comboOf(f); return c ? f.t + ':' + f.base.slice().sort().join(',') : f.t; };
+const iconHtml = f => `<i class="ico">${svgIcon(artKey(f))}</i>`;
 const living = st => st.players.map((p, i) => i).filter(i => !st.players[i].gone && !st.players[i].down);
 const foesAlive = st => st.enemies.map((e, i) => i).filter(i => st.enemies[i].hp > 0);
 const hasEq = (st, p, id) => st.players[p].equip.includes(id);
@@ -802,6 +807,85 @@ function botNext(st, p) {
   return null;
 }
 
+// ================= ART =================
+// Hand-drawn vector art. Die-face icons use currentColor so each face keeps its type color;
+// portraits use the game palette (navy kevlar, hazard amber, arcane violet, tactical teal).
+const BANG = '<path d="M21 1.5v5.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="21" cy="10" r="1.4" fill="currentColor"/>';
+const BULLET = (x, y, s, r) => `<g transform="translate(${x} ${y}) rotate(${r || 0}) scale(${s})"><path d="M-3 7V-1Q-3 -6 0 -8Q3 -6 3 -1V7Z" fill="currentColor"/><rect x="-3.6" y="7.5" width="7.2" height="2.6" rx=".6" fill="currentColor" opacity=".75"/></g>`;
+const SLUG = (x, y, s, r) => `<g transform="translate(${x} ${y}) rotate(${r || 0}) scale(${s})"><path d="M-1.8 7V-3L0 -9L1.8 -3V7Z" fill="currentColor"/><rect x="-2.6" y="7.5" width="5.2" height="2.4" rx=".5" fill="currentColor" opacity=".75"/></g>`;
+const BOLT = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M1 -10L-7 1h6l-2 9l9 -12h-6z" fill="currentColor"/></g>`;
+const SHIELD = '<path d="M12 2L20 5V11C20 16 16.5 20 12 22C7.5 20 4 16 4 11V5Z" fill="currentColor"/>';
+const ART = {
+  // base faces
+  D: BULLET(12, 11.5, 1.2),                                              // Hex Round
+  R: SLUG(12, 11.5, 1.15) + '<path d="M5 20l2-3M19 20l-2-3M4 15l2-1M20 15l-2-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>',   // armor-piercing round
+  A: BOLT(12, 12, 1),
+  W: SHIELD + '<path d="M12 6l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#fff" opacity=".55"/>',
+  H: '<rect x="3" y="5" width="18" height="15" rx="3" fill="currentColor"/><path d="M12 8v9M7.5 12.5h9" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M9 5V3.5h6V5" stroke="currentColor" stroke-width="2" fill="none"/>',
+  S: '<path d="M12 1l2 7 7-3-5 6 7 3-8 1 2 7-5-5-5 5 2-7-8-1 7-3-5-6 7 3z" fill="currentColor"/><circle cx="12" cy="12" r="2.6" fill="#fff" opacity=".7"/>',
+  E: '<path d="M2 12C5 6 19 6 22 12C19 18 5 18 2 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/><circle cx="13.2" cy="10.8" r="1.1" fill="#fff"/>',
+  C: '<path d="M12 2L19 12L12 22L5 12Z" fill="currentColor"/><path d="M12 6v12M8.5 12h7" stroke="#fff" stroke-width="1.4" opacity=".6"/>',
+  B: '<path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>',
+  U: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7a5 5 0 1 1-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>',
+  X: '<circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".6"/>',
+  // built-in pairings: each has its own symbol
+  'D:cleave':  BULLET(12, 13, .7) + BULLET(6.5, 14, .62, -28) + BULLET(17.5, 14, .62, 28),                     // Scatter Round
+  'D:engage':  BULLET(12, 14, .8) + '<path d="M12 1v3M5 4l2 2M19 4l-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',   // Breach Round
+  'D:cruel':   '<path d="M3 21L14 10L21 3L18.5 12L9 21Z" fill="currentColor"/><path d="M14 10l1.4 1.4M12 12l1.4 1.4M10 14l1.4 1.4" stroke="#fff" stroke-width="1.2" opacity=".7"/><path d="M3 21l3-3" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',   // Serrated Edge
+  'D:steel':   '<path d="M5 20L16 9" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/><path d="M14 5l5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M17 3l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',   // Riot Baton
+  'D:patient': '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/>',   // Aimed Round
+  'D:echo':    '<g opacity=".45">' + BULLET(8.5, 12, .85) + '</g>' + BULLET(15, 12, .85),                         // Echo Round
+  'R:engage':  SLUG(12, 14, .8) + '<path d="M12 1v3M5 4l2 2M19 4l-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',   // Breaching Slug
+  'R:cleave':  SLUG(12, 13, .75) + SLUG(6.5, 14, .65, -28) + SLUG(17.5, 14, .65, 28),                            // Flechette Spread
+  'A:charged': BOLT(10, 12, .9) + '<rect x="16" y="9" width="6" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="18" y="7.5" width="2" height="1.6" fill="currentColor"/><rect x="17.5" y="13" width="3" height="4.5" fill="currentColor"/>',   // Charged Arc
+  'A:cantrip': BOLT(10.5, 12.5, .9) + BANG,                                                                       // Static Arc
+  'A:cleave':  BOLT(7.5, 11, .7) + BOLT(16.5, 13, .7) + '<path d="M9 13l6-2" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 1.5"/>',   // Chain Lightning
+  'W:selfshield': SHIELD + '<circle cx="12" cy="9.5" r="2.4" fill="#fff" opacity=".75"/><path d="M8 17c.8-2.6 2.2-3.8 4-3.8s3.2 1.2 4 3.8" fill="#fff" opacity=".75"/>',   // Body Ward
+  'W:steel':   '<rect x="5" y="2" width="14" height="20" rx="3" fill="currentColor"/><rect x="7.5" y="6" width="9" height="2.6" rx="1" fill="#fff" opacity=".7"/><path d="M12 11v8" stroke="#fff" stroke-width="1.6" opacity=".5"/>',   // Riot Shield
+  'W:pristine': SHIELD + '<path d="M12 6.5l1 3.5 3.5 1-3.5 1-1 3.5-1-3.5-3.5-1 3.5-1z" fill="#fff" opacity=".8"/>',   // Pristine Ward
+  'S:cantrip': '<g transform="translate(-1.5 1) scale(.92)"><path d="M12 1l2 7 7-3-5 6 7 3-8 1 2 7-5-5-5 5 2-7-8-1 7-3-5-6 7 3z" fill="currentColor"/></g>' + BANG,   // Snap Flash
+  'E:cantrip': '<g transform="translate(-1.5 1) scale(.9)"><path d="M2 12C5 6 19 6 22 12C19 18 5 18 2 12Z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/></g>' + BANG,   // Flash Vision
+  'C:cantrip': '<g transform="translate(-1.5 1) scale(.9)"><path d="M12 2L19 12L12 22L5 12Z" fill="currentColor"/></g>' + BANG,   // Spark Rune
+};
+const svgIcon = key => `<svg viewBox="0 0 24 24" aria-hidden="true">${ART[key] || ART.B}</svg>`;
+
+// Portraits (48×48). Shared bits: skin, kevlar navy, amber trim, arcane violet glow.
+const PORTRAIT = {
+  breach: '<rect width="48" height="48" rx="10" fill="#1f2a3d"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2c3a55"/><path d="M14 40h20v8H14z" fill="#3a4b6e"/><rect x="18" y="38" width="12" height="4" rx="1" fill="#f0b23c"/><circle cx="24" cy="24" r="9" fill="#d9a77c"/><path d="M13 22c0-8 5-12 11-12s11 4 11 12v2H13z" fill="#26324a"/><rect x="14" y="21" width="20" height="5" rx="2.5" fill="#ff8a3c"/><path d="M35 15l6-6M37 19l7-2" stroke="#ff8a3c" stroke-width="2" stroke-linecap="round"/>',
+  storm: '<rect width="48" height="48" rx="10" fill="#1a2740"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#22385c"/><circle cx="24" cy="26" r="8.5" fill="#e0b48c"/><path d="M10 22L24 1l14 21z" fill="#18243a"/><rect x="9" y="20" width="30" height="4" rx="2" fill="#2c4470"/><path d="M15 26a9 9 0 0 0 4 6" stroke="#9be7ff" stroke-width="2" fill="none"/><circle cx="19" cy="32.5" r="1.4" fill="#9be7ff"/><path d="M40 28l-5 7h4l-2 6 6-8h-4z" fill="#9be7ff"/>',
+  precog: '<rect width="48" height="48" rx="10" fill="#211a35"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a2b5c"/><path d="M10 34C10 16 16 8 24 8s14 8 14 26z" fill="#4b2f6b"/><ellipse cx="24" cy="27" rx="8" ry="9" fill="#120d20"/><circle cx="20.5" cy="27" r="1.8" fill="#7fe0d0"/><circle cx="27.5" cy="27" r="1.8" fill="#7fe0d0"/><path d="M19 18.5C21 16 27 16 29 18.5C27 21 21 21 19 18.5Z" fill="#7fe0d0"/><circle cx="24" cy="18.5" r="1.2" fill="#120d20"/>',
+  riot: '<rect width="48" height="48" rx="10" fill="#1f2a3d"/><ellipse cx="24" cy="7" rx="10" ry="2.6" fill="none" stroke="#f0b23c" stroke-width="2"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2c3a55"/><circle cx="24" cy="25" r="9" fill="#c9926a"/><path d="M13 25c0-9 5-14 11-14s11 5 11 14v1H13z" fill="#3b4a66"/><path d="M14 23h20v8c0 2-2 3-4 3H18c-2 0-4-1-4-3z" fill="#7fb2ff" opacity=".45"/><path d="M32 30h10v12c0 3-2 5-5 6-3-1-5-3-5-6z" fill="#5aa9ff"/><path d="M37 33v10" stroke="#fff" stroke-width="1.6" opacity=".6"/>',
+};
+const ENEMY_ART = {
+  guard: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a2a40"/><circle cx="24" cy="26" r="9" fill="#c9a07a"/><path d="M12 21c2-7 7-10 12-10s10 3 12 10z" fill="#232b3d"/><rect x="11" y="19" width="26" height="4" rx="2" fill="#151b28"/><path d="M24 12l3 2v3l-3 2-3-2v-3z" fill="#f0b23c"/><rect x="17" y="25" width="14" height="3.4" rx="1.7" fill="#151b28"/>',
+  drone: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M10 14h10M28 14h10M10 34h10M28 34h10" stroke="#8e9ab3" stroke-width="3" stroke-linecap="round"/><path d="M15 14l6 6M33 14l-6 6M15 34l6-6M33 34l-6-6" stroke="#5a6680" stroke-width="2.4"/><rect x="17" y="18" width="14" height="12" rx="4" fill="#3d4a63"/><path d="M24 20l4 1.5v3c0 2-2 3.4-4 4-2-.6-4-2-4-4v-3z" fill="#7fb2ff"/>',
+  necro: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2d3a2a"/><path d="M13 24c0-8 5-13 11-13s11 5 11 13c0 5-3 9-11 9s-11-4-11-9z" fill="#4a5a44"/><circle cx="19" cy="22" r="3.6" fill="#9be37b"/><circle cx="29" cy="22" r="3.6" fill="#9be37b"/><circle cx="19" cy="22" r="1.6" fill="#1b2318"/><circle cx="29" cy="22" r="1.6" fill="#1b2318"/><rect x="20" y="28" width="8" height="7" rx="2" fill="#2a3326"/><path d="M21 31h6M21 33h6" stroke="#5a6a52" stroke-width="1"/>',
+  sniper: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#352336"/><path d="M11 34C11 17 17 9 24 9s13 8 13 25z" fill="#4a2e3a"/><ellipse cx="24" cy="26" rx="7.5" ry="8.5" fill="#160d12"/><circle cx="27" cy="25" r="4.4" fill="none" stroke="#ff6b5b" stroke-width="2"/><circle cx="27" cy="25" r="1.6" fill="#ff6b5b"/><path d="M31 25h9" stroke="#3d2a33" stroke-width="3"/>',
+  heavy: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M3 48c1-12 9-18 21-18s20 6 21 18z" fill="#4a5568"/><path d="M6 36h12M30 36h12" stroke="#2d3748" stroke-width="5" stroke-linecap="round"/><path d="M13 26c0-10 5-16 11-16s11 6 11 16v4H13z" fill="#5f6b80"/><rect x="16" y="20" width="16" height="5" rx="2" fill="#ff6b5b"/><path d="M18 30h12" stroke="#2d3748" stroke-width="2"/>',
+  intern: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><ellipse cx="25" cy="31" rx="12" ry="9" fill="#8a7a72"/><circle cx="15" cy="24" r="7" fill="#9a8a80"/><circle cx="12" cy="17" r="3.4" fill="#c9a3a0"/><circle cx="18" cy="17" r="3.4" fill="#c9a3a0"/><circle cx="13" cy="24" r="1.3" fill="#111"/><path d="M37 32c6 0 7 6 3 8" stroke="#c9a3a0" stroke-width="2" fill="none"/><path d="M16 30l4 8" stroke="#5aa9ff" stroke-width="1.6"/><rect x="18" y="37" width="6" height="5" rx="1" fill="#e4e8f0"/>',
+  vex: '<rect width="48" height="48" rx="10" fill="#2a1418"/><path d="M6 48c2-11 9-15 18-15s16 4 18 15z" fill="#1d1d2b"/><path d="M21 33l3 12 3-12z" fill="#ff6b5b"/><path d="M18 33l6 6 6-6" fill="#e4e8f0"/><circle cx="24" cy="23" r="9" fill="#cfd4dc"/><path d="M15 21c0-7 4-11 9-11s9 4 9 11l-4-4-5 3-5-3z" fill="#111622"/><circle cx="20.5" cy="23" r="1.4" fill="#ff3b3b"/><circle cx="27.5" cy="23" r="1.4" fill="#ff3b3b"/><path d="M21 28h6M22 28v2M26 28v2" stroke="#7a1a1a" stroke-width="1.2"/>',
+  grieve: '<rect width="48" height="48" rx="10" fill="#2a1418"/><path d="M6 48c2-11 9-15 18-15s16 4 18 15z" fill="#141826"/><path d="M21 33l3 12 3-12z" fill="#c77dff"/><path d="M14 12l3-6 4 4 3-6 3 6 4-4 3 6z" fill="#f0b23c"/><path d="M15 23c0-7 4-11 9-11s9 4 9 11c0 4-2 7-4 8v3H19v-3c-2-1-4-4-4-8z" fill="#e8e2d0"/><ellipse cx="20" cy="23" rx="2.4" ry="3" fill="#1a1426"/><ellipse cx="28" cy="23" rx="2.4" ry="3" fill="#1a1426"/><circle cx="20" cy="23" r="1" fill="#c77dff"/><circle cx="28" cy="23" r="1" fill="#c77dff"/><path d="M21 31v2M24 31v2M27 31v2" stroke="#1a1426" stroke-width="1.2"/>',
+};
+const portrait = (cls, size) => `<svg class="portrait" width="${size}" height="${size}" viewBox="0 0 48 48" aria-hidden="true">${PORTRAIT[cls]}</svg>`;
+const enemyArt = (type, size) => `<svg class="portrait" width="${size}" height="${size}" viewBox="0 0 48 48" aria-hidden="true">${ENEMY_ART[type] || ENEMY_ART.guard}</svg>`;
+// Title art: Halcyon Tower at night, rune-lit crown, city below.
+function towerArt() {
+  let win = '';
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 4; c++) { const lit = (r * 7 + c * 3) % 5 !== 0; win += `<rect x="${143 + c * 9}" y="${44 + r * 10}" width="5" height="5" fill="${lit ? (r === 0 ? '#c77dff' : '#f0b23c') : '#1b2436'}" opacity="${lit ? .85 : 1}"/>`; }
+  return `<svg class="tower" viewBox="0 0 330 170" role="img" aria-label="Halcyon Tower at night">
+    <rect width="330" height="170" rx="10" fill="#0b1018"/>
+    <circle cx="268" cy="34" r="15" fill="#e4e8f0" opacity=".85"/><circle cx="262" cy="30" r="15" fill="#0b1018"/>
+    <path d="M0 170V128h22v-14h18v24h16v-30h20v40h14v-22h16v34z" fill="#141c2b"/>
+    <path d="M330 170V122h-20v-12h-18v30h-14v-24h-20v36h-14v18z" fill="#141c2b"/>
+    <path d="M136 170V40l25-22 25 22v130z" fill="#1f2a3d" stroke="#2e3b54"/>
+    <path d="M161 18V4" stroke="#c77dff" stroke-width="2"/><circle cx="161" cy="22" r="5" fill="#c77dff" opacity=".8"/>
+    <circle cx="161" cy="22" r="11" fill="none" stroke="#c77dff" stroke-width="1" opacity=".5"/>
+    ${win}
+    <path d="M150 170v-14h22v14" fill="#f0b23c" opacity=".25"/>
+    <path d="M60 170l8-8h10l8 8" fill="#5aa9ff" opacity=".3"/>
+  </svg>`;
+}
+
 // ================= AUDIO =================
 let actx = null, master = null, musicGain = null;
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
@@ -1041,6 +1125,7 @@ function topbar() {
 function menuHtml() {
   const hasSave = !!store.get(SAVE_KEY);
   return `<div class="menu">
+    ${towerArt()}
     <div class="logo">${logoBig()}</div>
     <p class="muted" style="text-align:center;margin:0">Wizards in kevlar breach a cursed corporate tower, one floor at a time. Co-op dice tactics for 1 to 4 friends.</p>
     ${ui.err ? `<div class="banner err">${esc(ui.err)}</div>` : ''}
@@ -1080,13 +1165,23 @@ function connectingHtml() {
 
 function classTile(id, takenBy, mine) {
   const C = CLASSES[id], S = SIGS[C.sig];
-  return `<div class="tile ${takenBy != null ? 'taken' : ''} ${mine ? 'picked' : ''}">
-    <div class="hh"><span class="ic">${C.icon}</span><b>${C.name}</b><span class="tag">HP ${C.hp}</span></div>
-    <span class="muted" style="font-size:.82rem">${C.role}</span>
-    <div class="dl">${C.dice.map(d => `<span class="dn">${d.name}</span><div class="faces">${d.faces.map(c => codeHtml(c)).join('')}</div>`).join('')}</div>
-    <span class="sigtxt">✦ ${S.name} (${S.cost}): ${S.text}</span>
-    ${takenBy != null ? `<span class="tag" style="align-self:flex-start">Taken by ${esc(st.players[takenBy].name)}</span>` : `<button class="btn sm" data-cls="${id}">${mine ? 'Picked' : 'Pick'}</button>`}
+  return `<div class="tile ctile ${takenBy != null ? 'taken' : ''} ${mine ? 'picked' : ''}">
+    <div class="hh">${portrait(id, 64)}<div class="stack" style="gap:2px;flex:1"><b>${C.name}</b><span class="tag" style="align-self:flex-start">HP ${C.hp} · ${C.role}</span></div></div>
+    <div class="desc" style="color:var(--fg)">${C.blurb}</div>
+    <span class="sigtxt">✦ <b>${S.name}</b> (${S.cost}✦): ${S.text}</span>
+    <div class="row" style="gap:8px">${takenBy != null ? `<span class="tag">Taken by ${esc(st.players[takenBy].name)}</span>` : `<button class="btn sm" data-cls="${id}">${mine ? 'Picked' : 'Pick'}</button>`}<button class="btn sm ghost" data-clsinfo="${id}">Details</button></div>
   </div>`;
+}
+function showClass(id) {
+  const C = CLASSES[id], S = SIGS[C.sig], o = $('overlay');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between"><div class="row">${portrait(id, 72)}<div><h3>${C.name}</h3><span class="tag">HP ${C.hp} · ${C.role}</span></div></div><button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <p style="margin:0">${C.blurb}</p>
+    <p class="sigtxt" style="margin:0">✦ <b>${S.name}</b> (${S.cost}✦): ${S.text}</p>
+    <p class="muted" style="margin:0;font-size:.85rem">Starting dice. Hover a side to see exactly what it does. Each die can later become one of two + versions.</p>
+    <div class="netwrap">${C.dice.map(d => `<div class="mydie"><b>${esc(d.name)}</b>${netHtml(d.faces.map(parse), '3.4rem')}</div>`).join('')}</div>
+  </div>`;
+  o.classList.remove('hidden');
 }
 function lobbyHtml() {
   const P = st.players[me];
@@ -1100,13 +1195,13 @@ function lobbyHtml() {
   return `<div class="stack">
     <div class="row" style="justify-content:space-between;align-items:flex-start">
       <div class="stack" style="gap:6px"><h2>${st.mode === 'solo' ? 'Pick your operative' : 'Squad select'}</h2>
-        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Hover any face for details. Small purple symbols under a number are keywords.</p>'}
+        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Click Details to see its dice.</p>'}
       </div>
       <div class="row">${me === 0 ? `<button class="btn" data-ui="start" ${ready ? '' : 'disabled'}>Breach floor 1</button>${ready ? '' : '<span class="muted" style="font-size:.85rem">Everyone needs a class.</span>'}` : '<span class="muted">The host starts the run.</span>'}</div>
     </div>
     <div class="slots">${slots}</div>
     <p class="muted" style="font-size:.85rem;margin:0">Squad of ${n}: ${enemyCount(n, 1)} enemies per floor${n > 1 ? ' (+1 on floors 7 to 9)' : ''}, enemy HP ×${HP_MULT[n - 1]}, bosses ×${n} HP and ${n} action${n > 1 ? 's' : ''} a turn.</p>
-    <div class="tiles">${tiles}</div>
+    <div class="tiles ctiles">${tiles}</div>
   </div>`;
 }
 
@@ -1119,7 +1214,7 @@ function foeCard(i) {
   }).join('');
   const ok = canTarget('e', i) ? 'tg-ok' : '';
   return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
-    <span class="ic">${E.icon}</span><span class="nm">${foeLabel(i)}</span>
+    ${enemyArt(e.type, E.boss ? 64 : 52)}<span class="nm">${foeLabel(i)}</span>
     <div class="hp"><i style="width:${e.hp / e.mx * 100}%"></i><span>${dead ? 'Down' : `${e.hp}/${e.mx}`}</span></div>
     <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.66rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}</div>
     <div class="ints">${ints}</div>
@@ -1152,7 +1247,7 @@ function opCard(p) {
   const ok = canTarget('p', p) ? 'tg-ok' : '';
   return `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
     <div class="hh"><b>${pname(p)}</b><span class="status ${status}">${statusTxt}</span></div>
-    <div class="sub"><span>${C.icon} ${C.name}</span><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
+    <div class="sub">${portrait(P.cls, 26)}<span>${C.name}</span><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
     <div class="hp ally"><i style="width:${P.hp / mx * 100}%"></i><span>${P.down ? 'Down' : `${P.hp}/${mx}`}</span></div>
     <div class="dice">${dice}</div>
     ${sig}
@@ -1202,7 +1297,7 @@ function battleHtml() {
 
 function offerDesc(o) {
   if (o.k === 'plus') return { icon:'⬆', name:'Die upgrade', tag:'A random die becomes +', text:'Pick one of two + versions.' };
-  if (o.k === 'gear') return { icon: GEAR[o.id].icon, name: GEAR[o.id].name, tag:'Die equipment · 2 per die', text: GEAR[o.id].text };
+  if (o.k === 'gear') return { icon: GEAR[o.id].icon, name: GEAR[o.id].name, tag:'Die equipment', text: GEAR[o.id].text };
   return { icon: EQUIP[o.id].icon, name: EQUIP[o.id].name, tag:'Player equipment · 2 max', text: EQUIP[o.id].text };
 }
 // Pips like Slice & Dice: a short tick is 1, a full-height bar is 5.
@@ -1352,13 +1447,14 @@ function showText(title, text, importing) {
 let autoTimer = null;
 document.addEventListener('click', e => {
   if (e.target.id === 'overlay') { $('overlay').classList.add('hidden'); return; }   // click outside the box closes it
-  const el = e.target.closest('[data-ui],[data-cls],[data-die],[data-cast],[data-offer],[data-plusv],[data-gear],[data-equip],[data-dev],[data-inspect]');
+  const el = e.target.closest('[data-ui],[data-cls],[data-clsinfo],[data-die],[data-cast],[data-offer],[data-plusv],[data-gear],[data-equip],[data-dev],[data-inspect]');
   ac();
   if (el) {
     const d = el.dataset;
     if (d.ui) return uiAction(d.ui);
     if (d.dev) return devAction(d.dev);
     if (d.cls) { sfx.click(); return dispatch({ t:'class', cls: d.cls }); }
+    if (d.clsinfo) return showClass(d.clsinfo);
     if (d.cast) { ui.sel = null; return dispatch({ t:'cast', s: d.cast }); }
     if (d.die != null && +d.p === me && st && st.phase === 'battle') {
       const P = st.players[me], di = +d.die;

@@ -37,7 +37,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 - [Roadmap to alpha](#roadmap-to-alpha)
 
 ## How to play
-1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class (4 classes).
+1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class (4 classes). The class screen shows a portrait, a short description and the charge ability; **Details** shows the starting dice as unfolded dice.
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target.
 3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). Keeping all three moves on automatically; **Undo** goes back to rolling while you have rerolls and haven't used anything. Your Reroll, Done rolling, Undo and End turn buttons sit in your own operative card, next to your dice. **Cantrip** faces fire on a random target the moment they land.
 4. **Use dice in real time.** Click a die, then its target. It happens right away, and everyone sees HP and ward change. ✦ dice charge as soon as you click them. Abilities (your signature, plus any your gear grants) also fire right away, once per turn each.
@@ -47,7 +47,9 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 8. **Win** by clearing floor 10, the CEO.
 
 ## Faces
-Numbers are shown as **pips**, like Slice & Dice: each short tick is 1 and each tall bar is 5. Hover any face for the exact number. Built-in pairings have a ring in the face-type color around their icon.
+Numbers are shown as **pips** in the bottom-right corner, like Slice & Dice: each short tick is 1 and each tall bar is 5. Hover any face for the exact number.
+
+**Art:** all die faces, built-in pairings, class portraits, enemy portraits and the title tower are hand-drawn SVG inside `index.html` (no image files). Damage faces are hex rounds (bullets), Pierce is an armor-piercing slug, Ward is a badge shield. Gear and player equipment still use emoji icons.
 
 | Face | Effect |
 |---|---|
@@ -200,7 +202,7 @@ Normal enemy HP also grows 10% per floor, and each extra operative adds one esco
 - Up to 4 players can join in the lobby. If a guest leaves mid-run, their operative leaves and the rest carry on. If the host leaves, the run ends.
 - Strict networks may block direct connections (no TURN relay).
 
-**itch.io:** zip `index.html` on its own, set the project kind to HTML, tick "played in the browser", and use a viewport of about 1150 × 900 or fullscreen.
+**itch.io:** a ready zip is at `dist/kevlar-cantrips-itch.zip` (just `index.html`), plus a 630×500 cover image at `dist/cover-630x500.png`. To rebuild: zip `index.html` on its own, set the project kind to HTML, tick "played in the browser", and use a viewport of about 1150 × 900 or fullscreen.
 
 ## Saving, audio, dev tools
 - Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before this update (version 1) can't be loaded.
