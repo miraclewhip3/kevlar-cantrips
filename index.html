@@ -68,8 +68,9 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .die .gear{width:1.35rem;height:1.35rem;border-radius:50%;background:var(--panel2);border:1px solid #7fd3e6;display:flex;align-items:center;justify-content:center;font-size:.7rem}
 .die em.kws{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 .72rem var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:2px;line-height:1}
 .foe .die em.kws{color:var(--arcane)}
-.f{position:relative;height:1.95rem;align-items:flex-start;padding:3px 4px 0}
-.f .kwg{position:absolute;bottom:1px;left:0;right:0;text-align:center;font:700 .6rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
+.f{position:relative;height:2.3rem;min-width:2.5rem;align-items:flex-start;justify-content:flex-start;padding:3px 0 0 5px}
+.f .ico{font-size:1rem;margin:0}
+.f .kwg{position:absolute;bottom:1px;left:0;right:0;text-align:center;font:700 .7rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
 .psnb{font:700 .7rem var(--mono);color:#9be37b}
 .log tr.sys td{color:var(--hud);font:600 .72rem var(--mono);letter-spacing:.08em;padding-top:8px}
 
@@ -106,7 +107,9 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .op{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .op.me{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
 .op.down{opacity:.55}
-.op .ctrl{gap:8px;min-height:2.2rem;padding-top:6px;border-top:1px dashed var(--line)}
+.op .ctrlwrap{display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:1px dashed var(--line)}
+.op .ctrl{gap:8px;min-height:2.2rem}
+.op .ctrlwrap .hint{font-size:.85rem;min-height:0}
 .op .hh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .op .hh b{font-family:var(--display);font-size:1.05rem}
 .op .sub{font-size:.8rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -118,11 +121,15 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 /* unfolded die: top, a row of four, bottom */
 .net{display:grid;grid-template-columns:repeat(4,var(--s,3rem));grid-auto-rows:var(--s,3rem);gap:5px}
 .net .nf{border-radius:8px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);border:2px solid var(--ok);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(var(--s,3rem) * .32) var(--mono);color:#1b2230;position:relative;cursor:help}
-.net .nf .ico{font-size:calc(var(--s,3rem) * .5);line-height:1;margin-right:calc(var(--s,3rem) * .12)}
-.net .nf .pips{position:absolute;right:calc(var(--s,3rem) * .08);bottom:calc(var(--s,3rem) * .14);display:flex;gap:calc(var(--s,3rem) * .05);align-items:flex-end;font-style:normal}
-.net .nf .pips .ticks{display:flex;flex-direction:column-reverse;gap:calc(var(--s,3rem) * .05)}
-.net .nf .pips b{display:block;width:calc(var(--s,3rem) * .13);height:calc(var(--s,3rem) * .08);background:currentColor;border-radius:1px}
-.net .nf .pips b.p5{height:calc(var(--s,3rem) * .52)}
+.die{--s:3.7rem}.foe .die{--s:2.9rem}.f{--s:2.1rem}
+.ico{font-size:calc(var(--s,3rem) * .5);line-height:1;margin-right:calc(var(--s,3rem) * .14);font-style:normal}
+.ico.combo{border-radius:50%;box-shadow:0 0 0 2px currentColor;padding:1px}   /* built-in pairing: ring in the face-type color */
+.pips{position:absolute;right:calc(var(--s,3rem) * .08);bottom:calc(var(--s,3rem) * .14);display:flex;gap:calc(var(--s,3rem) * .05);align-items:flex-end;font-style:normal}
+.pips .ticks{display:flex;flex-direction:column-reverse;gap:calc(var(--s,3rem) * .05)}
+.pips b{display:block;width:calc(var(--s,3rem) * .13);height:calc(var(--s,3rem) * .08);background:currentColor;border-radius:1px}
+.pips b.p5{height:calc(var(--s,3rem) * .52)}
+.f .pips{bottom:auto;top:calc(var(--s) * .12)}
+.f .pips b{min-width:2px;min-height:2px}
 .net .nf.f-D{color:#c4361f}.net .nf.f-W{color:#2862c4}.net .nf.f-H{color:#1f8f44}.net .nf.f-R{color:#a86f00}.net .nf.f-A{color:#0a7ea0}.net .nf.f-C{color:#7440c9}.net .nf.f-S{color:#b0287a}.net .nf.f-E{color:#0f7c8c}.net .nf.f-B{color:#8892a3}
 .net .nf .kwg{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 calc(var(--s,3rem) * .25) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px;line-height:1}
 .net .p0{grid-area:1/2}.net .p1{grid-area:2/1}.net .p2{grid-area:2/2}.net .p3{grid-area:2/3}.net .p4{grid-area:2/4}.net .p5{grid-area:3/2}
@@ -136,6 +143,8 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .sigbtn.on{background:var(--arcane);color:#160d2c}
 .sigbtn:disabled{opacity:.4;cursor:default}
 .sigtxt{font-size:.78rem;color:#e6cfff}
+.sigcell{display:inline-flex;flex-direction:column;gap:2px}
+.sigwhy{font-size:.72rem;color:var(--muted)}
 .center{margin:12px 0;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
 .phase{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .phase span{font:600 .74rem var(--mono);padding:3px 9px;border-radius:3px;background:var(--panel2);color:var(--muted)}
@@ -379,6 +388,7 @@ function comboOf(f) { return f.base && f.base.length ? COMBO[f.t + ':' + f.base.
 // Keywords drawn as indicators: everything not covered by the face's own combo icon.
 function shownKw(f) { const c = comboOf(f); return c ? f.kw.filter(k => !f.base.includes(k)) : f.kw; }
 const faceIcon = f => { const c = comboOf(f); return c ? c.icon : FACE[f.t].icon; };
+const iconHtml = f => `<i class="ico${comboOf(f) ? ' combo' : ''}">${faceIcon(f)}</i>`;
 const living = st => st.players.map((p, i) => i).filter(i => !st.players[i].gone && !st.players[i].down);
 const foesAlive = st => st.enemies.map((e, i) => i).filter(i => st.enemies[i].hp > 0);
 const hasEq = (st, p, id) => st.players[p].equip.includes(id);
@@ -720,6 +730,11 @@ function enemyPhase(st) {
   startTurn(st);
 }
 
+// Gear fits if it changes at least one of the operative's current faces (or grants an ability).
+function gearFits(P, g) {
+  const G = GEAR[g]; if (G.ability) return true;
+  return P.dice.some((d, di) => facesOf(P, di).some(c => { const f = parse(c), before = JSON.stringify(f); G.fx(f); return JSON.stringify(f) !== before; }));
+}
 function floorCleared(st) {
   st.resolveN++;
   if (st.floor >= RULES.floors) { st.phase = 'over'; st.result = 'won'; return; }
@@ -733,7 +748,7 @@ function floorCleared(st) {
     const free = P.dice.map((d, i) => i).filter(i => P.dice[i].plus == null);
     if (UPGRADE_FLOORS.includes(st.floor) && free.length) P.offers = [{ k:'plus', d: pick(st, free) }];   // the die is random; you pick which upgrade
     else {
-      const gear = shuffle(st, Object.keys(GEAR)), eq = shuffle(st, Object.keys(EQUIP).filter(e => !P.equip.includes(e)));
+      const gear = shuffle(st, Object.keys(GEAR).filter(g => gearFits(P, g))), eq = shuffle(st, Object.keys(EQUIP).filter(e => !P.equip.includes(e)));
       P.offers = [{ k:'gear', id: gear[0] }, { k:'gear', id: gear[1] }, eq.length ? { k:'equip', id: eq[0] } : { k:'gear', id: gear[2] }];
     }
   });
@@ -964,12 +979,12 @@ function faceTip(f) {
 }
 function faceChip(f, extra = '', attrs = '') {
   const F = FACE[f.t];
-  return `<span class="f f-${f.t} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}><span>${faceIcon(f)}${F.num ? f.n : ''}</span>${kwGlyphs(shownKw(f))}</span>`;
+  return `<span class="f f-${f.t} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}>${iconHtml(f)}${F.num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</span>`;
 }
 const kwGlyphs = kw => kw.length ? `<i class="kwg">${kw.map(k => KW[k].g).join('')}</i>` : '';
 const codeHtml = (c, extra, attrs) => faceChip(parse(c), extra, attrs);
 const effHtml = (p, di, fi, extra, attrs) => faceChip(effFace(st, p, di, fi), extra, attrs);
-const dieInner = f => { const k = f.kw ? shownKw(f) : []; return `${faceIcon(f)}${FACE[f.t].num ? `<span>${f.n}</span>` : ''}${k.length ? `<em class="kws">${k.map(x => KW[x].g).join('')}</em>` : ''}`; };
+const dieInner = f => { const k = f.kw ? shownKw(f) : []; return `${iconHtml(f)}${FACE[f.t].num ? pipBars(f.n) : ''}${k.length ? `<em class="kws">${k.map(x => KW[x].g).join('')}</em>` : ''}`; };
 const gearBadges = gear => gear.length ? `<span class="gears">${gear.map(g => `<span class="gear" data-tip="${esc(GEAR[g].name + ': ' + GEAR[g].text)}">${GEAR[g].icon}</span>`).join('')}</span>` : '';
 const pname = i => i === me ? 'You' : esc(st.players[i].name);
 function foeLabel(i, short) {   // "Guard B" when several enemies share a type
@@ -989,6 +1004,7 @@ const renderCache = { roll: {}, rollNext: {}, vals: {}, sig: null };
 // ================= SCREENS =================
 function render() {
   const app = $('app');
+  tipEl.style.display = 'none';   // the element under the cursor is about to be replaced
   if (screen === 'menu') app.innerHTML = menuHtml();
   else if (screen === 'lobby') app.innerHTML = connectingHtml();
   else if (st) {
@@ -1118,8 +1134,8 @@ function opCard(p) {
   if (mine && st.phase === 'battle' && !P.down) {
     sig = `<div class="row" style="gap:6px">${abil.map(s => {
       const used = (P.cast || []).includes(s), cost = sigCost(st, p, s);
-      const can = P.step === 'use' && !used && P.charge >= cost && abilityUsable(st, p, s);
-      return `<button class="sigbtn" data-cast="${s}" ${can ? '' : 'disabled'} data-tip="${esc(SIGS[s].name + ' (' + cost + '✦): ' + SIGS[s].text)}">✦ ${SIGS[s].name} ${cost}${used ? ' · used' : ''}</button>`;
+      const why = used ? 'Used this turn' : P.step === 'roll' ? 'Finish rolling first' : P.step !== 'use' ? 'Your turn is over' : P.charge < cost ? `Needs ${cost} ✦ (you have ${P.charge})` : !abilityUsable(st, p, s) ? 'Nothing to use it on' : '';
+      return `<span class="sigcell"><button class="sigbtn" data-cast="${s}" ${why ? 'disabled' : ''} data-tip="${esc(SIGS[s].name + ' (' + cost + '✦): ' + SIGS[s].text + (why ? '\n' + why : ''))}">✦ ${SIGS[s].name} ${cost}</button>${why ? `<span class="sigwhy">${why}</span>` : ''}</span>`;
     }).join('')}</div>`;
   } else sig = `<span class="sigtxt">${abil.map(s => `<span data-tip="${esc(SIGS[s].text)}">✦ ${SIGS[s].name} ${sigCost(st, p, s)}</span>`).join(' · ')}</span>`;
   const equip = P.equip.map(r => `<span data-tip="${esc(EQUIP[r].name + ': ' + EQUIP[r].text)}">${EQUIP[r].icon}</span>`).join(' ');
@@ -1130,7 +1146,7 @@ function opCard(p) {
     <div class="hp ally"><i style="width:${P.hp / mx * 100}%"></i><span>${P.down ? 'Down' : `${P.hp}/${mx}`}</span></div>
     <div class="dice">${dice}</div>
     ${sig}
-    ${mine && st.phase === 'battle' ? `<div class="row ctrl">${ui.controls || ''}</div>` : ''}
+    ${mine && st.phase === 'battle' ? `<div class="ctrlwrap">${ui.hint ? `<div class="hint" style="text-align:left">${ui.hint}</div>` : ''}<div class="row ctrl">${ui.controls || ''}</div></div>` : ''}
   </div>`;
 }
 function logTable(lines, title) {
@@ -1160,7 +1176,7 @@ function battleHtml() {
     hint = waiting.length ? `Waiting for ${waiting.join(', ')}…` : 'Enemies are acting…';
     buttons = '<button class="btn ghost" data-ui="unready">Not ready yet</button>';
   }
-  ui.controls = buttons;
+  ui.controls = buttons; ui.hint = hint;
   return `
     <h4>Enemies · intent and target</h4>
     <div class="enemyrow" style="margin-top:6px">${st.enemies.map((_, i) => foeCard(i)).join('')}</div>
@@ -1169,7 +1185,7 @@ function battleHtml() {
     <div class="center">
       <div class="phase"><span>Turn ${st.turn}</span><span class="on">Squad rolls &amp; acts</span><span>Enemies act when all are ready</span></div>
       ${st.msg ? `<div class="banner">${esc(st.msg)}</div>` : ''}
-      <div class="hint">${hint}</div>
+      ${waiting.length && P && P.step === 'ready' ? `<div class="hint">Waiting for ${waiting.join(', ')}…</div>` : ''}
     </div>
     <div class="log box">${logTable(st.log.slice(-16), 'Combat log') || '<span class="muted">Dice you use show up here as they land.</span>'}</div>`;
 }
@@ -1185,7 +1201,7 @@ function pipBars(n) {
   return `<i class="pips">${'<b class="p5"></b>'.repeat(Math.floor(n / 5))}${n % 5 ? `<span class="ticks">${'<b></b>'.repeat(n % 5)}</span>` : ''}</i>`;
 }
 function netHtml(faces, size) {   // faces: effective face objects, laid out like an unfolded die
-  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}"><span class="ico">${faceIcon(f)}</span>${FACE[f.t].num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
+  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}">${iconHtml(f)}${FACE[f.t].num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
 }
 const effFaces = (p, di) => [0, 1, 2, 3, 4, 5].map(fi => effFace(st, p, di, fi));
 const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(GEAR[g].text)}">${GEAR[g].icon} <b style="color:var(--fg)">${GEAR[g].name}</b>: ${GEAR[g].text}</div>`).join('')}</div>` : '';
@@ -1309,7 +1325,7 @@ function showHelp() {
       <li>At 0 HP you're <b>down</b>. You're back next floor at 50% HP. The run ends if the whole squad is down.</li>
       <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 a random die of yours is upgraded, and you pick which of its two + versions it becomes. After the others you pick die equipment (2 per die) or player equipment (2 per operative).</li>
     </ul>
-    <h3>Faces</h3><table>${faces}</table>
+    <h3>Faces</h3><p class="muted" style="margin:0;font-size:.85rem">Numbers are shown as pips, like Slice &amp; Dice: each short tick is 1 and each tall bar is 5 (${faceChip(parse('D7'))} is 7 damage). Hover any face for the exact number.</p><table>${faces}</table>
     <h3>Keywords</h3><p class="muted" style="margin:0;font-size:.85rem">Class dice show built-in keyword pairings as their own icon (🪓 Cleaving Strike = ⚔ + Cleave). Small purple symbols mean gear added that keyword.</p><table>${kws}</table>
     <h3>Built-in pairings</h3><table>${Object.entries(COMBO).map(([k, c]) => { const [t, kw] = k.split(':'); return `<tr><td>${c.icon}</td><td><b>${c.name}</b></td><td>${FACE[t].name} + ${KW[kw].name}</td></tr>`; }).join('')}</table>
     <p class="muted" style="font-size:.85rem">Hover anything for details. Solo runs autosave. Add ?dev to the URL for test buttons.</p>

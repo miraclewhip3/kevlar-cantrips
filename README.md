@@ -41,12 +41,14 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target.
 3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). Keeping all three moves on automatically; **Undo** goes back to rolling while you have rerolls and haven't used anything. Your Reroll, Done rolling, Undo and End turn buttons sit in your own operative card, next to your dice. **Cantrip** faces fire on a random target the moment they land.
 4. **Use dice in real time.** Click a die, then its target. It happens right away, and everyone sees HP and ward change. ✦ dice charge as soon as you click them. Abilities (your signature, plus any your gear grants) also fire right away, once per turn each.
-5. **End turn.** Unused dice are lost. If you still have unused dice or a usable ability, End turn asks you to confirm first. When the whole squad is ready, turrets fire, then every enemy that's still standing and not stunned acts. Ward lasts until then. Poison ticks at the end of the turn.
-6. **Down, not out.** At 0 HP you're down. A Necromedic can revive you; otherwise you're back next floor at 50% HP. The run ends when the whole squad is down.
+5. **End turn.** Unused dice are lost. If you still have unused dice or a usable ability, End turn asks you to confirm first. When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then. Poison ticks at the end of the turn.
+6. **Down, not out.** At 0 HP you're down, and you're back next floor at 50% HP. The run ends when the whole squad is down.
 7. **Between floors** everyone heals half their missing HP and picks an upgrade (see below).
 8. **Win** by clearing floor 10, the CEO.
 
 ## Faces
+Numbers are shown as **pips**, like Slice & Dice: each short tick is 1 and each tall bar is 5. Hover any face for the exact number. Built-in pairings have a ring in the face-type color around their icon.
+
 | Face | Effect |
 |---|---|
 | ⚔ Damage N | N damage to one enemy |
@@ -113,6 +115,7 @@ Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two 
 ## Between floors
 - **After floors 2, 5 and 8:** a die upgrade. A random die that isn't upgraded yet is picked for you, and you choose which of its two + versions it becomes. By floor 9 all three dice are +.
 - **After floors 1, 3, 4, 6, 7 and 9:** pick 1 of 3 offers. Two are die equipment and one is player equipment.
+- Gear offers only include die equipment that changes at least one of your faces (ability gear always qualifies).
 - Die equipment: **2 per die**. Installing on a full die asks which piece to replace.
 - Player equipment: **2 per operative**. Taking a third asks which to replace.
 
