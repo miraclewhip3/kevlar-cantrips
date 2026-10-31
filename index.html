@@ -66,10 +66,10 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 @media (prefers-reduced-motion:reduce){.die.roll{animation:none}}
 .die .gears{position:absolute;top:-8px;right:-8px;display:flex;gap:2px}
 .die .gear{width:1.35rem;height:1.35rem;border-radius:50%;background:var(--panel2);border:1px solid #7fd3e6;display:flex;align-items:center;justify-content:center;font-size:.7rem}
-.die em.kws{position:absolute;bottom:2px;left:0;right:0;text-align:center;font:700 .5rem var(--mono);font-style:normal;color:#5b2d8a;letter-spacing:.02em;line-height:1}
+.die em.kws{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 .72rem var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:2px;line-height:1}
 .foe .die em.kws{color:var(--arcane)}
-.f{position:relative}
-.f .kwdot{position:absolute;top:-6px;right:-6px;min-width:.85rem;height:.85rem;border-radius:50%;background:var(--arcane);color:#160d2c;font:700 .55rem/.85rem var(--mono);font-style:normal;text-align:center}
+.f{flex-direction:column;height:auto;min-height:1.6rem;line-height:1.05;padding:2px 4px}
+.f .kwg{font:700 .62rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
 .psnb{font:700 .7rem var(--mono);color:#9be37b}
 .log tr.sys td{color:var(--hud);font:600 .72rem var(--mono);letter-spacing:.08em;padding-top:8px}
 
@@ -102,16 +102,25 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .tg-ok:hover{background:#221d10}
 
 /* squad */
-.ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:10px}
+.ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
 .op{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .op.me{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
 .op.down{opacity:.55}
 .op .hh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .op .hh b{font-family:var(--display);font-size:1.05rem}
 .op .sub{font-size:.8rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.op .dice{display:flex;gap:12px;flex-wrap:wrap;min-height:5.2rem}
-.op .dcol{display:flex;flex-direction:column;align-items:center;gap:4px;width:4.2rem}
+.op .dice{display:flex;gap:12px;flex-wrap:nowrap;min-height:5.2rem}
+.op .dcol{display:flex;flex-direction:column;align-items:center;gap:4px;width:5rem}
 .op .tg{font:500 .68rem var(--mono);color:var(--muted);text-align:center;line-height:1.2;min-height:.85rem}
+.dname{font:600 .7rem var(--mono);color:var(--muted);background:none;border:0;border-bottom:1px dashed var(--line);cursor:pointer;padding:0;text-align:center;line-height:1.2}
+.dname:hover{color:var(--fg);border-color:var(--hud)}
+/* unfolded die: top, a row of four, bottom */
+.net{display:grid;grid-template-columns:repeat(4,var(--s,3rem));grid-auto-rows:var(--s,3rem);gap:5px}
+.net .nf{border-radius:8px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);border:2px solid var(--ok);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(var(--s,3rem) * .32) var(--mono);color:#1b2230;position:relative;cursor:help}
+.net .nf.f-D{color:#c4361f}.net .nf.f-W{color:#2862c4}.net .nf.f-H{color:#1f8f44}.net .nf.f-R{color:#a86f00}.net .nf.f-A{color:#0a7ea0}.net .nf.f-C{color:#7440c9}.net .nf.f-S{color:#b0287a}.net .nf.f-E{color:#0f7c8c}.net .nf.f-B{color:#8892a3}
+.net .nf .kwg{font:700 calc(var(--s,3rem) * .27) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px}
+.net .p0{grid-area:1/2}.net .p1{grid-area:2/1}.net .p2{grid-area:2/2}.net .p3{grid-area:2/3}.net .p4{grid-area:2/4}.net .p5{grid-area:3/2}
+.netwrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
 .op .badges{display:flex;gap:4px;flex-wrap:wrap;min-height:1.2rem}
 .bdg{font:700 .7rem var(--mono);padding:1px 6px;border-radius:3px;background:#0b1018;border:1px solid var(--line)}
 .bdg.D{color:var(--dmg);border-color:#6b3329}.bdg.W{color:var(--ward)}.bdg.H{color:var(--heal)}
@@ -160,7 +169,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .overlay table{border-collapse:collapse;font-size:.86rem}
 .overlay td,.overlay th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px}
-#tip{position:fixed;z-index:60;background:#070b11;border:1px solid var(--hud-dim);color:var(--fg);font-size:.82rem;padding:6px 9px;border-radius:4px;max-width:18rem;pointer-events:none;display:none}
+#tip{white-space:pre-line;position:fixed;z-index:60;background:#070b11;border:1px solid var(--hud-dim);color:var(--fg);font-size:.82rem;padding:6px 9px;border-radius:4px;max-width:18rem;pointer-events:none;display:none}
 .dev{border:1px dashed #7a5;border-radius:4px;padding:3px 7px;font-size:.78rem}
 @media (max-width:640px){.foe{width:calc(50% - 6px)}.foe.boss{width:100%}}
 </style>
@@ -177,37 +186,51 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
 // Each die has a base set and a "+" set (from the die upgrade after floors 2, 5 and 8).
 const CLASSES = {
   breach:{ name:'Breach Mage', icon:'💥', hp:14, role:'Piercing burst', sig:'doorkick', dice:[
-    { name:'Scattershot',      faces:['D2:cleave','D2','D3','R1','R2:engage','B'],      plus:['D3:cleave','D3','D3:cleave','R2','R2:engage','R1'] },
-    { name:'Breaching Charge', faces:['D4:engage','R3','R2','D1','B','B'],              plus:['D5:engage','R4','R3','D2','R1:engage','B'] },
-    { name:'Kevlar Ward',      faces:['W2','W2','W3','W1','C1','B'],                    plus:['W3','W3','W4','W2:selfshield','C2','C1'] } ] },
+    { name:'Scattershot', faces:['D2:cleave','D2','D3','R1','R2:engage','B'], plus:[
+      { label:'Heavy Load',    faces:['D3:cleave','D3','D3:cleave','R2','R2:engage','R1'] },
+      { label:'Wide Spread',   faces:['D2:cleave','D2:cleave','D3:cleave','R1:cleave','R2:engage','D1:cleave'] } ] },
+    { name:'Breaching Charge', faces:['D4:engage','R3','R2','D1','B','B'], plus:[
+      { label:'Bigger Charge', faces:['D5:engage','R4','R3','D2','R1:engage','B'] },
+      { label:'Shaped Charge', faces:['R4:engage','R3:engage','R3','R2','D2','B'] } ] },
+    { name:'Kevlar Ward', faces:['W2','W2','W3','W1','C1','B'], plus:[
+      { label:'Thicker Plates', faces:['W3','W3','W4','W2:selfshield','C2','C1'] },
+      { label:'Reactive Armor', faces:['W2:steel','W2:selfshield','W3','W2','C2','D2:steel'] } ] } ] },
   storm:{ name:'Storm Witch', icon:'⚡', hp:11, role:'Chain damage', sig:'thunder', dice:[
-    { name:'Arc Lash',  faces:['A2','A2','A3:charged','A1:cantrip','C1','B'],           plus:['A3','A3','A4:charged','A2:cantrip','C2','A1'] },
-    { name:'Downdraft', faces:['W2','W1','A1','S','B','B'],                             plus:['W3','W2','A2','S','S:cantrip','W1'] },
-    { name:'Squall',    faces:['C2','C1:cantrip','A2','D2:cruel','W1','B'],             plus:['C3','C2:cantrip','A3','D3:cruel','W2','C1'] } ] },
-  necro:{ name:'Necromedic', icon:'🦴', hp:12, role:'Healer, revives', sig:'rise', dice:[
-    { name:'Stim Hex',    faces:['H3','H2','H2:cantrip','H1','C1','B'],                 plus:['H4','H3','H3:cantrip','H2','C2','H1'] },
-    { name:'Bone Splint', faces:['W2','H2','W1','H1','B','B'],                          plus:['W3','H3','W2','H2:pristine','H1','W1'] },
-    { name:'Lifetap',     faces:['D2:selfheal','D2:selfheal','D3:cruel','C1','C2','B'], plus:['D3:selfheal','D3:selfheal','D4:cruel','C2','C2','D1:selfheal'] } ] },
+    { name:'Arc Lash', faces:['A2','A2','A3:charged','A1:cantrip','C1','B'], plus:[
+      { label:'Overload',        faces:['A3','A3','A4:charged','A2:cantrip','C2','A1'] },
+      { label:'Chain Lightning', faces:['A2:cleave','A2','A3:charged','A2:cantrip','C2','A1:cantrip'] } ] },
+    { name:'Downdraft', faces:['W2','W1','A1','S','B','B'], plus:[
+      { label:'Gale Force',      faces:['W3','W2','A2','S','S:cantrip','W1'] },
+      { label:'Eye of the Storm',faces:['W2:selfshield','W2','A2:cantrip','S','S','C1'] } ] },
+    { name:'Squall', faces:['C2','C1:cantrip','A2','D2:cruel','W1','B'], plus:[
+      { label:'Downpour',        faces:['C3','C2:cantrip','A3','D3:cruel','W2','C1'] },
+      { label:'Static Build-up', faces:['C2:cantrip','C2:cantrip','A2:charged','D2:cruel','W1','C1'] } ] } ] },
   precog:{ name:'Precog', icon:'👁', hp:10, role:'Control: stuns, rewrites intents', sig:'toldyou', dice:[
-    { name:'Foresight',    faces:['S','S','E','E:cantrip','C1','B'],                    plus:['S','S:cantrip','E','E:cantrip','C2','C1'] },
-    { name:'Second Guess', faces:['E','W2','W1','C2','C1','B'],                         plus:['E','W3','W2','C3','C2','E'] },
-    { name:'Sidearm',      faces:['D2:patient','D2','D3','D1','D1:echo','B'],           plus:['D3:patient','D3','D4','D2','D2:echo','D1:echo'] } ] },
+    { name:'Foresight', faces:['S','S','E','E:cantrip','C1','B'], plus:[
+      { label:'Deep Trance',  faces:['S','S:cantrip','E','E:cantrip','C2','C1'] },
+      { label:'Clear Vision', faces:['S','S','E:cantrip','E:cantrip','C2:cantrip','W1'] } ] },
+    { name:'Second Guess', faces:['E','W2','W1','C2','C1','B'], plus:[
+      { label:'Overthink',   faces:['E','W3','W2','C3','C2','E'] },
+      { label:'Hedge Bets',  faces:['E','W2:pristine','W2','C2','C2','H2'] } ] },
+    { name:'Sidearm', faces:['D2:patient','D2','D3','D1','D1:echo','B'], plus:[
+      { label:'Extended Mag', faces:['D3:patient','D3','D4','D2','D2:echo','D1:echo'] },
+      { label:'Called Shot',  faces:['D3:patient','D3:patient','D3:cruel','D2:echo','D1:echo','R1'] } ] } ] },
   riot:{ name:'Riot Cleric', icon:'🛡️', hp:16, role:'Tank, wards, taunt', sig:'riotline', dice:[
-    { name:'Riot Ward', faces:['W3','W2','W2','W1','C1','B'],                           plus:['W4','W3','W3','W2','C2','W1:steel'] },
-    { name:'Flashbang', faces:['S','S:cantrip','D1','D1','W1','B'],                     plus:['S','S:cantrip','D2','D2:engage','W2','S'] },
-    { name:'Censure',   faces:['D3:steel','D2:steel','D2','H1','C1','B'],               plus:['D4:steel','D3:steel','D3','H2','C2','D1:steel'] } ] },
-  hexer:{ name:'Drone Hexer', icon:'🛸', hp:10, role:'Turrets and hacks', sig:'turret', dice:[
-    { name:'Turret',      faces:['D2','D2','D2:growth','D1:growth','C1','B'],           plus:['D3','D3','D3:growth','D2:growth','C2','D1:growth'] },
-    { name:'Hack',        faces:['S','S','C2','C1','B','B'],                            plus:['S','S:cantrip','C3','C2','C1:cantrip','B'] },
-    { name:'Sparkcaster', faces:['A2:charged','A1','D3','D1','W1','B'],                 plus:['A3:charged','A2','D4','D2','W2','A1:charged'] } ] },
+    { name:'Riot Ward', faces:['W3','W2','W2','W1','C1','B'], plus:[
+      { label:'Reinforced', faces:['W4','W3','W3','W2','C2','W1:steel'] },
+      { label:'Shield Wall', faces:['W3:steel','W3','W2','W2','H1','C1'] } ] },
+    { name:'Flashbang', faces:['S','S:cantrip','D1','D1','W1','B'], plus:[
+      { label:'Breaching Bang', faces:['S','S:cantrip','D2','D2:engage','W2','S'] },
+      { label:'Stun Grenade',   faces:['S','S:cantrip','S','D1:cleave','W2','C1'] } ] },
+    { name:'Censure', faces:['D3:steel','D2:steel','D2','H1','C1','B'], plus:[
+      { label:'Judgment', faces:['D4:steel','D3:steel','D3','H2','C2','D1:steel'] },
+      { label:'Smite',    faces:['D3:steel','D3:steel','D3:engage','H2','C1','D2'] } ] } ] },
 };
 const SIGS = {
   doorkick:{ name:'Door Kick',      cost:3, text:'2 piercing damage to every enemy.' },
   thunder: { name:'Thunderhead',    cost:4, text:'2 damage to every enemy.' },
-  rise:    { name:'Rise and Grind', cost:4, text:'Revive a downed teammate at 50% HP.' },
   toldyou: { name:'Told You So',    cost:3, text:'Stun the 2 enemies with the biggest intents.' },
   riotline:{ name:'Riot Line',      cost:3, text:'🛡2 on every operative, and every enemy attack this turn hits you instead.' },
-  turret:  { name:'Deploy Turret',  cost:4, text:'A turret shoots a random enemy for 2 before enemies act, every turn this floor.' },
   // abilities granted by die equipment
   zap:     { name:'Zap',            cost:2, text:'Stun a random enemy.' },
   flare:   { name:'Flare',          cost:3, text:'3 damage to the enemy with the most HP.' },
@@ -228,20 +251,20 @@ const FACE = {
 };
 // Keywords, after Slice & Dice. 'tag' is the short label shown on dice.
 const KW = {
-  cleave:    { tag:'CLV', name:'Cleave',      text:'Also hits the enemies on both sides of the target for the same amount.' },
-  engage:    { tag:'ENG', name:'Engage',      text:'Double if the target is at full HP.' },
-  cruel:     { tag:'CRU', name:'Cruel',       text:'Double if the target is at half HP or less.' },
-  cantrip:   { tag:'CAN', name:'Cantrip',     text:'Fires on a random target the moment it lands face up while rolling. You can still use the die afterward.' },
-  pristine:  { tag:'PRI', name:'Pristine',    text:'Double if you are at full HP.' },
-  steel:     { tag:'STL', name:'Steel',       text:'+1 for each point of ward you have.' },
-  charged:   { tag:'CHG', name:'Charged',     text:'+1 for each ✦ charge you have.' },
-  echo:      { tag:'ECH', name:'Echo',        text:'Its number becomes the number of the last die you used this turn.' },
-  patient:   { tag:'PAT', name:'Patient',     text:'Double if this die was not used last turn.' },
-  growth:    { tag:'GRO', name:'Growth',      text:'This face gets +1 every time it is used, for the rest of the floor.' },
-  selfshield:{ tag:'SSH', name:'Self-shield', text:'Also gives you ward equal to its number.' },
-  selfheal:  { tag:'SHL', name:'Self-heal',   text:'Also heals you by its number.' },
-  poison:    { tag:'PSN', name:'Poison',      text:'The target takes 1 more damage at the end of every turn this floor (stacks).' },
-  pain:      { tag:'PAIN',name:'Pain',        text:'You take 1 damage when you use it.' },
+  cleave:    { g:'↔', tag:'CLV', name:'Cleave',      text:'Also hits the enemies on both sides of the target for the same amount.' },
+  engage:    { g:'⊕', tag:'ENG', name:'Engage',      text:'Double if the target is at full HP.' },
+  cruel:     { g:'✂', tag:'CRU', name:'Cruel',       text:'Double if the target is at half HP or less.' },
+  cantrip:   { g:'!', tag:'CAN', name:'Cantrip',     text:'Fires on a random target the moment it lands face up while rolling. You can still use the die afterward.' },
+  pristine:  { g:'✧', tag:'PRI', name:'Pristine',    text:'Double if you are at full HP.' },
+  steel:     { g:'▣', tag:'STL', name:'Steel',       text:'+1 for each point of ward you have.' },
+  charged:   { g:'ϟ', tag:'CHG', name:'Charged',     text:'+1 for each ✦ charge you have.' },
+  echo:      { g:'≈', tag:'ECH', name:'Echo',        text:'Its number becomes the number of the last die you used this turn.' },
+  patient:   { g:'⧗', tag:'PAT', name:'Patient',     text:'Double if this die was not used last turn.' },
+  growth:    { g:'↑', tag:'GRO', name:'Growth',      text:'This face gets +1 every time it is used, for the rest of the floor.' },
+  selfshield:{ g:'◈', tag:'SSH', name:'Self-shield', text:'Also gives you ward equal to its number.' },
+  selfheal:  { g:'♥', tag:'SHL', name:'Self-heal',   text:'Also heals you by its number.' },
+  poison:    { g:'☠', tag:'PSN', name:'Poison',      text:'The target takes 1 more damage at the end of every turn this floor (stacks).' },
+  pain:      { g:'✶', tag:'PAIN',name:'Pain',        text:'You take 1 damage when you use it.' },
 };
 const NUMERIC = t => FACE[t].num;
 const DMG = t => t === 'D' || t === 'R' || t === 'A';
@@ -329,8 +352,8 @@ const hasEq = (st, p, id) => st.players[p].equip.includes(id);
 const maxHp = (st, p) => { const P = st.players[p]; return CLASSES[P.cls].hp + (P.equip.includes('union') ? 5 : 0); };
 const floorDef = st => FLOORS[st.floor - 1];
 const dieDef = (P, di) => CLASSES[P.cls].dice[di];
-const facesOf = (P, di) => P.dice[di].plus ? dieDef(P, di).plus : dieDef(P, di).faces;
-const dieName = (P, di) => dieDef(P, di).name + (P.dice[di].plus ? '+' : '');
+const facesOf = (P, di) => P.dice[di].plus != null ? dieDef(P, di).plus[P.dice[di].plus].faces : dieDef(P, di).faces;
+const dieName = (P, di) => dieDef(P, di).name + (P.dice[di].plus != null ? '+' : '');
 
 function newRun(mode, seed) {
   return { v:2, mode, seed: seed | 0, phase:'lobby', floor:0, players:[], enemies:[], turrets:[], taunt:null, turn:0, log:[], result:null, rollN:0, resolveN:0, msg:'' };
@@ -342,7 +365,7 @@ function addPlayer(st, name) {
 function removePlayer(st, i) { st.players.splice(i, 1); }
 function setupOperative(st, p) {
   const P = st.players[p];
-  P.dice = CLASSES[P.cls].dice.map(() => ({ plus:false, gear:[], grow:[0,0,0,0,0,0] }));
+  P.dice = CLASSES[P.cls].dice.map(() => ({ plus:null, gear:[], grow:[0,0,0,0,0,0] }));
   P.equip = []; P.hp = CLASSES[P.cls].hp; P.down = false; P.charge = 0;
 }
 
@@ -514,10 +537,8 @@ function castAbility(st, p, s) {
   const al = foesAlive(st);
   if (s === 'doorkick') al.forEach(i => hitEnemy(st, p, i, 2, true, src));
   if (s === 'thunder') al.forEach(i => hitEnemy(st, p, i, 2, false, src));
-  if (s === 'rise') { const t = st.players.findIndex((x, i) => i !== p && x.down && !x.gone); if (t >= 0) { const T = st.players[t]; T.down = false; T.hp = Math.ceil(maxHp(st, t) / 2); T.step = 'ready'; T.roll = []; L(st, 'ally', src, T.name, `Back up at ${T.hp} HP (rolls next turn)`); } }
   if (s === 'toldyou') al.filter(i => !st.enemies[i].stun).sort((a, b) => intentSize(st.enemies[b]) - intentSize(st.enemies[a])).slice(0, 2).forEach(i => { st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); });
   if (s === 'riotline') { st.taunt = p; living(st).forEach(i => st.players[i].ward += 2); L(st, 'ally', src, 'Squad', `+2 ward each; enemies target ${P.name}`); }
-  if (s === 'turret') { st.turrets.push(p); L(st, 'ally', src, '—', 'Turret online'); }
   if (s === 'zap') { const c = al.filter(i => !st.enemies[i].stun); if (c.length) { const i = pick(st, c); st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); } }
   if (s === 'flare' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp > st.enemies[b].hp ? i : b), 3, false, src);
   if (s === 'triage') { const lv = living(st); if (lv.length) healPlayer(st, lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b), 3, src); }
@@ -536,7 +557,6 @@ function validTarget(st, t, tg) {
 }
 const needsTarget = t => !['C', 'B'].includes(t);
 function abilityUsable(st, p, s) {
-  if (s === 'rise') return st.players.some((x, i) => i !== p && x.down && !x.gone);
   if (s === 'riotline' || s === 'triage') return true;
   return foesAlive(st).length > 0;
 }
@@ -603,8 +623,8 @@ function act(st, p, a) {
       if (st.phase !== 'upgrade' || P.picked) return 'Not picking now';
       const o = P.offers[a.i]; if (!o) return 'bad';
       if (o.k === 'plus') {
-        const d = P.dice[a.d]; if (!d || d.plus) return 'Pick a die that is not upgraded yet';
-        d.plus = true;
+        const d = P.dice[o.d]; if (!d || d.plus != null || !(a.v === 0 || a.v === 1)) return 'Pick one of the two upgrades';
+        d.plus = a.v;
       } else if (o.k === 'gear') {
         const d = P.dice[a.d]; if (!d) return 'Pick a die';
         if (d.gear.length >= RULES.gearPerDie) { if (!(a.r >= 0 && a.r < d.gear.length)) return 'Pick gear to replace'; d.gear.splice(a.r, 1); }
@@ -666,7 +686,8 @@ function floorCleared(st) {
     if (P.down) { P.down = false; P.hp = Math.ceil(mx / 2); }
     else P.hp = Math.min(mx, P.hp + Math.ceil((mx - P.hp) / 2));
     P.picked = false; P.step = 'wait'; P.roll = []; P.ward = 0; P.cast = [];
-    if (UPGRADE_FLOORS.includes(st.floor) && P.dice.some(d => !d.plus)) P.offers = [{ k:'plus' }];
+    const free = P.dice.map((d, i) => i).filter(i => P.dice[i].plus == null);
+    if (UPGRADE_FLOORS.includes(st.floor) && free.length) P.offers = [{ k:'plus', d: pick(st, free) }];   // the die is random; you pick which upgrade
     else {
       const gear = shuffle(st, Object.keys(GEAR)), eq = shuffle(st, Object.keys(EQUIP).filter(e => !P.equip.includes(e)));
       P.offers = [{ k:'gear', id: gear[0] }, { k:'gear', id: gear[1] }, eq.length ? { k:'equip', id: eq[0] } : { k:'gear', id: gear[2] }];
@@ -679,7 +700,7 @@ function botNext(st, p) {
   const P = st.players[p]; if (!P) return null;
   if (st.phase === 'upgrade' && !P.picked) {
     const o = P.offers[0];
-    if (o.k === 'plus') return { t:'take', i: 0, d: P.dice.findIndex(d => !d.plus) };
+    if (o.k === 'plus') return { t:'take', i: 0, v: (p + st.floor) % 2 };
     const ei = P.offers.findIndex(x => x.k === 'equip');
     if (ei >= 0 && P.equip.length < RULES.equipPerPlayer) return { t:'take', i: ei };
     const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0);
@@ -715,7 +736,8 @@ function botNext(st, p) {
 // ================= AUDIO =================
 let actx = null, master = null, musicGain = null;
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
-let muted = store.get('kc-mute') === '1', musicOn = store.get('kc-music') !== '0';
+// ?mute in the URL silences everything (used for automated testing).
+let muted = store.get('kc-mute') === '1' || new URLSearchParams(location.search).has('mute'), musicOn = store.get('kc-music') !== '0';
 function ac() {
   if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; }
     master = actx.createGain(); master.connect(actx.destination); musicGain = actx.createGain(); musicGain.connect(master); applyVol(); }
@@ -775,6 +797,7 @@ const myName = () => (store.get('kc-name') || 'Operative').slice(0, 14);
 
 function dispatch(a) {
   ac();
+  if (a.t !== 'ready') ui.confirmEnd = false;
   if (net.role === 'client') { if (net.host && net.host.open) net.host.send({ t:'act', a }); return; }
   if (!st) return;
   const err = act(st, me, a);
@@ -890,15 +913,16 @@ function teardown() {
 function endSession(msg) { teardown(); st = null; me = 0; screen = 'menu'; ui.err = msg || ''; ui.sel = ui.pend = null; render(); }
 
 // ================= RENDER HELPERS =================
-const kwTip = kw => kw.length ? ' · ' + kw.map(k => `${KW[k].name}: ${KW[k].text}`).join(' · ') : '';
+const kwTip = kw => kw.map(k => `\n${KW[k].g} ${KW[k].name}: ${KW[k].text}`).join('');
 function faceTip(f) { const F = FACE[f.t]; return `${F.name}${F.num ? ' ' + f.n : ''}: ${F.text(f.n)}${kwTip(f.kw)}`; }
 function faceChip(f, extra = '', attrs = '') {
   const F = FACE[f.t];
-  return `<span class="f f-${f.t} ${f.kw.length ? 'haskw' : ''} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}>${F.icon}${F.num ? f.n : ''}${f.kw.length ? `<i class="kwdot">${f.kw.length}</i>` : ''}</span>`;
+  return `<span class="f f-${f.t} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}><span>${F.icon}${F.num ? f.n : ''}</span>${kwGlyphs(f.kw)}</span>`;
 }
+const kwGlyphs = kw => kw.length ? `<i class="kwg">${kw.map(k => KW[k].g).join('')}</i>` : '';
 const codeHtml = (c, extra, attrs) => faceChip(parse(c), extra, attrs);
 const effHtml = (p, di, fi, extra, attrs) => faceChip(effFace(st, p, di, fi), extra, attrs);
-const dieInner = f => `${FACE[f.t].icon}${FACE[f.t].num ? `<span>${f.n}</span>` : ''}${f.kw && f.kw.length ? `<em class="kws">${f.kw.map(k => KW[k].tag).join(' ')}</em>` : ''}`;
+const dieInner = f => `${FACE[f.t].icon}${FACE[f.t].num ? `<span>${f.n}</span>` : ''}${f.kw && f.kw.length ? `<em class="kws">${f.kw.map(k => KW[k].g).join('')}</em>` : ''}`;
 const gearBadges = gear => gear.length ? `<span class="gears">${gear.map(g => `<span class="gear" data-tip="${esc(GEAR[g].name + ': ' + GEAR[g].text)}">${GEAR[g].icon}</span>`).join('')}</span>` : '';
 const pname = i => i === me ? 'You' : esc(st.players[i].name);
 function foeLabel(i, short) {   // "Guard B" when several enemies share a type
@@ -1003,7 +1027,7 @@ function lobbyHtml() {
   return `<div class="stack">
     <div class="row" style="justify-content:space-between;align-items:flex-start">
       <div class="stack" style="gap:6px"><h2>${st.mode === 'solo' ? 'Pick your operative' : 'Squad select'}</h2>
-        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Hover any face for details; a small number on a face counts its keywords.</p>'}
+        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Hover any face for details. Small purple symbols under a number are keywords.</p>'}
       </div>
       <div class="row">${me === 0 ? `<button class="btn" data-ui="start" ${ready ? '' : 'disabled'}>Breach floor 1</button>${ready ? '' : '<span class="muted" style="font-size:.85rem">Everyone needs a class.</span>'}` : '<span class="muted">The host starts the run.</span>'}</div>
     </div>
@@ -1034,13 +1058,13 @@ function opCard(p) {
   const statusTxt = { roll:'ROLLING', use:'IN ACTION', ready:'READY', down:'DOWN', gone:'LEFT', wait:'' }[status] || '';
   const dice = P.dice.map((dd, di) => {
     const d = P.roll[di];
-    if (!d) return `<div class="dcol"><div class="die empty">${gearBadges(dd.gear)}</div><span class="tg">${esc(dieName(P, di))}</span></div>`;
+    if (!d) return `<div class="dcol"><div class="die empty">${gearBadges(dd.gear)}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button></div>`;
     const f = effFace(st, p, di, d.fi);
     const key = p + ':' + di, isRoll = renderCache.roll[key] !== d.r; renderCache.rollNext[key] = d.r;
     const usable = mine && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
     const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', d.k && P.step === 'roll' ? 'kept' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : ''].join(' ');
-    const tl = P.step === 'roll' ? (d.k ? 'kept' : esc(dieName(P, di))) : d.used ? 'used' : f.t === 'B' ? '—' : esc(dieName(P, di));
-    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(dieName(P, di) + ' · ' + faceTip(f))}">${dieInner(f)}${gearBadges(dd.gear)}</div><span class="tg">${tl}</span></div>`;
+    const state = P.step === 'roll' ? (d.k ? 'kept' : '') : d.used ? 'used' : '';
+    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(dieName(P, di) + '\n' + faceTip(f))}">${dieInner(f)}${gearBadges(dd.gear)}</div><button class="dname" data-inspect="${p}:${di}" data-tip="See every side of this die">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
   }).join('');
   const abil = [C.sig, ...abilitiesOf(P)];
   let sig;
@@ -1073,12 +1097,16 @@ function battleHtml() {
   else if (P.down) hint = 'You\'re down. Your squad fights on, and you\'re back next floor at 50% HP.';
   else if (P.step === 'roll') {
     hint = 'Click dice to keep them, then reroll the rest. Cantrip faces fire as soon as they land.';
-    buttons = `<button class="btn" data-ui="reroll" ${P.rerolls > 0 ? '' : 'disabled'}>Reroll unkept (${P.rerolls} left)</button><button class="btn ghost" data-ui="done">Done rolling</button>`;
+    buttons = `<button class="btn" data-ui="reroll" ${P.rerolls > 0 ? '' : 'disabled'}>Reroll (${P.rerolls} left)</button><button class="btn ghost" data-ui="done">Done rolling</button>`;
   } else if (P.step === 'use') {
     const f = selFace();
-    hint = f ? (needsTarget(f.t) ? 'Click a highlighted enemy or operative. It happens right away.' : '') : 'Click a die to use it: it hits right away. ✦ dice charge on click. Press Ready when you\'re done.';
+    hint = f ? (needsTarget(f.t) ? 'Click a highlighted enemy or operative. It happens right away.' : '') : 'Click a die to use it: it hits right away. ✦ dice charge on click. Click a die\'s name to see all its sides.';
     const left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
-    buttons = `<button class="btn" data-ui="ready">${left ? `Ready (${left} unused)` : 'Ready'}</button>${ui.sel != null ? '<button class="btn ghost" data-ui="desel">Cancel</button>' : ''}`;
+    const abil = [CLASSES[P.cls].sig, ...abilitiesOf(P)].filter(s => !(P.cast || []).includes(s) && P.charge >= sigCost(st, me, s) && abilityUsable(st, me, s)).length;
+    if (ui.confirmEnd && (left || abil)) {
+      hint = `You still have ${left ? `${left} unused ${left > 1 ? 'dice' : 'die'}` : ''}${left && abil ? ' and ' : ''}${abil ? `${abil} ability ready` : ''}. End your turn anyway?`;
+      buttons = '<button class="btn ghost" data-ui="keepgoing">Keep playing</button><button class="btn" data-ui="endnow">End turn anyway</button>';
+    } else buttons = `${ui.sel != null ? '<button class="btn ghost" data-ui="desel">Cancel</button>' : ''}<button class="btn ${left ? 'ghost' : ''}" data-ui="ready">End turn</button>`;
   } else {
     hint = waiting.length ? `Waiting for ${waiting.join(', ')}…` : 'Enemies are acting…';
     buttons = '<button class="btn ghost" data-ui="unready">Not ready yet</button>';
@@ -1098,15 +1126,36 @@ function battleHtml() {
 }
 
 function offerDesc(o) {
-  if (o.k === 'plus') return { icon:'⬆', name:'Die upgrade', tag:'One die becomes its + version', text:'Pick one of your dice to upgrade for the rest of the run.' };
+  if (o.k === 'plus') return { icon:'⬆', name:'Die upgrade', tag:'A random die becomes +', text:'Pick one of two + versions.' };
   if (o.k === 'gear') return { icon: GEAR[o.id].icon, name: GEAR[o.id].name, tag:'Die equipment · 2 per die', text: GEAR[o.id].text };
   return { icon: EQUIP[o.id].icon, name: EQUIP[o.id].name, tag:'Player equipment · 2 max', text: EQUIP[o.id].text };
 }
+function netHtml(faces, size) {   // faces: effective face objects, laid out like an unfolded die
+  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}"><span>${FACE[f.t].icon}${FACE[f.t].num ? f.n : ''}</span>${kwGlyphs(f.kw)}</div>`).join('')}</div>`;
+}
+const effFaces = (p, di) => [0, 1, 2, 3, 4, 5].map(fi => effFace(st, p, di, fi));
+const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(GEAR[g].text)}">${GEAR[g].icon} <b style="color:var(--fg)">${GEAR[g].name}</b>: ${GEAR[g].text}</div>`).join('')}</div>` : '';
 function dieBlock(p, di, extra) {
   const P = st.players[p], d = P.dice[di];
-  return `<div class="mydie"><b style="font-family:var(--display)">${esc(dieName(P, di))}</b>
-    <div class="faces">${[0, 1, 2, 3, 4, 5].map(fi => effHtml(p, di, fi)).join('')}</div>
-    <span class="muted" style="font-size:.78rem">Gear: ${d.gear.length ? d.gear.map(g => `<span data-tip="${esc(GEAR[g].text)}">${GEAR[g].icon} ${GEAR[g].name}</span>`).join(', ') : 'none'} (${d.gear.length}/${RULES.gearPerDie})</span>${extra || ''}</div>`;
+  return `<div class="mydie"><button class="dname" style="font-size:.9rem;align-self:flex-start" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button>
+    ${netHtml(effFaces(p, di), '2.9rem')}${gearLine(d)}${extra || ''}</div>`;
+}
+function abilitiesHtml(p) {
+  const P = st.players[p], own = CLASSES[P.cls].sig;
+  const rows = [own, ...abilitiesOf(P)].map(s => `<div>✦ <b style="color:#e6cfff">${SIGS[s].name}</b> (${sigCost(st, p, s)}✦): ${SIGS[s].text}${s === own ? ' <span class="tag">signature</span>' : ' <span class="tag">from gear</span>'}</div>`).join('');
+  return `<div style="font-size:.85rem" class="stack"><b>Charge abilities</b>${rows}<span class="muted">✦ comes from ✦ faces and resets each floor${hasEq(st, p, 'flask') ? ' (you start each floor with 2)' : ''}.</span></div>`;
+}
+function showDie(p, di) {
+  const P = st.players[p], d = P.dice[di], o = $('overlay');
+  const plus = d.plus != null ? `<span class="tag">+ ${esc(dieDef(P, di).plus[d.plus].label)}</span>` : '';
+  const abil = d.gear.filter(g => GEAR[g].ability).map(g => `<div>✦ <b>${SIGS[GEAR[g].ability].name}</b> (${SIGS[GEAR[g].ability].cost}✦): ${SIGS[GEAR[g].ability].text}</div>`).join('');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between"><h3>${esc(dieName(P, di))} ${plus}</h3><button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <p class="muted" style="margin:0">${p === me ? 'Your' : esc(P.name) + "'s"} ${CLASSES[P.cls].name} die. Hover a side to see exactly what it does.</p>
+    <div class="netwrap">${netHtml(effFaces(p, di), '4.6rem')}
+      <div class="stack" style="min-width:14rem;flex:1">${d.gear.length ? `<b>Equipped gear</b>${gearLine(d)}` : ''}${abil}</div></div>
+  </div>`;
+  o.classList.remove('hidden');
 }
 function upgradeHtml() {
   const P = st.players[me];
@@ -1115,13 +1164,10 @@ function upgradeHtml() {
   let body = '';
   if (P && !P.picked && !P.gone) {
     if (P.offers[0].k === 'plus') {
-      body = `<p class="muted" style="margin:0">Upgrade floor: pick one die to become its + version.</p><div class="tiles">${P.dice.map((d, di) => {
-        const D = dieDef(P, di);
-        return `<div class="tile ${d.plus ? 'taken' : ''}"><div class="hh"><b>${esc(D.name)} → ${esc(D.name)}+</b></div>
-          <div class="dl"><span class="dn">Now</span><div class="faces">${[0, 1, 2, 3, 4, 5].map(fi => effHtml(me, di, fi)).join('')}</div>
-          <span class="dn">After</span><div class="faces">${D.plus.map(c => codeHtml(c)).join('')}</div></div>
-          ${d.plus ? '<span class="tag">Already upgraded</span>' : `<button class="btn sm" data-plus="${di}">Upgrade</button>`}</div>`;
-      }).join('')}</div>`;
+      const di = P.offers[0].d, D = dieDef(P, di);
+      body = `<p class="muted" style="margin:0">Upgrade floor. The tower picked your <b style="color:var(--fg)">${esc(D.name)}</b> die. Choose how it upgrades (gear on it stays).</p>
+      <div class="netwrap"><div class="mydie"><b>Now</b>${netHtml(effFaces(me, di), '2.9rem')}</div>
+      ${D.plus.map((v, k) => `<div class="mydie"><b>${esc(D.name)}+ · ${esc(v.label)}</b>${netHtml(v.faces.map(parse), '2.9rem')}<button class="btn sm" data-plusv="${k}">Choose ${esc(v.label)}</button></div>`).join('')}</div>`;
     } else {
       const tiles = P.offers.map((o, i) => { const d = offerDesc(o); return `<div class="tile ${ui.pend === i ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${d.text}</div><button class="btn sm" data-offer="${i}">Choose</button></div>`; }).join('');
       let chooser = '';
@@ -1134,7 +1180,7 @@ function upgradeHtml() {
     }
   } else body = `<p class="muted">${P && P.gone ? 'You left this run.' : 'Picked. Waiting for your squad…'}</p>`;
   const mine = P && !P.gone && ui.pend == null ? `<div class="box stack"><h3>Your loadout · ${CLASSES[P.cls].icon} ${CLASSES[P.cls].name}</h3><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di)).join('')}</div>
-    <div class="muted" style="font-size:.85rem">HP ${P.hp}/${maxHp(st, me)} · Player equipment (${P.equip.length}/${RULES.equipPerPlayer}): ${P.equip.map(r => EQUIP[r].icon + ' ' + EQUIP[r].name).join(', ') || 'none'}</div></div>` : '';
+    <div class="muted" style="font-size:.85rem">HP ${P.hp}/${maxHp(st, me)} · Player equipment (${P.equip.length}/${RULES.equipPerPlayer}): ${P.equip.map(r => `<span data-tip="${esc(EQUIP[r].text)}">${EQUIP[r].icon} ${EQUIP[r].name}</span>`).join(', ') || 'none'}</div>${abilitiesHtml(me)}</div>` : '';
   const nextUp = UPGRADE_FLOORS.includes(st.floor + 1) ? ' After it: a die upgrade.' : '';
   return `<div class="stack">
     <div class="row" style="justify-content:space-between"><div><h2>Floor ${st.floor} cleared</h2><p class="muted" style="margin:4px 0 0">Everyone healed half their missing HP; downed operatives are back at 50%. Next: floor ${st.floor + 1}, ${esc(next.name)}.${nextUp}</p></div><div class="row">${status}</div></div>
@@ -1196,18 +1242,18 @@ function logoBig() {
 function showHelp() {
   const o = $('overlay');
   const faces = ['D2', 'R2', 'A2', 'W2', 'H2', 'S', 'E', 'C2', 'B'].map(c => { const { t } = parse(c); return `<tr><td>${codeHtml(c)}</td><td><b>${FACE[t].name}</b></td><td>${FACE[t].text('N')}</td></tr>`; }).join('');
-  const kws = Object.values(KW).map(k => `<tr><td class="mono">${k.tag}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
+  const kws = Object.values(KW).map(k => `<tr><td class="mono" style="color:var(--arcane)">${k.g}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
   o.innerHTML = `<div class="box">
     <div class="row" style="justify-content:space-between">${logoBig()}<button class="btn ghost" data-ui="closehelp">Close</button></div>
     <h3>How to play</h3>
     <ul>
       <li>You are one operative with <b>3 class dice</b>. Up to 4 friends breach a 10-floor tower; each floor is one fight, and bosses wait on floors 5 and 10.</li>
       <li><b>Each turn</b> every enemy shows its intent (what it will do and to whom). Everyone rolls at once: click dice to keep, reroll the rest (2 rerolls).</li>
-      <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>Ready</b> when you're done.</li>
+      <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>End turn</b> when you're done (it checks with you if dice or abilities are left).</li>
       <li>When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then.</li>
       <li><b>✦ Charge</b> pays for your class signature and any abilities your gear grants.</li>
-      <li>At 0 HP you're <b>down</b>. You're back next floor at 50% HP (or sooner if a Necromedic revives you). The run ends if the whole squad is down.</li>
-      <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 you upgrade one whole die (Riot Ward → Riot Ward+). After the others you pick die equipment (2 per die) or player equipment (2 per operative).</li>
+      <li>At 0 HP you're <b>down</b>. You're back next floor at 50% HP. The run ends if the whole squad is down.</li>
+      <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 a random die of yours is upgraded, and you pick which of its two + versions it becomes. After the others you pick die equipment (2 per die) or player equipment (2 per operative).</li>
     </ul>
     <h3>Faces</h3><table>${faces}</table>
     <h3>Keywords</h3><table>${kws}</table>
@@ -1224,7 +1270,7 @@ function showText(title, text, importing) {
 // ================= INPUT =================
 let autoTimer = null;
 document.addEventListener('click', e => {
-  const el = e.target.closest('[data-ui],[data-cls],[data-die],[data-cast],[data-offer],[data-plus],[data-gear],[data-equip],[data-dev]');
+  const el = e.target.closest('[data-ui],[data-cls],[data-die],[data-cast],[data-offer],[data-plusv],[data-gear],[data-equip],[data-dev],[data-inspect]');
   ac();
   if (el) {
     const d = el.dataset;
@@ -1248,7 +1294,8 @@ document.addEventListener('click', e => {
       if (o.k === 'equip' && P.equip.length < RULES.equipPerPlayer) return dispatch({ t:'take', i: +d.offer });
       ui.pend = +d.offer; return render();
     }
-    if (d.plus != null) return dispatch({ t:'take', i: 0, d: +d.plus });
+    if (d.plusv != null) return dispatch({ t:'take', i: 0, v: +d.plusv });
+    if (d.inspect) { const [ip, idi] = d.inspect.split(':').map(Number); return showDie(ip, idi); }
     if (d.gear != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, d: +d.gear, r: d.r != null ? +d.r : undefined }); }
     if (d.equip != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, r: +d.equip }); }
   }
@@ -1299,9 +1346,17 @@ function uiAction(k) {
     case 'start': dispatch({ t:'start' }); break;
     case 'reroll': dispatch({ t:'reroll' }); break;
     case 'done': dispatch({ t:'done' }); break;
-    case 'ready': ui.sel = null; dispatch({ t:'ready' }); break;
-    case 'unready': dispatch({ t:'unready' }); break;
-    case 'desel': ui.sel = null; render(); break;
+    case 'ready': {   // ask first if dice or abilities are left, so a stray click doesn't waste a turn
+      ui.sel = null;
+      const P = st.players[me], left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
+      const abil = [CLASSES[P.cls].sig, ...abilitiesOf(P)].some(s => !(P.cast || []).includes(s) && P.charge >= sigCost(st, me, s) && abilityUsable(st, me, s));
+      if (left || abil) { ui.confirmEnd = true; render(); } else dispatch({ t:'ready' });
+      break;
+    }
+    case 'endnow': ui.confirmEnd = false; dispatch({ t:'ready' }); break;
+    case 'keepgoing': ui.confirmEnd = false; render(); break;
+    case 'unready': ui.confirmEnd = false; dispatch({ t:'unready' }); break;
+    case 'desel': ui.sel = null; ui.confirmEnd = false; render(); break;
     case 'unpend': ui.pend = null; render(); break;
     case 'restart': dispatch({ t:'restart' }); break;
   }

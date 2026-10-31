@@ -37,11 +37,11 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 - [Roadmap to alpha](#roadmap-to-alpha)
 
 ## How to play
-1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class.
+1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class (4 classes).
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target.
 3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). **Cantrip** faces fire on a random target the moment they land.
 4. **Use dice in real time.** Click a die, then its target. It happens right away, and everyone sees HP and ward change. ✦ dice charge as soon as you click them. Abilities (your signature, plus any your gear grants) also fire right away, once per turn each.
-5. **Ready.** Unused dice are lost. When the whole squad is ready, turrets fire, then every enemy that's still standing and not stunned acts. Ward lasts until then. Poison ticks at the end of the turn.
+5. **End turn.** Unused dice are lost. If you still have unused dice or a usable ability, End turn asks you to confirm first. When the whole squad is ready, turrets fire, then every enemy that's still standing and not stunned acts. Ward lasts until then. Poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down. A Necromedic can revive you; otherwise you're back next floor at 50% HP. The run ends when the whole squad is down.
 7. **Between floors** everyone heals half their missing HP and picks an upgrade (see below).
 8. **Win** by clearing floor 10, the CEO.
@@ -60,39 +60,37 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 | ✕ Blank | Nothing |
 
 ## Keywords
-These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywords), adapted to co-op. A purple number on a face chip counts its keywords; big dice show short tags.
+These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywords), adapted to co-op. Each keyword has a small purple symbol shown under the number on every die side, so you can read a die at a glance. Hovering lists each keyword on its own line.
 
-| Tag | Keyword | Effect |
+| Symbol | Keyword | Effect |
 |---|---|---|
-| CLV | Cleave | Also hits the enemies on both sides of the target for the same amount |
-| ENG | Engage | Double if the target is at full HP |
-| CRU | Cruel | Double if the target is at half HP or less |
-| CAN | Cantrip | Fires on a random target the moment it lands while rolling; the die can still be used |
-| PRI | Pristine | Double if you're at full HP |
-| STL | Steel | +1 per point of ward you have |
-| CHG | Charged | +1 per ✦ you have |
-| ECH | Echo | Takes the number of the last die you used this turn |
-| PAT | Patient | Double if this die wasn't used last turn |
-| GRO | Growth | This face gets +1 each time it's used, for the rest of the floor |
-| SSH | Self-shield | Also gives you that much ward |
-| SHL | Self-heal | Also heals you that much |
-| PSN | Poison | The target takes 1 more damage at the end of every turn this floor (stacks) |
-| PAIN | Pain | You take 1 damage when you use it |
+| ↔ | Cleave | Also hits the enemies on both sides of the target for the same amount |
+| ⊕ | Engage | Double if the target is at full HP |
+| ✂ | Cruel | Double if the target is at half HP or less |
+| ! | Cantrip | Fires on a random target the moment it lands while rolling; the die can still be used |
+| ✧ | Pristine | Double if you're at full HP |
+| ▣ | Steel | +1 per point of ward you have |
+| ϟ | Charged | +1 per ✦ you have |
+| ≈ | Echo | Takes the number of the last die you used this turn |
+| ⧗ | Patient | Double if this die wasn't used last turn |
+| ↑ | Growth | This face gets +1 each time it's used, for the rest of the floor |
+| ◈ | Self-shield | Also gives you that much ward |
+| ♥ | Self-heal | Also heals you that much |
+| ☠ | Poison | The target takes 1 more damage at the end of every turn this floor (stacks) |
+| ✶ | Pain | You take 1 damage when you use it |
 
 ## Classes and dice
 | Class | HP | Dice (base) | Signature |
 |---|---|---|---|
 | 💥 Breach Mage | 14 | Scattershot ⚔2 CLV, ⚔2, ⚔3, ➹1, ➹2 ENG, ✕ · Breaching Charge ⚔4 ENG, ➹3, ➹2, ⚔1, ✕, ✕ · Kevlar Ward 🛡2, 🛡2, 🛡3, 🛡1, ✦1, ✕ | Door Kick (3✦): 2 piercing to every enemy |
 | ⚡ Storm Witch | 11 | Arc Lash ⚡2, ⚡2, ⚡3 CHG, ⚡1 CAN, ✦1, ✕ · Downdraft 🛡2, 🛡1, ⚡1, ◉, ✕, ✕ · Squall ✦2, ✦1 CAN, ⚡2, ⚔2 CRU, 🛡1, ✕ | Thunderhead (4✦): 2 to every enemy |
-| 🦴 Necromedic | 12 | Stim Hex ✚3, ✚2, ✚2 CAN, ✚1, ✦1, ✕ · Bone Splint 🛡2, ✚2, 🛡1, ✚1, ✕, ✕ · Lifetap ⚔2 SHL, ⚔2 SHL, ⚔3 CRU, ✦1, ✦2, ✕ | Rise and Grind (4✦): revive a downed teammate at 50% |
 | 👁 Precog | 10 | Foresight ◉, ◉, 👁, 👁 CAN, ✦1, ✕ · Second Guess 👁, 🛡2, 🛡1, ✦2, ✦1, ✕ · Sidearm ⚔2 PAT, ⚔2, ⚔3, ⚔1, ⚔1 ECH, ✕ | Told You So (3✦): stun the 2 biggest intents |
 | 🛡️ Riot Cleric | 16 | Riot Ward 🛡3, 🛡2, 🛡2, 🛡1, ✦1, ✕ · Flashbang ◉, ◉ CAN, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2 STL, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
-| 🛸 Drone Hexer | 10 | Turret ⚔2, ⚔2, ⚔2 GRO, ⚔1 GRO, ✦1, ✕ · Hack ◉, ◉, ✦2, ✦1, ✕, ✕ · Sparkcaster ⚡2 CHG, ⚡1, ⚔3, ⚔1, 🛡1, ✕ | Deploy Turret (4✦): 2 to a random enemy every turn this floor |
 
-Every die has a **+ version** (most numbers +1, blanks filled in, an extra keyword or two). Hover a die on the upgrade screen to compare.
+Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two + versions**: one mostly raises numbers, the other leans on keywords (for example Scattershot+ Heavy Load or Wide Spread). Click any die's name, in battle or on the loadout, to open it as an unfolded die and hover each side; equipped gear is listed only if there is any.
 
 ## Between floors
-- **After floors 2, 5 and 8:** a die upgrade. Pick one of your 3 dice to become its + version (Riot Ward → Riot Ward+). Each die can be upgraded once, so by floor 9 all three are +.
+- **After floors 2, 5 and 8:** a die upgrade. A random die that isn't upgraded yet is picked for you, and you choose which of its two + versions it becomes. By floor 9 all three dice are +.
 - **After floors 1, 3, 4, 6, 7 and 9:** pick 1 of 3 offers. Two are die equipment and one is player equipment.
 - Die equipment: **2 per die**. Installing on a full die asks which piece to replace.
 - Player equipment: **2 per operative**. Taking a third asks which to replace.
@@ -169,7 +167,7 @@ Enemy numbers get +1 from floor 4 and +2 from floor 8.
 | 3 | 4 (5 on floors 7–9) | ×2.4 | +1 | 3 |
 | 4 | 5 (6 on floors 7–9) | ×3.4 | +1 | 4 |
 
-Normal enemy HP also grows 10% per floor, and each extra operative adds one escort on boss floors. Tuned with 100 bot runs per squad size: a simple bot won 13–19% of runs and reached floor 7.5–9 on average at every size. Real players should do better.
+Normal enemy HP also grows 10% per floor, and each extra operative adds one escort on boss floors. Tuned with bot runs: with the 4 classes, a simple bot won 11–24% of runs and reached floor 8–9 on average at every squad size (80 runs each). Real players should do better.
 
 ## Multiplayer
 - **WebRTC peer-to-peer via PeerJS 1.5.4** (from unpkg). Room ids are `cheezy-kc-<CODE>`.
@@ -193,13 +191,15 @@ Normal enemy HP also grows 10% per floor, and each extra operative adds one esco
   - No floor modifiers.
   - Dice apply in real time instead of showing "incoming" previews.
 - **Co-op rules (round 7):** one operative per player, 3 dice, unique classes, simultaneous rolling, own offers, revive at 50% next floor.
+- **Round 9 (user's choices):** dice sit in one row; click a die name to inspect every side; keyword symbols replace the purple counts; tooltips put each keyword on its own line; "Reroll" instead of "Reroll unkept"; two + versions per die with the die picked at random; End turn confirms when dice or abilities are left; 4 classes.
 - **Real-time dice:** there's no resolve step for the squad; the enemy turn happens when everyone is ready. This removed the incoming badges and the resolve order (pillar 3).
 - **Cantrip** fires on landing even if you reroll later; it doesn't use up the die (as in Slice & Dice).
 
 ## Assumptions made in this prototype
 I filled these in; change any of them freely.
 - All keyword choices and the 14 adapted keywords. I left out Copycat, Exert, Heavy, Petrify, Sticky, Single-use, Death and Future to keep the first pass readable.
-- Every die's + version, all 24 die equipment and 10 player equipment, and every number.
+- Both + versions of every die, all 24 die equipment and 10 player equipment, and every number.
+- Die sides in the unfolded view have a green frame (my reading of "the sides should be green").
 - There's no undo once a die is used.
 - Gear offers are random, so a class may be offered gear that doesn't match its faces.
 - Abilities can each be cast once per turn.
