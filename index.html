@@ -68,8 +68,8 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .die .gear{width:1.35rem;height:1.35rem;border-radius:50%;background:var(--panel2);border:1px solid #7fd3e6;display:flex;align-items:center;justify-content:center;font-size:.7rem}
 .die em.kws{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 .72rem var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:2px;line-height:1}
 .foe .die em.kws{color:var(--arcane)}
-.f{flex-direction:column;height:auto;min-height:1.6rem;line-height:1.05;padding:2px 4px}
-.f .kwg{font:700 .62rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
+.f{position:relative;height:1.95rem;align-items:flex-start;padding:3px 4px 0}
+.f .kwg{position:absolute;bottom:1px;left:0;right:0;text-align:center;font:700 .6rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
 .psnb{font:700 .7rem var(--mono);color:#9be37b}
 .log tr.sys td{color:var(--hud);font:600 .72rem var(--mono);letter-spacing:.08em;padding-top:8px}
 
@@ -106,6 +106,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .op{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .op.me{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
 .op.down{opacity:.55}
+.op .ctrl{gap:8px;min-height:2.2rem;padding-top:6px;border-top:1px dashed var(--line)}
 .op .hh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .op .hh b{font-family:var(--display);font-size:1.05rem}
 .op .sub{font-size:.8rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -118,7 +119,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .net{display:grid;grid-template-columns:repeat(4,var(--s,3rem));grid-auto-rows:var(--s,3rem);gap:5px}
 .net .nf{border-radius:8px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);border:2px solid var(--ok);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(var(--s,3rem) * .32) var(--mono);color:#1b2230;position:relative;cursor:help}
 .net .nf.f-D{color:#c4361f}.net .nf.f-W{color:#2862c4}.net .nf.f-H{color:#1f8f44}.net .nf.f-R{color:#a86f00}.net .nf.f-A{color:#0a7ea0}.net .nf.f-C{color:#7440c9}.net .nf.f-S{color:#b0287a}.net .nf.f-E{color:#0f7c8c}.net .nf.f-B{color:#8892a3}
-.net .nf .kwg{font:700 calc(var(--s,3rem) * .27) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px}
+.net .nf .kwg{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 calc(var(--s,3rem) * .25) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px;line-height:1}
 .net .p0{grid-area:1/2}.net .p1{grid-area:2/1}.net .p2{grid-area:2/2}.net .p3{grid-area:2/3}.net .p4{grid-area:2/4}.net .p5{grid-area:3/2}
 .netwrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
 .op .badges{display:flex;gap:4px;flex-wrap:wrap;min-height:1.2rem}
@@ -169,6 +170,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .overlay table{border-collapse:collapse;font-size:.86rem}
 .overlay td,.overlay th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px}
+#tip .net{margin:6px 0;white-space:normal}
 #tip{white-space:pre-line;position:fixed;z-index:60;background:#070b11;border:1px solid var(--hud-dim);color:var(--fg);font-size:.82rem;padding:6px 9px;border-radius:4px;max-width:18rem;pointer-events:none;display:none}
 .dev{border:1px dashed #7a5;border-radius:4px;padding:3px 7px;font-size:.78rem}
 @media (max-width:640px){.foe{width:calc(50% - 6px)}.foe.boss{width:100%}}
@@ -345,7 +347,32 @@ function rnd(st) { let t = (st.seed = (st.seed + 0x6D2B79F5) | 0); t = Math.imul
 const ri = (st, n) => Math.floor(rnd(st) * n);
 const pick = (st, a) => a[ri(st, a.length)];
 function shuffle(st, a) { for (let i = a.length - 1; i > 0; i--) { const j = ri(st, i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function parse(c) { const [head, kws] = c.split(':'); return { t: head[0], n: +head.slice(1) || 0, kw: kws ? kws.split(',') : [] }; }
+function parse(c) { const [head, kws] = c.split(':'); const kw = kws ? kws.split(',') : []; return { t: head[0], n: +head.slice(1) || 0, kw, base: kw.slice() }; }
+// Every built-in face + keyword pairing has its own icon, so a die reads at a glance.
+// Small indicator symbols only appear for keywords added by gear.
+const COMBO = {
+  'D:cleave':    { icon:'🪓', name:'Cleaving Strike' },
+  'D:engage':    { icon:'💢', name:'Opening Strike' },
+  'D:cruel':     { icon:'🔪', name:'Cruel Strike' },
+  'D:steel':     { icon:'🔨', name:'Steel Strike' },
+  'D:patient':   { icon:'🎯', name:'Aimed Shot' },
+  'D:echo':      { icon:'🔁', name:'Echo Shot' },
+  'R:engage':    { icon:'🏹', name:'Breaching Shot' },
+  'R:cleave':    { icon:'🔱', name:'Piercing Spread' },
+  'A:charged':   { icon:'🌩️', name:'Charged Arc' },
+  'A:cantrip':   { icon:'💫', name:'Static Arc' },
+  'A:cleave':    { icon:'⛓️', name:'Chain Lightning' },
+  'W:selfshield':{ icon:'🪖', name:'Self Ward' },
+  'W:steel':     { icon:'🏰', name:'Steel Ward' },
+  'W:pristine':  { icon:'💠', name:'Pristine Ward' },
+  'S:cantrip':   { icon:'🔆', name:'Snap Stun' },
+  'E:cantrip':   { icon:'🔮', name:'Flash Vision' },
+  'C:cantrip':   { icon:'🌟', name:'Spark Charge' },
+};
+function comboOf(f) { return f.base && f.base.length ? COMBO[f.t + ':' + f.base.slice().sort().join(',')] || null : null; }
+// Keywords drawn as indicators: everything not covered by the face's own combo icon.
+function shownKw(f) { const c = comboOf(f); return c ? f.kw.filter(k => !f.base.includes(k)) : f.kw; }
+const faceIcon = f => { const c = comboOf(f); return c ? c.icon : FACE[f.t].icon; };
 const living = st => st.players.map((p, i) => i).filter(i => !st.players[i].gone && !st.players[i].down);
 const foesAlive = st => st.enemies.map((e, i) => i).filter(i => st.enemies[i].hp > 0);
 const hasEq = (st, p, id) => st.players[p].equip.includes(id);
@@ -556,6 +583,8 @@ function validTarget(st, t, tg) {
   return false;
 }
 const needsTarget = t => !['C', 'B'].includes(t);
+// Back to rolling is allowed while rerolls remain and nothing has been used yet this turn.
+const canUndo = P => P.step === 'use' && P.rerolls > 0 && !P.roll.some(d => d.used) && !(P.cast || []).length;
 function abilityUsable(st, p, s) {
   if (s === 'riotline' || s === 'triage') return true;
   return foesAlive(st).length > 0;
@@ -583,10 +612,19 @@ function act(st, p, a) {
       st.players.forEach((x, i) => setupOperative(st, i));
       st.floor = 1; startFloor(st); return null;
     }
-    case 'keep': case 'reroll': case 'done': case 'use': case 'cast': case 'ready': case 'unready': {
+    case 'keep': case 'reroll': case 'done': case 'undo': case 'use': case 'cast': case 'ready': case 'unready': {
       if (st.phase !== 'battle') return 'Not in a fight';
       if (P.down || P.gone) return 'You are down';
-      if (a.t === 'keep') { if (P.step !== 'roll' || !P.roll[a.i]) return 'bad'; P.roll[a.i].k = !P.roll[a.i].k; return null; }
+      if (a.t === 'keep') {
+        if (P.step !== 'roll' || !P.roll[a.i]) return 'bad';
+        P.roll[a.i].k = !P.roll[a.i].k;
+        if (P.roll.every(d => d.k)) P.step = 'use';   // all kept: same as Done rolling (Undo goes back)
+        return null;
+      }
+      if (a.t === 'undo') {
+        if (!canUndo(P)) return 'Nothing to undo';
+        P.step = 'roll'; return null;
+      }
       if (a.t === 'reroll') {
         if (P.step !== 'roll' || P.rerolls <= 0) return 'No rerolls left';
         P.rerolls--;
@@ -914,15 +952,18 @@ function endSession(msg) { teardown(); st = null; me = 0; screen = 'menu'; ui.er
 
 // ================= RENDER HELPERS =================
 const kwTip = kw => kw.map(k => `\n${KW[k].g} ${KW[k].name}: ${KW[k].text}`).join('');
-function faceTip(f) { const F = FACE[f.t]; return `${F.name}${F.num ? ' ' + f.n : ''}: ${F.text(f.n)}${kwTip(f.kw)}`; }
+function faceTip(f) {
+  const F = FACE[f.t], c = comboOf(f);
+  return `${c ? c.name + ' · ' : ''}${F.name}${F.num ? ' ' + f.n : ''}: ${F.text(f.n)}${kwTip(f.kw)}`;
+}
 function faceChip(f, extra = '', attrs = '') {
   const F = FACE[f.t];
-  return `<span class="f f-${f.t} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}><span>${F.icon}${F.num ? f.n : ''}</span>${kwGlyphs(f.kw)}</span>`;
+  return `<span class="f f-${f.t} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}><span>${faceIcon(f)}${F.num ? f.n : ''}</span>${kwGlyphs(shownKw(f))}</span>`;
 }
 const kwGlyphs = kw => kw.length ? `<i class="kwg">${kw.map(k => KW[k].g).join('')}</i>` : '';
 const codeHtml = (c, extra, attrs) => faceChip(parse(c), extra, attrs);
 const effHtml = (p, di, fi, extra, attrs) => faceChip(effFace(st, p, di, fi), extra, attrs);
-const dieInner = f => `${FACE[f.t].icon}${FACE[f.t].num ? `<span>${f.n}</span>` : ''}${f.kw && f.kw.length ? `<em class="kws">${f.kw.map(k => KW[k].g).join('')}</em>` : ''}`;
+const dieInner = f => { const k = f.kw ? shownKw(f) : []; return `${faceIcon(f)}${FACE[f.t].num ? `<span>${f.n}</span>` : ''}${k.length ? `<em class="kws">${k.map(x => KW[x].g).join('')}</em>` : ''}`; };
 const gearBadges = gear => gear.length ? `<span class="gears">${gear.map(g => `<span class="gear" data-tip="${esc(GEAR[g].name + ': ' + GEAR[g].text)}">${GEAR[g].icon}</span>`).join('')}</span>` : '';
 const pname = i => i === me ? 'You' : esc(st.players[i].name);
 function foeLabel(i, short) {   // "Guard B" when several enemies share a type
@@ -1063,8 +1104,8 @@ function opCard(p) {
     const key = p + ':' + di, isRoll = renderCache.roll[key] !== d.r; renderCache.rollNext[key] = d.r;
     const usable = mine && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
     const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', d.k && P.step === 'roll' ? 'kept' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : ''].join(' ');
-    const state = P.step === 'roll' ? (d.k ? 'kept' : '') : d.used ? 'used' : '';
-    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(dieName(P, di) + '\n' + faceTip(f))}">${dieInner(f)}${gearBadges(dd.gear)}</div><button class="dname" data-inspect="${p}:${di}" data-tip="See every side of this die">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
+    const state = P.step !== 'roll' && d.used ? 'used' : '';
+    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(dieName(P, di) + '\n' + faceTip(f))}">${dieInner(f)}${gearBadges(dd.gear)}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
   }).join('');
   const abil = [C.sig, ...abilitiesOf(P)];
   let sig;
@@ -1083,6 +1124,7 @@ function opCard(p) {
     <div class="hp ally"><i style="width:${P.hp / mx * 100}%"></i><span>${P.down ? 'Down' : `${P.hp}/${mx}`}</span></div>
     <div class="dice">${dice}</div>
     ${sig}
+    ${mine && st.phase === 'battle' ? `<div class="row ctrl">${ui.controls || ''}</div>` : ''}
   </div>`;
 }
 function logTable(lines, title) {
@@ -1098,6 +1140,7 @@ function battleHtml() {
   else if (P.step === 'roll') {
     hint = 'Click dice to keep them, then reroll the rest. Cantrip faces fire as soon as they land.';
     buttons = `<button class="btn" data-ui="reroll" ${P.rerolls > 0 ? '' : 'disabled'}>Reroll (${P.rerolls} left)</button><button class="btn ghost" data-ui="done">Done rolling</button>`;
+    if (P.roll.some(d => d.k)) hint = 'Kept dice stay; Reroll rolls the rest. Keep all three to move on.';
   } else if (P.step === 'use') {
     const f = selFace();
     hint = f ? (needsTarget(f.t) ? 'Click a highlighted enemy or operative. It happens right away.' : '') : 'Click a die to use it: it hits right away. ✦ dice charge on click. Click a die\'s name to see all its sides.';
@@ -1106,22 +1149,22 @@ function battleHtml() {
     if (ui.confirmEnd && (left || abil)) {
       hint = `You still have ${left ? `${left} unused ${left > 1 ? 'dice' : 'die'}` : ''}${left && abil ? ' and ' : ''}${abil ? `${abil} ability ready` : ''}. End your turn anyway?`;
       buttons = '<button class="btn ghost" data-ui="keepgoing">Keep playing</button><button class="btn" data-ui="endnow">End turn anyway</button>';
-    } else buttons = `${ui.sel != null ? '<button class="btn ghost" data-ui="desel">Cancel</button>' : ''}<button class="btn ${left ? 'ghost' : ''}" data-ui="ready">End turn</button>`;
+    } else buttons = `${canUndo(P) ? `<button class="btn ghost" data-ui="undo" data-tip="Back to rolling (${P.rerolls} reroll${P.rerolls > 1 ? 's' : ''} left)">↶ Undo</button>` : ''}<button class="btn ${left ? 'ghost' : ''}" data-ui="ready">End turn</button>`;
   } else {
     hint = waiting.length ? `Waiting for ${waiting.join(', ')}…` : 'Enemies are acting…';
     buttons = '<button class="btn ghost" data-ui="unready">Not ready yet</button>';
   }
+  ui.controls = buttons;
   return `
     <h4>Enemies · intent and target</h4>
     <div class="enemyrow" style="margin-top:6px">${st.enemies.map((_, i) => foeCard(i)).join('')}</div>
+    <h4 style="margin-top:14px">Squad</h4>
+    <div class="ops" style="margin-top:6px">${st.players.map((_, p) => opCard(p)).join('')}</div>
     <div class="center">
       <div class="phase"><span>Turn ${st.turn}</span><span class="on">Squad rolls &amp; acts</span><span>Enemies act when all are ready</span></div>
       ${st.msg ? `<div class="banner">${esc(st.msg)}</div>` : ''}
       <div class="hint">${hint}</div>
-      <div class="row" style="justify-content:center;min-height:2.2rem">${buttons}</div>
     </div>
-    <h4>Squad</h4>
-    <div class="ops" style="margin-top:6px">${st.players.map((_, p) => opCard(p)).join('')}</div>
     <div class="log box">${logTable(st.log.slice(-16), 'Combat log') || '<span class="muted">Dice you use show up here as they land.</span>'}</div>`;
 }
 
@@ -1131,7 +1174,7 @@ function offerDesc(o) {
   return { icon: EQUIP[o.id].icon, name: EQUIP[o.id].name, tag:'Player equipment · 2 max', text: EQUIP[o.id].text };
 }
 function netHtml(faces, size) {   // faces: effective face objects, laid out like an unfolded die
-  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}"><span>${FACE[f.t].icon}${FACE[f.t].num ? f.n : ''}</span>${kwGlyphs(f.kw)}</div>`).join('')}</div>`;
+  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}"><span>${faceIcon(f)}${FACE[f.t].num ? f.n : ''}</span>${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
 }
 const effFaces = (p, di) => [0, 1, 2, 3, 4, 5].map(fi => effFace(st, p, di, fi));
 const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(GEAR[g].text)}">${GEAR[g].icon} <b style="color:var(--fg)">${GEAR[g].name}</b>: ${GEAR[g].text}</div>`).join('')}</div>` : '';
@@ -1248,7 +1291,7 @@ function showHelp() {
     <h3>How to play</h3>
     <ul>
       <li>You are one operative with <b>3 class dice</b>. Up to 4 friends breach a 10-floor tower; each floor is one fight, and bosses wait on floors 5 and 10.</li>
-      <li><b>Each turn</b> every enemy shows its intent (what it will do and to whom). Everyone rolls at once: click dice to keep, reroll the rest (2 rerolls).</li>
+      <li><b>Each turn</b> every enemy shows its intent (what it will do and to whom). Everyone rolls at once: click dice to keep, reroll the rest (2 rerolls). Keeping all three moves on automatically; Undo goes back while you have rerolls.</li>
       <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>End turn</b> when you're done (it checks with you if dice or abilities are left).</li>
       <li>When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then.</li>
       <li><b>✦ Charge</b> pays for your class signature and any abilities your gear grants.</li>
@@ -1256,7 +1299,8 @@ function showHelp() {
       <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 a random die of yours is upgraded, and you pick which of its two + versions it becomes. After the others you pick die equipment (2 per die) or player equipment (2 per operative).</li>
     </ul>
     <h3>Faces</h3><table>${faces}</table>
-    <h3>Keywords</h3><table>${kws}</table>
+    <h3>Keywords</h3><p class="muted" style="margin:0;font-size:.85rem">Class dice show built-in keyword pairings as their own icon (🪓 Cleaving Strike = ⚔ + Cleave). Small purple symbols mean gear added that keyword.</p><table>${kws}</table>
+    <h3>Built-in pairings</h3><table>${Object.entries(COMBO).map(([k, c]) => { const [t, kw] = k.split(':'); return `<tr><td>${c.icon}</td><td><b>${c.name}</b></td><td>${FACE[t].name} + ${KW[kw].name}</td></tr>`; }).join('')}</table>
     <p class="muted" style="font-size:.85rem">Hover anything for details. Solo runs autosave. Add ?dev to the URL for test buttons.</p>
   </div>`;
   o.classList.remove('hidden');
@@ -1270,6 +1314,7 @@ function showText(title, text, importing) {
 // ================= INPUT =================
 let autoTimer = null;
 document.addEventListener('click', e => {
+  if (e.target.id === 'overlay') { $('overlay').classList.add('hidden'); return; }   // click outside the box closes it
   const el = e.target.closest('[data-ui],[data-cls],[data-die],[data-cast],[data-offer],[data-plusv],[data-gear],[data-equip],[data-dev],[data-inspect]');
   ac();
   if (el) {
@@ -1357,6 +1402,7 @@ function uiAction(k) {
     case 'keepgoing': ui.confirmEnd = false; render(); break;
     case 'unready': ui.confirmEnd = false; dispatch({ t:'unready' }); break;
     case 'desel': ui.sel = null; ui.confirmEnd = false; render(); break;
+    case 'undo': dispatch({ t:'undo' }); break;
     case 'unpend': ui.pend = null; render(); break;
     case 'restart': dispatch({ t:'restart' }); break;
   }
@@ -1364,7 +1410,16 @@ function uiAction(k) {
 
 // tooltips
 const tipEl = $('tip');
+function diePreview(p, di) {
+  const P = st.players[p], d = P.dice[di];
+  return `<b>${esc(dieName(P, di))}</b>${netHtml(effFaces(p, di), '1.9rem')}${d.gear.length ? `<div>${d.gear.map(g => GEAR[g].icon + ' ' + GEAR[g].name).join('<br>')}</div>` : ''}<div class="muted">Click to inspect each side</div>`;
+}
 document.addEventListener('mouseover', e => {
+  const ins = e.target.closest('[data-inspect]');
+  if (ins && st && screen === 'game') {
+    const [ip, idi] = ins.dataset.inspect.split(':').map(Number);
+    if (st.players[ip] && st.players[ip].dice[idi]) { tipEl.innerHTML = diePreview(ip, idi); tipEl.style.display = 'block'; return; }
+  }
   const t = e.target.closest('[data-tip]');
   if (!t) { tipEl.style.display = 'none'; return; }
   tipEl.textContent = t.dataset.tip; tipEl.style.display = 'block';

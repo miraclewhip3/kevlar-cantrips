@@ -39,7 +39,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 ## How to play
 1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class (4 classes).
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target.
-3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). **Cantrip** faces fire on a random target the moment they land.
+3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). Keeping all three moves on automatically; **Undo** goes back to rolling while you have rerolls and haven't used anything. Your Reroll, Done rolling, Undo and End turn buttons sit in your own operative card, next to your dice. **Cantrip** faces fire on a random target the moment they land.
 4. **Use dice in real time.** Click a die, then its target. It happens right away, and everyone sees HP and ward change. ✦ dice charge as soon as you click them. Abilities (your signature, plus any your gear grants) also fire right away, once per turn each.
 5. **End turn.** Unused dice are lost. If you still have unused dice or a usable ability, End turn asks you to confirm first. When the whole squad is ready, turrets fire, then every enemy that's still standing and not stunned acts. Ward lasts until then. Poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down. A Necromedic can revive you; otherwise you're back next floor at 50% HP. The run ends when the whole squad is down.
@@ -60,7 +60,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 | ✕ Blank | Nothing |
 
 ## Keywords
-These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywords), adapted to co-op. Each keyword has a small purple symbol shown under the number on every die side, so you can read a die at a glance. Hovering lists each keyword on its own line.
+These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywords), adapted to co-op. Built-in pairings on class dice have their own icon (see below), so a die reads at a glance. Keywords added by gear show as small purple symbols at the bottom of a side; they never move the main icon. Hovering lists each keyword on its own line.
 
 | Symbol | Keyword | Effect |
 |---|---|---|
@@ -79,6 +79,27 @@ These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywo
 | ☠ | Poison | The target takes 1 more damage at the end of every turn this floor (stacks) |
 | ✶ | Pain | You take 1 damage when you use it |
 
+### Built-in pairings
+| Icon | Name | Face + keyword |
+|---|---|---|
+| 🪓 | Cleaving Strike | ⚔ + Cleave |
+| 💢 | Opening Strike | ⚔ + Engage |
+| 🔪 | Cruel Strike | ⚔ + Cruel |
+| 🔨 | Steel Strike | ⚔ + Steel |
+| 🎯 | Aimed Shot | ⚔ + Patient |
+| 🔁 | Echo Shot | ⚔ + Echo |
+| 🏹 | Breaching Shot | ➹ + Engage |
+| 🔱 | Piercing Spread | ➹ + Cleave |
+| 🌩️ | Charged Arc | ⚡ + Charged |
+| 💫 | Static Arc | ⚡ + Cantrip |
+| ⛓️ | Chain Lightning | ⚡ + Cleave |
+| 🪖 | Self Ward | 🛡 + Self-shield |
+| 🏰 | Steel Ward | 🛡 + Steel |
+| 💠 | Pristine Ward | 🛡 + Pristine |
+| 🔆 | Snap Stun | ◉ + Cantrip |
+| 🔮 | Flash Vision | 👁 + Cantrip |
+| 🌟 | Spark Charge | ✦ + Cantrip |
+
 ## Classes and dice
 | Class | HP | Dice (base) | Signature |
 |---|---|---|---|
@@ -87,7 +108,7 @@ These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywo
 | 👁 Precog | 10 | Foresight ◉, ◉, 👁, 👁 CAN, ✦1, ✕ · Second Guess 👁, 🛡2, 🛡1, ✦2, ✦1, ✕ · Sidearm ⚔2 PAT, ⚔2, ⚔3, ⚔1, ⚔1 ECH, ✕ | Told You So (3✦): stun the 2 biggest intents |
 | 🛡️ Riot Cleric | 16 | Riot Ward 🛡3, 🛡2, 🛡2, 🛡1, ✦1, ✕ · Flashbang ◉, ◉ CAN, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2 STL, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
 
-Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two + versions**: one mostly raises numbers, the other leans on keywords (for example Scattershot+ Heavy Load or Wide Spread). Click any die's name, in battle or on the loadout, to open it as an unfolded die and hover each side; equipped gear is listed only if there is any.
+Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two + versions**: one mostly raises numbers, the other leans on keywords (for example Scattershot+ Heavy Load or Wide Spread). Hover any die's name for a quick preview of all six sides; click it to open the full unfolded die and hover each side (click outside to close). Equipped gear is listed only if there is any.
 
 ## Between floors
 - **After floors 2, 5 and 8:** a die upgrade. A random die that isn't upgraded yet is picked for you, and you choose which of its two + versions it becomes. By floor 9 all three dice are +.
@@ -192,6 +213,7 @@ Normal enemy HP also grows 10% per floor, and each extra operative adds one esco
   - Dice apply in real time instead of showing "incoming" previews.
 - **Co-op rules (round 7):** one operative per player, 3 dice, unique classes, simultaneous rolling, own offers, revive at 50% next floor.
 - **Round 9 (user's choices):** dice sit in one row; click a die name to inspect every side; keyword symbols replace the purple counts; tooltips put each keyword on its own line; "Reroll" instead of "Reroll unkept"; two + versions per die with the die picked at random; End turn confirms when dice or abilities are left; 4 classes.
+- **Round 10 (user's choices):** auto-continue when all dice are kept, plus Undo; controls inside your own card; phase and hint moved above the combat log; no "kept" label and no Cancel button; unique icons for built-in pairings, with indicators only for gear-added keywords; inspector closes on click-outside and previews on hover.
 - **Real-time dice:** there's no resolve step for the squad; the enemy turn happens when everyone is ready. This removed the incoming badges and the resolve order (pillar 3).
 - **Cantrip** fires on landing even if you reroll later; it doesn't use up the die (as in Slice & Dice).
 
