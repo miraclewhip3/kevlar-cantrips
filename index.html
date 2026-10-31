@@ -202,7 +202,7 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
 // Faces are codes: type letter, number, then optional keywords, e.g. 'D2:cleave,engage'.
 // Each die has a base set and a "+" set (from the die upgrade after floors 2, 5 and 8).
 const CLASSES = {
-  breach:{ name:'Breach Mage', icon:'💥', hp:14, role:'Piercing burst', sig:'doorkick', dice:[
+  breach:{ name:'Breach Mage', icon:'💥', hp:15, role:'Piercing burst', sig:'doorkick', dice:[
     { name:'Scattershot', faces:['D2:cleave','D2','D3','R1','R2:engage','B'], plus:[
       { label:'Heavy Load',    faces:['D3:cleave','D3','D3:cleave','R2','R2:engage','R1'] },
       { label:'Wide Spread',   faces:['D2:cleave','D2:cleave','D3:cleave','R1:cleave','R2:engage','D1:cleave'] } ] },
@@ -212,7 +212,7 @@ const CLASSES = {
     { name:'Kevlar Ward', faces:['W2','W2','W3','W1','C1','B'], plus:[
       { label:'Thicker Plates', faces:['W3','W3','W4','W2:selfshield','C2','C1'] },
       { label:'Reactive Armor', faces:['W2:steel','W2:selfshield','W3','W2','C2','D2:steel'] } ] } ] },
-  storm:{ name:'Storm Witch', icon:'⚡', hp:11, role:'Chain damage', sig:'thunder', dice:[
+  storm:{ name:'Storm Witch', icon:'⚡', hp:13, role:'Chain damage', sig:'thunder', dice:[
     { name:'Arc Lash', faces:['A2','A2','A3:charged','A1:cantrip','C1','B'], plus:[
       { label:'Overload',        faces:['A3','A3','A4:charged','A2:cantrip','C2','A1'] },
       { label:'Chain Lightning', faces:['A2:cleave','A2','A3:charged','A2:cantrip','C2','A1:cantrip'] } ] },
@@ -222,26 +222,26 @@ const CLASSES = {
     { name:'Squall', faces:['C2','C1:cantrip','A2','D2:cruel','W1','B'], plus:[
       { label:'Downpour',        faces:['C3','C2:cantrip','A3','D3:cruel','W2','C1'] },
       { label:'Static Build-up', faces:['C2:cantrip','C2:cantrip','A2:charged','D2:cruel','W1','C1'] } ] } ] },
-  precog:{ name:'Precog', icon:'👁', hp:10, role:'Control: stuns, rewrites intents', sig:'toldyou', dice:[
-    { name:'Foresight', faces:['S','S','E','E:cantrip','C1','B'], plus:[
-      { label:'Deep Trance',  faces:['S','S:cantrip','E','E:cantrip','C2','C1'] },
-      { label:'Clear Vision', faces:['S','S','E:cantrip','E:cantrip','C2:cantrip','W1'] } ] },
-    { name:'Second Guess', faces:['E','W2','W1','C2','C1','B'], plus:[
-      { label:'Overthink',   faces:['E','W3','W2','C3','C2','E'] },
-      { label:'Hedge Bets',  faces:['E','W2:pristine','W2','C2','C2','H2'] } ] },
-    { name:'Sidearm', faces:['D2:patient','D2','D3','D1','D1:echo','B'], plus:[
-      { label:'Extended Mag', faces:['D3:patient','D3','D4','D2','D2:echo','D1:echo'] },
-      { label:'Called Shot',  faces:['D3:patient','D3:patient','D3:cruel','D2:echo','D1:echo','R1'] } ] } ] },
-  riot:{ name:'Riot Cleric', icon:'🛡️', hp:16, role:'Tank, wards, taunt', sig:'riotline', dice:[
-    { name:'Riot Ward', faces:['W3','W2','W2','W1','C1','B'], plus:[
-      { label:'Reinforced', faces:['W4','W3','W3','W2','C2','W1:steel'] },
-      { label:'Shield Wall', faces:['W3:steel','W3','W2','W2','H1','C1'] } ] },
+  precog:{ name:'Precog', icon:'👁', hp:12, role:'Control: stuns, rewrites intents', sig:'toldyou', dice:[
+    { name:'Foresight', faces:['S','D2','E','E:cantrip','C1','D1'], plus:[
+      { label:'Deep Trance',  faces:['S','D3','E','E:cantrip','C2','D2'] },
+      { label:'Clear Vision', faces:['S','D2','E:cantrip','E:cantrip','C2:cantrip','D2'] } ] },
+    { name:'Second Guess', faces:['E','W2','D2','C2','R2','D1'], plus:[
+      { label:'Overthink',   faces:['E','W3','D3','C2','R2','D2'] },
+      { label:'Hedge Bets',  faces:['E','W2:pristine','D2','C2','R2','H2'] } ] },
+    { name:'Sidearm', faces:['D3:patient','D2','D3','D2','D1:echo','D1'], plus:[
+      { label:'Extended Mag', faces:['D4:patient','D3','D4','D3','D2:echo','D2'] },
+      { label:'Called Shot',  faces:['D3:patient','D3:patient','D3:cruel','D2:echo','D2:echo','R2'] } ] } ] },
+  riot:{ name:'Riot Cleric', icon:'🛡️', hp:13, role:'Tank, wards, taunt', sig:'riotline', dice:[
+    { name:'Riot Ward', faces:['W2','W2','W1','W1','C1','B'], plus:[
+      { label:'Reinforced', faces:['W3','W3','W2','W2','C2','W1:steel'] },
+      { label:'Shield Wall', faces:['W2:steel','W2','W2','W1','H1','C1'] } ] },
     { name:'Flashbang', faces:['S','S:cantrip','D1','D1','W1','B'], plus:[
       { label:'Breaching Bang', faces:['S','S:cantrip','D2','D2:engage','W2','S'] },
       { label:'Stun Grenade',   faces:['S','S:cantrip','S','D1:cleave','W2','C1'] } ] },
-    { name:'Censure', faces:['D3:steel','D2:steel','D2','H1','C1','B'], plus:[
-      { label:'Judgment', faces:['D4:steel','D3:steel','D3','H2','C2','D1:steel'] },
-      { label:'Smite',    faces:['D3:steel','D3:steel','D3:engage','H2','C1','D2'] } ] } ] },
+    { name:'Censure', faces:['D3:steel','D2','D2','H1','C1','B'], plus:[
+      { label:'Judgment', faces:['D4:steel','D3','D3','H2','C2','D1'] },
+      { label:'Smite',    faces:['D3:steel','D3','D3:engage','H2','C1','D2'] } ] } ] },
 };
 const SIGS = {
   doorkick:{ name:'Door Kick',      cost:3, text:'2 piercing damage to every enemy.' },
@@ -249,7 +249,7 @@ const SIGS = {
   toldyou: { name:'Told You So',    cost:3, text:'Stun the 2 enemies with the biggest intents.' },
   riotline:{ name:'Riot Line',      cost:3, text:'🛡2 on every operative, and every enemy attack this turn hits you instead.' },
   // abilities granted by die equipment
-  zap:     { name:'Zap',            cost:2, text:'Stun a random enemy.' },
+  zap:     { name:'Zap',            cost:3, text:'Stun a random enemy.' },
   flare:   { name:'Flare',          cost:3, text:'3 damage to the enemy with the most HP.' },
   triage:  { name:'Triage',         cost:2, text:'Heal the most hurt operative 3.' },
 };
@@ -274,13 +274,14 @@ const KW = {
   cantrip:   { g:'!', tag:'CAN', name:'Cantrip',     text:'Fires on a random target the moment it lands face up while rolling. You can still use the die afterward.' },
   pristine:  { g:'✧', tag:'PRI', name:'Pristine',    text:'Double if you are at full HP.' },
   steel:     { g:'▣', tag:'STL', name:'Steel',       text:'+1 for each point of ward you have.' },
-  charged:   { g:'ϟ', tag:'CHG', name:'Charged',     text:'+1 for each ✦ charge you have.' },
+  charged:   { g:'ϟ', tag:'CHG', name:'Charged',     text:'+1 for each ✦ charge you have (up to +3).' },
   echo:      { g:'≈', tag:'ECH', name:'Echo',        text:'Its number becomes the number of the last die you used this turn.' },
   patient:   { g:'⧗', tag:'PAT', name:'Patient',     text:'Double if this die was not used last turn.' },
   growth:    { g:'↑', tag:'GRO', name:'Growth',      text:'This face gets +1 every time it is used, for the rest of the floor.' },
-  selfshield:{ g:'◈', tag:'SSH', name:'Self-shield', text:'Also gives you ward equal to its number.' },
-  selfheal:  { g:'♥', tag:'SHL', name:'Self-heal',   text:'Also heals you by its number.' },
-  poison:    { g:'☠', tag:'PSN', name:'Poison',      text:'The target takes 1 more damage at the end of every turn this floor (stacks).' },
+  selfshield:{ g:'◈', tag:'SSH', name:'Self-shield', text:'Also gives you ward equal to half its number (at least 1).' },
+  selfheal:  { g:'♥', tag:'SHL', name:'Self-heal',   text:'Also heals you by half its number (at least 1).' },
+  cover:     { g:'⛨', tag:'COV', name:'Cover',       text:'Also gives half its number (at least 1) as ward to the lowest-HP teammate, or you if alone.' },
+  poison:    { g:'☠', tag:'PSN', name:'Poison',      text:'The target takes 1 more damage at the end of every turn this floor (stacks up to 3).' },
   pain:      { g:'✶', tag:'PAIN',name:'Pain',        text:'You take 1 damage when you use it.' },
 };
 const NUMERIC = t => FACE[t].num;
@@ -294,12 +295,12 @@ const GEAR = {
   plate:    { name:'Ceramic Plate',      icon:'🧱', text:'Blank faces become 🛡2.',                     pre:true, fx:f => { if (f.t === 'B') { f.t = 'W'; f.n = 2; } } },
   battery:  { name:'Battery Pack',       icon:'🔋', text:'Blank faces become ✦1.',                      pre:true, fx:f => { if (f.t === 'B') { f.t = 'C'; f.n = 1; } } },
   echoch:   { name:'Echo Chamber',       icon:'🔁', text:'Blank faces become ⚔1 with Echo.',            pre:true, fx:f => { if (f.t === 'B') { f.t = 'D'; f.n = 1; f.kw.push('echo'); } } },
-  foam:     { name:'Riot Foam',          icon:'🫧', text:'⚔ faces become 🛡 of the same number +1.',    pre:true, fx:f => { if (f.t === 'D') { f.t = 'W'; f.n++; } } },
+  foam:     { name:'Riot Foam',          icon:'🫧', text:'⚔ faces gain Cover (also ward the lowest-HP teammate for half).', fx:f => { if (f.t === 'D') f.kw.push('cover'); } },
   convert:  { name:'Conversion Rig',     icon:'♻️', text:'✚ faces become ⚔ of the same number, with Cruel.', pre:true, fx:f => { if (f.t === 'H') { f.t = 'D'; f.kw.push('cruel'); } } },
   serrated: { name:'Serrated Edge',      icon:'🪚', text:'⚔ faces gain Cruel.',                         fx:f => { if (f.t === 'D') f.kw.push('cruel'); } },
   salvo:    { name:'Opening Salvo',      icon:'🎺', text:'Number faces gain Engage.',                   fx:f => { if (NUMERIC(f.t) && f.t !== 'C') f.kw.push('engage'); } },
   broadhead:{ name:'Broadhead Rounds',   icon:'🪓', text:'⚔ and ➹ faces gain Cleave.',                  fx:f => { if (f.t === 'D' || f.t === 'R') f.kw.push('cleave'); } },
-  spellwire:{ name:'Spellwire',          icon:'🧵', text:'Every face gains Cantrip.',                   fx:f => { if (f.t !== 'B') f.kw.push('cantrip'); } },
+  spellwire:{ name:'Spellwire',          icon:'🧵', text:'The highest-number face(s) gain Cantrip.',    wire:true, fx:() => {} },
   polish:   { name:'Mirror Polish',      icon:'🪞', text:'Number faces gain Pristine.',                 fx:f => { if (NUMERIC(f.t)) f.kw.push('pristine'); } },
   capacitor:{ name:'Capacitor',          icon:'🔌', text:'Number faces gain Charged.',                  fx:f => { if (NUMERIC(f.t) && f.t !== 'C') f.kw.push('charged'); } },
   lining:   { name:'Kevlar Lining',      icon:'🦺', text:'⚔ and ➹ faces gain Self-shield.',             fx:f => { if (f.t === 'D' || f.t === 'R') f.kw.push('selfshield'); } },
@@ -307,8 +308,8 @@ const GEAR = {
   hourglass:{ name:'Hourglass',          icon:'⏳', text:'Number faces gain Patient.',                  fx:f => { if (NUMERIC(f.t)) f.kw.push('patient'); } },
   bonsai:   { name:'Bonsai Chip',        icon:'🌱', text:'Number faces gain Growth.',                   fx:f => { if (NUMERIC(f.t)) f.kw.push('growth'); } },
   toxin:    { name:'Toxin Vial',         icon:'🧪', text:'⚔, ➹ and ⚡ faces gain Poison.',              fx:f => { if (DMG(f.t)) f.kw.push('poison'); } },
-  glass:    { name:'Glass Rune',         icon:'🔮', text:'Doubles every number. Faces gain Pain.',     post:true, fx:f => { if (NUMERIC(f.t)) { f.n *= 2; f.kw.push('pain'); } } },
-  taser:    { name:'Taser Spellcard',    icon:'💳', text:'Grants Zap (2✦): stun a random enemy.',       ability:'zap' },
+  glass:    { name:'Glass Rune',         icon:'🔮', text:'Doubles ⚔, ➹ and ⚡ numbers; any that reach 6 or more gain Pain.', post:true, fx:f => { if (DMG(f.t)) { f.n *= 2; if (f.n >= 6) f.kw.push('pain'); } } },
+  taser:    { name:'Taser Spellcard',    icon:'💳', text:'Grants Zap (3✦): stun a random enemy.',       ability:'zap' },
   flarerune:{ name:'Flare Rune',         icon:'🎇', text:'Grants Flare (3✦): 3 damage to the enemy with the most HP.', ability:'flare' },
   sigil:    { name:'Triage Sigil',       icon:'⚕️', text:'Grants Triage (2✦): heal the most hurt operative 3.', ability:'triage' },
 };
@@ -319,10 +320,10 @@ const EQUIP = {
   union:   { name:'Union Card',            icon:'🪪', text:'+5 max HP.' },
   vest:    { name:'Spare Vest',            icon:'🦺', text:'Start every turn with 🛡1.' },
   warrant: { name:'Expired Warrant',       icon:'📎', text:'+1 damage against bosses.' },
-  overtime:{ name:'Overtime Pay',          icon:'💼', text:'Each enemy you kill gives you 1 ✦.' },
-  radio:   { name:'Squad Radio',           icon:'📻', text:'Your 🛡 and ✚ dice give +1 when used on a teammate.' },
+  overtime:{ name:'Overtime Pay',          icon:'💼', text:'Each enemy you kill gives you 2 ✦.' },
+  radio:   { name:'Squad Radio',           icon:'📻', text:'Your 🛡 and ✚ dice give +1 when used on a teammate (or on yourself when you fight alone).' },
   adrenal: { name:'Adrenaline Shot',       icon:'💉', text:'Once per floor, survive a hit that would down you, at 1 HP.' },
-  bodycam: { name:'Body Cam',              icon:'📹', text:'Your signature costs 1 less ✦.' },
+  bodycam: { name:'Body Cam',              icon:'📹', text:'Your signature costs 2 less ✦ (minimum 1).' },
   pouch:   { name:'Hex Ammo Pouch',        icon:'🎒', text:'The first damage die you use each turn gets +1.' },
 };
 const ENEMIES = {
@@ -350,7 +351,7 @@ const FLOORS = [
 const UPGRADE_FLOORS = [2, 5, 8];   // die+ upgrade after these floors; gear or equipment after the rest
 const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:2, equipPerPlayer:2 };
 // Enemy HP by squad size, tuned with bot runs so 1-4 operatives reach a similar floor on average.
-const HP_MULT = [1.0, 1.6, 2.4, 3.4];
+const HP_MULT = [1.0, 1.6, 2.0, 2.9];
 const enemyCount = (n, floor) => Math.min(6, n + 1 + (floor >= 7 && n > 1 ? 1 : 0));
 const PREFIX = 'cheezy-kc-';
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -419,12 +420,16 @@ function effFace(st, p, di, fi) {
   gears.filter(g => g.pre).forEach(g => g.fx(f));
   gears.filter(g => !g.pre && !g.post).forEach(g => g.fx(f));
   gears.filter(g => g.post).forEach(g => g.fx(f));
+  if (die.gear.includes('spellwire')) {   // highest base number on this die gains Cantrip
+    const top = Math.max(...facesOf(P, di).map(c => parse(c).n));
+    if (top > 0 && parse(facesOf(P, di)[fi]).n === top) f.kw.push('cantrip');
+  }
   if (NUMERIC(f.t)) f.n += die.grow[fi] || 0;
   f.kw = [...new Set(f.kw)];
   return f;
 }
 const abilitiesOf = (P) => { const a = []; P.dice.forEach(d => d.gear.forEach(g => { if (GEAR[g].ability) a.push(GEAR[g].ability); })); return [...new Set(a)]; };
-const sigCost = (st, p, s) => Math.max(1, SIGS[s].cost - (s === CLASSES[st.players[p].cls].sig && hasEq(st, p, 'bodycam') ? 1 : 0));
+const sigCost = (st, p, s) => Math.max(1, SIGS[s].cost - (s === CLASSES[st.players[p].cls].sig && hasEq(st, p, 'bodycam') ? 2 : 0));
 
 function scaleFor(st) {
   const n = Math.max(1, st.players.filter(p => !p.gone).length);
@@ -501,7 +506,7 @@ function hitEnemy(st, p, i, n, pierce, src) {
   const b = pierce ? 0 : Math.min(e.ward, n); e.ward -= b;
   const before = e.hp; e.hp = Math.max(0, e.hp - (n - b));
   L(st, 'ally', src, en(st, i), `${b ? b + ' blocked · ' : ''}${before} → ${e.hp}${e.hp === 0 ? ' ✖' : ''}`);
-  if (e.hp === 0 && p != null && hasEq(st, p, 'overtime')) st.players[p].charge++;
+  if (e.hp === 0 && p != null && hasEq(st, p, 'overtime')) st.players[p].charge += 2;
   return before - e.hp;
 }
 function hurtPlayer(st, pi, v, src, wardable) {
@@ -528,9 +533,9 @@ function faceValue(st, p, di, f, tg) {
   let v = f.n;
   if (f.kw.includes('echo') && P.lastN != null) v = P.lastN;
   if (f.kw.includes('steel')) v += P.ward;
-  if (f.kw.includes('charged')) v += P.charge;
+  if (f.kw.includes('charged')) v += Math.min(3, P.charge);
   if (DMG(f.t) && hasEq(st, p, 'pouch') && !P.dmgUsed) v++;
-  if ((f.t === 'W' || f.t === 'H') && tg && tg.k === 'p' && tg.i !== p && hasEq(st, p, 'radio')) v++;
+  if ((f.t === 'W' || f.t === 'H') && tg && tg.k === 'p' && (tg.i !== p || living(st).length === 1) && hasEq(st, p, 'radio')) v++;
   let mult = 1;
   if (tg) {
     const T = tg.k === 'e' ? st.enemies[tg.i] : st.players[tg.i];
@@ -563,11 +568,16 @@ function applyFace(st, p, di, f, tg, cantrip) {
   else if (f.t === 'C') { P.charge += v; L(st, 'ally', src, P.name, `+${v} ✦`); }
   if (DMG(f.t)) {
     P.dmgUsed = true;
-    if (f.kw.includes('poison') && st.enemies[tg.i].hp > 0) { st.enemies[tg.i].poison++; L(st, 'ally', src, en(st, tg.i), 'Poisoned'); }
+    if (f.kw.includes('poison') && st.enemies[tg.i].hp > 0 && st.enemies[tg.i].poison < 3) { st.enemies[tg.i].poison++; L(st, 'ally', src, en(st, tg.i), 'Poisoned'); }
   }
   if (NUMERIC(f.t) && f.t !== 'C') {
-    if (f.kw.includes('selfshield')) { P.ward += v; L(st, 'ally', src, P.name, `+${v} ward (self)`); }
-    if (f.kw.includes('selfheal')) healPlayer(st, p, v, src + ' (self-heal)');
+    const half = Math.max(1, Math.floor(v / 2));
+    if (f.kw.includes('selfshield')) { P.ward += half; L(st, 'ally', src, P.name, `+${half} ward (self)`); }
+    if (f.kw.includes('selfheal')) healPlayer(st, p, half, src + ' (self-heal)');
+    if (f.kw.includes('cover')) {
+      const mates = living(st).filter(i => i !== p), tgt = mates.length ? mates.reduce((b, i) => st.players[i].hp < st.players[b].hp ? i : b) : p;
+      st.players[tgt].ward += half; L(st, 'ally', src + ' (cover)', pn(st, tgt), `+${half} ward`);
+    }
   }
   if (!cantrip) {
     P.lastN = NUMERIC(f.t) ? f.n : P.lastN;
@@ -732,7 +742,7 @@ function enemyPhase(st) {
 
 // Gear fits if it changes at least one of the operative's current faces (or grants an ability).
 function gearFits(P, g) {
-  const G = GEAR[g]; if (G.ability) return true;
+  const G = GEAR[g]; if (G.ability || G.wire) return true;
   return P.dice.some((d, di) => facesOf(P, di).some(c => { const f = parse(c), before = JSON.stringify(f); G.fx(f); return JSON.stringify(f) !== before; }));
 }
 function floorCleared(st) {

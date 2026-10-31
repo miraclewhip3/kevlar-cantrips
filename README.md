@@ -72,13 +72,14 @@ These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywo
 | ! | Cantrip | Fires on a random target the moment it lands while rolling; the die can still be used |
 | ✧ | Pristine | Double if you're at full HP |
 | ▣ | Steel | +1 per point of ward you have |
-| ϟ | Charged | +1 per ✦ you have |
+| ϟ | Charged | +1 per ✦ you have, up to +3 |
 | ≈ | Echo | Takes the number of the last die you used this turn |
 | ⧗ | Patient | Double if this die wasn't used last turn |
 | ↑ | Growth | This face gets +1 each time it's used, for the rest of the floor |
-| ◈ | Self-shield | Also gives you that much ward |
-| ♥ | Self-heal | Also heals you that much |
-| ☠ | Poison | The target takes 1 more damage at the end of every turn this floor (stacks) |
+| ◈ | Self-shield | Also gives you half that much ward (at least 1) |
+| ♥ | Self-heal | Also heals you half that much (at least 1) |
+| ⛨ | Cover | Also gives half that much ward (at least 1) to the lowest-HP teammate, or you if alone |
+| ☠ | Poison | The target takes 1 more damage at the end of every turn this floor (stacks up to 3) |
 | ✶ | Pain | You take 1 damage when you use it |
 
 ### Built-in pairings
@@ -105,10 +106,10 @@ These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywo
 ## Classes and dice
 | Class | HP | Dice (base) | Signature |
 |---|---|---|---|
-| 💥 Breach Mage | 14 | Scattershot ⚔2 CLV, ⚔2, ⚔3, ➹1, ➹2 ENG, ✕ · Breaching Charge ⚔4 ENG, ➹3, ➹2, ⚔1, ✕, ✕ · Kevlar Ward 🛡2, 🛡2, 🛡3, 🛡1, ✦1, ✕ | Door Kick (3✦): 2 piercing to every enemy |
-| ⚡ Storm Witch | 11 | Arc Lash ⚡2, ⚡2, ⚡3 CHG, ⚡1 CAN, ✦1, ✕ · Downdraft 🛡2, 🛡1, ⚡1, ◉, ✕, ✕ · Squall ✦2, ✦1 CAN, ⚡2, ⚔2 CRU, 🛡1, ✕ | Thunderhead (4✦): 2 to every enemy |
-| 👁 Precog | 10 | Foresight ◉, ◉, 👁, 👁 CAN, ✦1, ✕ · Second Guess 👁, 🛡2, 🛡1, ✦2, ✦1, ✕ · Sidearm ⚔2 PAT, ⚔2, ⚔3, ⚔1, ⚔1 ECH, ✕ | Told You So (3✦): stun the 2 biggest intents |
-| 🛡️ Riot Cleric | 16 | Riot Ward 🛡3, 🛡2, 🛡2, 🛡1, ✦1, ✕ · Flashbang ◉, ◉ CAN, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2 STL, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
+| 💥 Breach Mage | 15 | Scattershot ⚔2 CLV, ⚔2, ⚔3, ➹1, ➹2 ENG, ✕ · Breaching Charge ⚔4 ENG, ➹3, ➹2, ⚔1, ✕, ✕ · Kevlar Ward 🛡2, 🛡2, 🛡3, 🛡1, ✦1, ✕ | Door Kick (3✦): 2 piercing to every enemy |
+| ⚡ Storm Witch | 13 | Arc Lash ⚡2, ⚡2, ⚡3 CHG, ⚡1 CAN, ✦1, ✕ · Downdraft 🛡2, 🛡1, ⚡1, ◉, ✕, ✕ · Squall ✦2, ✦1 CAN, ⚡2, ⚔2 CRU, 🛡1, ✕ | Thunderhead (4✦): 2 to every enemy |
+| 👁 Precog | 12 | Foresight ◉, ⚔2, 👁, 👁 CAN, ✦1, ⚔1 · Second Guess 👁, 🛡2, ⚔2, ✦2, ➹2, ⚔1 · Sidearm ⚔3 PAT, ⚔2, ⚔3, ⚔2, ⚔1 ECH, ⚔1 | Told You So (3✦): stun the 2 biggest intents |
+| 🛡️ Riot Cleric | 13 | Riot Ward 🛡2, 🛡2, 🛡1, 🛡1, ✦1, ✕ · Flashbang ◉, ◉ CAN, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
 
 Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two + versions**: one mostly raises numbers, the other leans on keywords (for example Scattershot+ Heavy Load or Wide Spread). Hover any die's name for a quick preview of all six sides; click it to open the full unfolded die and hover each side (click outside to close). Equipped gear is listed only if there is any.
 
@@ -131,12 +132,12 @@ Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two 
 | 🧱 Ceramic Plate | Face change | Blanks become 🛡2 |
 | 🔋 Battery Pack | Face change | Blanks become ✦1 |
 | 🔁 Echo Chamber | Face change | Blanks become ⚔1 Echo |
-| 🫧 Riot Foam | Face change | ⚔ becomes 🛡 of the same number +1 |
+| 🫧 Riot Foam | Keyword | ⚔ gains Cover |
 | ♻️ Conversion Rig | Face change | ✚ becomes ⚔ of the same number, with Cruel |
 | 🪚 Serrated Edge | Keyword | ⚔ gains Cruel |
 | 🎺 Opening Salvo | Keyword | Number faces gain Engage |
 | 🪓 Broadhead Rounds | Keyword | ⚔ and ➹ gain Cleave |
-| 🧵 Spellwire | Keyword | Every face gains Cantrip |
+| 🧵 Spellwire | Keyword | The highest-number face(s) gain Cantrip |
 | 🪞 Mirror Polish | Keyword | Number faces gain Pristine |
 | 🔌 Capacitor | Keyword | Number faces gain Charged |
 | 🦺 Kevlar Lining | Keyword | ⚔ and ➹ gain Self-shield |
@@ -144,8 +145,8 @@ Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two 
 | ⏳ Hourglass | Keyword | Number faces gain Patient |
 | 🌱 Bonsai Chip | Keyword | Number faces gain Growth |
 | 🧪 Toxin Vial | Keyword | ⚔, ➹ and ⚡ gain Poison |
-| 🔮 Glass Rune | Pips + keyword | Doubles every number; faces gain Pain |
-| 💳 Taser Spellcard | Ability | Zap (2✦): stun a random enemy |
+| 🔮 Glass Rune | Pips + keyword | Doubles ⚔, ➹ and ⚡ numbers; any that reach 6+ gain Pain |
+| 💳 Taser Spellcard | Ability | Zap (3✦): stun a random enemy |
 | 🎇 Flare Rune | Ability | Flare (3✦): 3 to the enemy with the most HP |
 | ⚕️ Triage Sigil | Ability | Triage (2✦): heal the most hurt operative 3 |
 
@@ -161,10 +162,10 @@ Formerly "relics". These belong to the operative, never a die. You can carry 2.
 | 🪪 Union Card | +5 max HP |
 | 🦺 Spare Vest | Start every turn with 🛡1 |
 | 📎 Expired Warrant | +1 damage against bosses |
-| 💼 Overtime Pay | Each enemy you kill gives you 1 ✦ |
-| 📻 Squad Radio | Your 🛡 and ✚ give +1 when used on a teammate |
+| 💼 Overtime Pay | Each enemy you kill gives you 2 ✦ |
+| 📻 Squad Radio | Your 🛡 and ✚ give +1 when used on a teammate (or on yourself when alone) |
 | 💉 Adrenaline Shot | Once per floor, survive a hit that would down you, at 1 HP |
-| 📹 Body Cam | Your signature costs 1 less |
+| 📹 Body Cam | Your signature costs 2 less (minimum 1) |
 | 🎒 Hex Ammo Pouch | The first damage die you use each turn gets +1 |
 
 ## Enemies and floors
@@ -188,10 +189,10 @@ Enemy numbers get +1 from floor 4 and +2 from floor 8.
 |---|---|---|---|---|
 | 1 | 2 | ×1.0 | +0 | 1 |
 | 2 | 3 (4 on floors 7–9) | ×1.6 | +0 | 2 |
-| 3 | 4 (5 on floors 7–9) | ×2.4 | +1 | 3 |
-| 4 | 5 (6 on floors 7–9) | ×3.4 | +1 | 4 |
+| 3 | 4 (5 on floors 7–9) | ×2.0 | +1 | 3 |
+| 4 | 5 (6 on floors 7–9) | ×2.9 | +1 | 4 |
 
-Normal enemy HP also grows 10% per floor, and each extra operative adds one escort on boss floors. Tuned with bot runs: with the 4 classes, a simple bot won 11–24% of runs and reached floor 8–9 on average at every squad size (80 runs each). Real players should do better.
+Normal enemy HP also grows 10% per floor, and each extra operative adds one escort on boss floors. Re-tuned after the 2026/10/31 balance audit (see BALANCE.md): a simple bot now wins about 9–13% of squad runs (floor 8.6–8.8 on average) and 5–42% solo depending on class (300 runs each). Real players should do better.
 
 ## Multiplayer
 - **WebRTC peer-to-peer via PeerJS 1.5.4** (from unpkg). Room ids are `cheezy-kc-<CODE>`.
@@ -231,7 +232,7 @@ I filled these in; change any of them freely.
 
 ## To review later
 - With 4 players the screen is busy (up to 6 enemies plus 4 operative cards).
-- Spellwire (every face gains Cantrip) and Glass Rune may be too strong with some dice.
+- See BALANCE.md for the latest bot numbers; the Riot Cleric is still the strongest class.
 - Offers could be biased toward gear that fits your faces.
 - The old mockup page doesn't show this update.
 
