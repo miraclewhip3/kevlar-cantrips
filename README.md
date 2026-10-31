@@ -88,7 +88,7 @@ These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywo
 | Icon | Name | Face + keyword |
 |---|---|---|
 | 🪓 | Cleaving Strike | ⚔ + Cleave |
-| 💢 | Opening Strike | ⚔ + Engage |
+| 💢 | Opening Round | ⚔ + Engage (shown as a round with a full heart) |
 | 🔪 | Cruel Strike | ⚔ + Cruel |
 | 🔨 | Steel Strike | ⚔ + Steel |
 | 🎯 | Aimed Shot | ⚔ + Patient |
@@ -111,7 +111,7 @@ These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywo
 | 💥 Breach Mage | 15 | Scattershot ⚔2 CLV, ⚔2, ⚔3, ➹1, ➹2 ENG, ✕ · Breaching Charge ⚔4 ENG, ➹3, ➹2, ⚔1, ✕, ✕ · Kevlar Ward 🛡2, 🛡2, 🛡3, 🛡1, ✦1, ✕ | Door Kick (3✦): 2 piercing to every enemy |
 | ⚡ Storm Witch | 13 | Arc Lash ⚡2, ⚡2, ⚡3 CHG, ⚡1 CAN, ✦1, ✕ · Downdraft 🛡2, 🛡1, ⚡1, ◉, ✕, ✕ · Squall ✦2, ✦1 CAN, ⚡2, ⚔2 CRU, 🛡1, ✕ | Thunderhead (4✦): 2 to every enemy |
 | 👁 Precog | 12 | Foresight ◉, ⚔2, 👁, 👁 CAN, ✦1, ⚔1 · Second Guess 👁, 🛡2, ⚔2, ✦2, ➹2, ⚔1 · Sidearm ⚔3 PAT, ⚔2, ⚔3, ⚔2, ⚔1 ECH, ⚔1 | Told You So (3✦): stun the 2 biggest intents |
-| 🛡️ Riot Cleric | 13 | Riot Ward 🛡2, 🛡2, 🛡1, 🛡1, ✦1, ✕ · Flashbang ◉, ◉ CAN, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
+| 🛡️ Riot Cleric | 13 | Riot Ward 🛡2, 🛡2, 🛡1, 🛡1, ✦1, ✕ · Flashbang ◉, ◉, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
 
 Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two + versions**: one mostly raises numbers, the other leans on keywords (for example Scattershot+ Heavy Load or Wide Spread). Hover any die's name for a quick preview of all six sides; click it to open the full unfolded die and hover each side (click outside to close). Equipped gear is listed only if there is any.
 
@@ -201,6 +201,8 @@ Normal enemy HP also grows 10% per floor, and each extra operative adds one esco
 - **The host is authoritative.** The host runs `act(state, player, action)` for everyone and applies dice in the order they arrive. Guests send actions and draw the state they receive; the RNG seed is stripped first.
 - Up to 4 players can join in the lobby. If a guest leaves mid-run, their operative leaves and the rest carry on. If the host leaves, the run ends.
 - Strict networks may block direct connections (no TURN relay).
+
+**Deploy to itch.io with butler:** `./deploy-itch.sh <itch-user>/<game>` rebuilds the zip and pushes it to the `html` channel (butler is installed at `~/butler/butler.exe`; run `butler login` once first).
 
 **itch.io:** a ready zip is at `dist/kevlar-cantrips-itch.zip` (just `index.html`), plus a 630×500 cover image at `dist/cover-630x500.png`. To rebuild: zip `index.html` on its own, set the project kind to HTML, tick "played in the browser", and use a viewport of about 1150 × 900 or fullscreen.
 
