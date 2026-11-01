@@ -208,7 +208,8 @@ Normal enemy HP also grows 10% per floor, and each extra operative adds one esco
 
 ## Saving, audio, dev tools
 - Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before this update (version 1) can't be loaded.
-- Procedural WebAudio sound effects and a low synth loop, with 🎵 and 🔊 toggles.
+- Procedural WebAudio sound effects and a low synth loop, with 🎵 and 🔊 toggles. Each event has its own sound (hex-round shot, armor-piercing crack, lightning zap, ward clink, heal chime, flashbang, vision shimmer, charge sparkle, kill, enemy hit, down, summon, ability cast, new turn).
+- **Animations:** each combat-log event replays in order (140 ms apart): hit cards shake with a red flash, heals glow green, wards glow blue, stuns flash and wobble, kills pop and fade, and attacking enemies lunge. Banners announce each floor and each cleared floor. Reduced-motion settings turn the shakes off.
 - `?dev` adds these top-bar buttons: **Clear floor**, **+5 ✦**, **Heal** and **Auto-play**. `window.KC` exposes `act`, `botNext`, `newRun` and `addPlayer`.
 
 ## Design decisions

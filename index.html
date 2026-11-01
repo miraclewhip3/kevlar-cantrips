@@ -158,6 +158,20 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .log th{font-family:var(--display);color:var(--muted)}
 .float{position:fixed;pointer-events:none;font:800 1.35rem var(--mono);z-index:50;animation:floatup 1.1s ease-out forwards;text-shadow:0 2px 3px #000}
 @keyframes floatup{0%{opacity:0;transform:translateY(6px)}15%{opacity:1}100%{opacity:0;transform:translateY(-38px)}}
+@keyframes an-hit{0%{transform:none;box-shadow:0 0 0 3px rgba(255,107,91,.9)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}100%{transform:none;box-shadow:0 0 0 0 rgba(255,107,91,0)}}
+@keyframes an-heal{0%{box-shadow:0 0 0 0 rgba(123,227,154,.9)}50%{box-shadow:0 0 18px 4px rgba(123,227,154,.7)}100%{box-shadow:0 0 0 0 rgba(123,227,154,0)}}
+@keyframes an-ward{0%{box-shadow:0 0 0 0 rgba(127,178,255,.9)}50%{box-shadow:0 0 18px 4px rgba(127,178,255,.75)}100%{box-shadow:0 0 0 0 rgba(127,178,255,0)}}
+@keyframes an-stun{0%{transform:none;filter:brightness(2.2)}30%{transform:rotate(-3deg)}60%{transform:rotate(3deg)}100%{transform:none;filter:none}}
+@keyframes an-kill{0%{transform:scale(1);opacity:1}40%{transform:scale(1.08);filter:brightness(2)}100%{transform:scale(.92);opacity:.3}}
+@keyframes an-lunge{0%{transform:none}35%{transform:translateY(14px) scale(1.05)}100%{transform:none}}
+@keyframes an-charge{0%{box-shadow:0 0 0 0 rgba(199,125,255,.9)}50%{box-shadow:0 0 16px 4px rgba(199,125,255,.7)}100%{box-shadow:0 0 0 0 rgba(199,125,255,0)}}
+.an-hit{animation:an-hit .45s ease-out}.an-heal{animation:an-heal .7s ease-out}.an-ward{animation:an-ward .7s ease-out}.an-stun{animation:an-stun .5s ease-out}.an-kill{animation:an-kill .6s ease-out forwards}.an-lunge{animation:an-lunge .35s ease-out}.an-charge{animation:an-charge .6s ease-out}
+.die.used{transition:opacity .25s,transform .25s}
+#banner{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:55;pointer-events:none;font:700 2rem var(--display);letter-spacing:.06em;color:var(--hud);text-shadow:0 3px 12px #000;background:rgba(14,19,29,.85);border:1px solid var(--hud-dim);border-radius:8px;padding:.5rem 1.4rem;opacity:0}
+#banner.show{animation:bannerin 1.5s ease-out forwards}
+#banner small{display:block;font:500 .9rem var(--body);color:var(--muted);letter-spacing:0;text-align:center}
+@keyframes bannerin{0%{opacity:0;transform:translate(-50%,-40%) scale(.9)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-56%)}}
+@media (prefers-reduced-motion:reduce){.an-hit,.an-stun,.an-lunge,.an-kill{animation:none}#banner.show{animation-duration:.01s}}
 
 /* tiles (lobby, upgrades) */
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
@@ -198,6 +212,7 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
 <body>
 <div id="app" class="wrap"></div>
 <div id="tip"></div>
+<div id="banner"></div>
 <div id="overlay" class="overlay hidden"></div>
 
 <script>
@@ -503,7 +518,7 @@ const trimLog = st => { if (st.log.length > 40) st.log.splice(0, st.log.length -
 // Effects ------------------------------------------------------------------
 const pn = (st, i) => st.players[i].name;
 function en(st, i) { const t = st.enemies[i].type, same = st.enemies.map((x, j) => j).filter(j => st.enemies[j].type === t); return ENEMIES[t].name + (same.length > 1 ? ' ' + 'ABCDEFG'[same.indexOf(i)] : ''); }
-const L = (st, side, src, tgt, res) => st.log.push({ side, src, tgt, res });
+const L = (st, side, src, tgt, res) => { st.logN = (st.logN || 0) + 1; st.log.push({ side, src, tgt, res, n: st.logN }); };
 
 function hitEnemy(st, p, i, n, pierce, src) {
   const e = st.enemies[i]; if (!e || e.hp <= 0) return 0;
@@ -927,6 +942,16 @@ const sfx = {
   win() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, .28, 'triangle', .12, 0, i * .12)); },
   lose() { [330, 294, 262, 196].forEach((f, i) => tone(f, .32, 'triangle', .12, 0, i * .16)); },
   join() { tone(600, .1, 'sine', .12); tone(900, .14, 'sine', .1, 0, .1); },
+  shot() { noise(.07, .35, 1200); tone(220, .08, 'square', .06, -120); },                  // hex round
+  pierce() { noise(.05, .3, 3200); tone(900, .1, 'sawtooth', .06, -700); },               // armor-piercing crack
+  stun() { noise(.18, .3, 5000); tone(2400, .25, 'sine', .05, -1800); },                  // flashbang
+  sight() { [660, 990, 1320].forEach((f, i) => tone(f, .18, 'sine', .05, 0, i * .04)); }, // vision shimmer
+  kill() { tone(320, .2, 'square', .08, -240); noise(.15, .2, 900, .03); },
+  enemyHit() { tone(110, .22, 'sawtooth', .12, -50); noise(.1, .25, 500); },
+  down() { tone(260, .5, 'triangle', .12, -180); },
+  summon() { tone(200, .3, 'sine', .08, 300); tone(150, .3, 'sine', .06, 200, .08); },
+  cast() { noise(.25, .15, 1800); [523, 784].forEach((f, i) => tone(f, .2, 'triangle', .08, 0, i * .07)); },
+  turn() { tone(440, .08, 'triangle', .06); tone(660, .1, 'triangle', .05, 0, .07); },
 };
 // Low synth pulse with a minor arpeggio: tactical, a little spooky.
 const PROG = [[110, 131, 165], [98, 123, 147], [87, 110, 131], [98, 117, 147]];
@@ -1377,17 +1402,62 @@ function overHtml() {
   </div>`;
 }
 
+// Turn new combat-log lines into staggered sounds and card animations, so a turn reads as a sequence.
+function eventTarget(name) {
+  const p = st.players.findIndex(P => P.name === name);
+  if (p >= 0) return document.querySelector(`[data-key="p:${p}"]`);
+  const e = st.enemies.findIndex((x, i) => en(st, i) === name);
+  return e >= 0 ? document.querySelector(`[data-key="e:${e}"]`) : null;
+}
+function animate(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+function replayEvents(fromN) {
+  const fresh = st.log.filter(l => l.n > fromN && l.side !== 'sys').slice(-10);
+  fresh.forEach((l, k) => setTimeout(() => {
+    if (!st) return;
+    const s = l.src + ' ' + l.res, el = eventTarget(l.tgt);
+    if (l.side === 'foe') {
+      const atk = st.enemies.findIndex((x, i) => l.src.startsWith(en(st, i)));
+      if (atk >= 0) animate(document.querySelector(`[data-key="e:${atk}"]`), 'an-lunge');
+      if (/Summoned/.test(l.res)) sfx.summon();
+      else if (/ward/.test(l.res)) { sfx.ward(); animate(el, 'an-ward'); }
+      else if (/✚/.test(l.src)) { sfx.heal(); animate(el, 'an-heal'); }
+      else if (/\(down\)/.test(l.res)) { sfx.down(); animate(el, 'an-hit'); }
+      else if (/→/.test(l.res)) { sfx.enemyHit(); animate(el, 'an-hit'); }
+      return;
+    }
+    if (/✖/.test(l.res)) { sfx.kill(); animate(el, 'an-kill'); }
+    else if (/Stunned/.test(l.res)) { sfx.stun(); animate(el, 'an-stun'); }
+    else if (/Intent rewritten/.test(l.res)) { sfx.sight(); animate(el, 'an-stun'); }
+    else if (/ward/.test(l.res)) { sfx.ward(); animate(el, 'an-ward'); }
+    else if (/✦$/.test(l.res)) { sfx.charge(); animate(el, 'an-charge'); }
+    else if (/Poison/.test(l.src) || /Poisoned/.test(l.res)) { sfx.hit(); animate(el, 'an-hit'); }
+    else if (/✚|self-heal/.test(s) || /Back up/.test(l.res)) { sfx.heal(); animate(el, 'an-heal'); }
+    else if (/ ✦ /.test(l.src)) { sfx.cast(); animate(el, 'an-hit'); }
+    else if (/⚡/.test(l.src)) { sfx.zap(); animate(el, 'an-hit'); }
+    else if (/➹/.test(l.src)) { sfx.pierce(); animate(el, 'an-hit'); }
+    else if (/→/.test(l.res)) { sfx.shot(); animate(el, 'an-hit'); }
+  }, k * 140));
+}
+let bannerTimer = null;
+function showBanner(title, sub) {
+  const b = $('banner'); if (!b) return;
+  b.innerHTML = `${esc(title)}${sub ? `<small>${esc(sub)}</small>` : ''}`;
+  b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+  clearTimeout(bannerTimer); bannerTimer = setTimeout(() => b.classList.remove('show'), 1600);
+}
 function postRender() {
   if (!st || screen !== 'game') { renderCache.vals = {}; renderCache.sig = null; return; }
-  const sig = { rollN: st.rollN, resolveN: st.resolveN, phase: st.phase, floor: st.floor, log: st.log.length ? st.log[st.log.length - 1] : null };
+  const sig = { rollN: st.rollN, resolveN: st.resolveN, phase: st.phase, floor: st.floor, logN: st.logN || 0, turn: st.turn };
   const prev = renderCache.sig;
   if (prev) {
     if (sig.rollN !== prev.rollN) sfx.roll();
-    if (sig.log && sig.log !== prev.log && prev.log && JSON.stringify(sig.log) !== JSON.stringify(prev.log)) {
-      const s = sig.log.src + ' ' + sig.log.res;
-      if (/ward/.test(s)) sfx.ward(); else if (/✦/.test(s)) sfx.charge(); else if (/⚡|➹/.test(s)) sfx.zap(); else if (/✚|heal/.test(s)) sfx.heal(); else if (/→/.test(s)) sfx.hit();
+    if (st.phase === 'battle' && st.turn > 1 && prev.turn !== st.turn) sfx.turn();
+    replayEvents(prev.logN || 0);
+    if (sig.phase !== prev.phase) {
+      if (sig.phase === 'upgrade') { sfx.clear(); showBanner(`Floor ${st.floor} cleared`, 'Pick your upgrade'); }
+      if (sig.phase === 'over') st.result === 'won' ? sfx.win() : sfx.lose();
     }
-    if (sig.phase !== prev.phase) { if (sig.phase === 'upgrade') sfx.clear(); if (sig.phase === 'over') st.result === 'won' ? sfx.win() : sfx.lose(); }
+    if (sig.phase === 'battle' && (prev.phase !== 'battle' || prev.floor !== sig.floor)) showBanner(`Floor ${st.floor}`, floorDef(st).name);
   }
   renderCache.sig = sig;
   Object.assign(renderCache.roll, renderCache.rollNext);
