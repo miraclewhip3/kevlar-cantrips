@@ -32,7 +32,9 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class. The class screen shows a portrait, a short description and the charge ability; **Details** shows the starting dice.
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target (with keyword symbols such as ↔ spread or ☠ poison).
 3. **Everyone rolls at once.** Tap dice to 🔒 lock them (a padlock badge and gold frame show it; unlocked dice have a dashed outline), then Reroll rolls only the unlocked ones (2 rerolls). Locking all three moves on automatically; **Undo** goes back while you have rerolls. Cantrip faces fire as soon as they land.
-4. **Use dice in real time.** Click a die, then its target; it happens right away. ✦ dice charge on click. Abilities fire once per turn each.
+4. **Use dice in real time.** Click a die, then its target; it happens right away. ✦ dice charge on click (charge maxes at **4**). Abilities fire once per turn each.
+   - Your health bar stripes the damage coming at you before your next turn (attacks after ward, plus poison).
+   - Click an enemy's intent die to see every side it can roll (each boss phase separately).
 5. **End turn.** It asks first if dice or abilities are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down and back next floor at 50% HP. The run ends when the whole squad is down.
 7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8.
@@ -51,7 +53,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 | ⟂ | Pierce | Ignores the target's ward |
 | ⌁ | Chain | Also deals 1 to each enemy next to the target |
 | ↔ | Cleave | Also hits the enemies on both sides with the whole face: Pierce, Poison and Stun apply to each, and Engage, Cruel and Duel are checked per target |
-| ☠ | Poison | Target takes 1 more at the end of every turn this floor (stacks, no cap) |
+| ☠ | Poison | Adds poison equal to its number; the target takes its poison as damage at the end of every turn this floor (stacks, no cap, works on stunned enemies) |
 | ✺ | Stun | Cancels every intent of the target this turn (rare: 2 floor-9 items and the Precog signature) |
 | ⊕ | Engage | Double vs a target at full HP |
 | ✂ | Cruel | Double vs a target at half HP or less |
@@ -61,7 +63,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 | ↻ | Rampage | If it kills, the die rerolls and can be used again (once a turn) |
 | ✶ | Pain | You take 1 when you use it |
 | ▣ | Steel | +1 per point of ward you have |
-| ϟ | Charged | +1 per ✦ you have (no cap) |
+| ϟ | Charged | +1 per ✦ you have (charge itself maxes at 4) |
 | ↑ | Growth | This face gets +1 each use, for the floor |
 | ≈ | Echo | Takes the number of the last die you used this turn |
 | ⧉ | Copycat | Also gets the keywords of the last face you used this turn |
@@ -97,6 +99,7 @@ Role changes: Slug Choke, Thermite Charge, Reactive Plating (Breach); Overcharge
 - **After floors 2, 5 and 8:** a random die that isn't upgraded yet is picked; you choose its + version or its role change.
 - **After floors 1, 3, 4, 6, 7 and 9:** pick 1 of 3 items from that floor's own pool of 7 (items that change at least one of your faces are offered first).
 - Each die holds up to **3 items**; installing on a full die asks which to replace. There is no player equipment.
+- Item text links its keywords: hover or tap a keyword name to read what it does. Items no longer show as badges on your dice; open a die (tap its name) to see them.
 - **Rearranging:** on the between-floors screen, move items to another die (Move → Move here), swap them between full dice (Swap here), or reorder them (↑). Items apply **top to bottom**, so order matters: Tuning Fork above Glass Rune adds 1 before doubling.
 
 ## Items by floor

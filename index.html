@@ -153,6 +153,8 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .sigbtn.on{background:var(--arcane);color:#160d2c}
 .sigbtn:disabled{opacity:.4;cursor:default}
 .sigtxt{font-size:.78rem;color:#e6cfff}
+.kwref{color:#e2c6ff;border-bottom:1px dotted var(--arcane);cursor:help}
+.hp .inc{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(255,107,91,.95) 0 4px,rgba(255,107,91,.45) 4px 8px)}
 .sigcell{display:inline-flex;flex-direction:column;gap:2px}
 .sigwhy{font-size:.72rem;color:var(--muted)}
 .center{margin:12px 0;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
@@ -278,13 +280,13 @@ const SIGS = {
   zap:      { name:'Zap',        cost:3, text:'2 damage to the lowest-HP enemy.' },
   flare:    { name:'Flare',      cost:3, text:'3 damage to the enemy with the most HP.' },
   triage:   { name:'Triage',     cost:3, text:'Heal the most hurt operative 3.' },
-  stunburst:{ name:'Stun Burst', cost:5, text:'Stun a random enemy.' },
+  stunburst:{ name:'Stun Burst', cost:4, text:'Stun a random enemy.' },
 };
 const FACE = {
   D:{ icon:'⚔', name:'Damage',    num:true,  text:n=>`Deal ${n} damage to one enemy.` },
   W:{ icon:'🛡', name:'Ward',      num:true,  text:n=>`Give any operative ${n} ward until enemies act.` },
   H:{ icon:'✚', name:'Heal',      num:true,  text:n=>`Heal any standing operative ${n}.` },
-  C:{ icon:'✦', name:'Charge',    num:true,  text:n=>`Add ${n} charge for abilities (lasts the floor).` },
+  C:{ icon:'✦', name:'Charge',    num:true,  text:n=>`Add ${n} charge for abilities (max 4; lasts the floor).` },
   B:{ icon:'✕', name:'Blank',     num:false, text:()=>'Does nothing.' },
   // enemy-only intents
   U:{ icon:'📎', name:'Summon',    num:false, text:()=>'Summons an Intern Familiar.' },
@@ -297,7 +299,7 @@ const KW = {
   pierce:    { g:'⟂', name:'Pierce',      text:'Ignores the target\'s ward.' },
   chain:     { g:'⌁', name:'Chain',       text:'Also deals 1 to each enemy next to the target.' },
   cleave:    { g:'↔', name:'Cleave',      text:'Also hits the enemies on both sides of the target with the whole face: Pierce, Poison and Stun apply to each one too.' },
-  poison:    { g:'☠', name:'Poison',      text:'The target takes 1 more damage at the end of every turn this floor (stacks).' },
+  poison:    { g:'☠', name:'Poison',      text:'Adds poison equal to its number. A poisoned target takes damage equal to its poison at the end of every turn this floor; more poison stacks on top. Works on stunned enemies too.' },
   stun:      { g:'✺', name:'Stun',        text:'Cancels every intent of the target this turn.' },
   engage:    { g:'⊕', name:'Engage',      text:'Double if the target is at full HP.' },
   cruel:     { g:'✂', name:'Cruel',       text:'Double if the target is at half HP or less.' },
@@ -327,7 +329,7 @@ const KW = {
 };
 const ENEMY_KW = {
   spread: 'Also hits the operatives next to the target.',
-  poison: 'The operative takes 1 at the end of every turn this floor.',
+  poison: 'Adds poison equal to the hit: the operative takes that much at the end of every turn this floor (stacks).',
   growth: 'This attack gets +1 every time it is used.',
   charged:'+1 for each turn this enemy has been alive.',
   all:    'Affects every ally.',
@@ -381,7 +383,7 @@ const ITEMS = {
   weave:    { floor:7, name:'Regen Weave',     icon:'🕸️', text:'All 🛡 faces gain Regen.', fx:f => { if (f.t === 'W') addKw(f, 'regen'); } },
   // after floor 9 · Glass Atrium (tier 4, strongest)
   flashpin: { floor:9, name:'Flashbang Pin',   icon:'📍', text:'The middle ⚔ face gains Stun.', fx:(f, fi) => { if (fi === POS_MID && f.t === 'D') addKw(f, 'stun'); } },
-  ntaser:   { floor:9, name:'Neural Taser',    icon:'⚡', text:'Grants Stun Burst (5✦): stun a random enemy.', ability:'stunburst' },
+  ntaser:   { floor:9, name:'Neural Taser',    icon:'⚡', text:'Grants Stun Burst (4✦): stun a random enemy.', ability:'stunburst' },
   twinbarrel:{ floor:9, name:'Twin-Barrel Mod', icon:'🔫', text:'The left face gains Copycat and +2.', fx:(f, fi) => { if (fi === POS_LEFT && NUMERIC(f.t)) { f.n += 2; addKw(f, 'copycat'); } } },
   phoenix:  { floor:9, name:'Phoenix Sigil',   icon:'🔥', text:'The left face gains Deathwish and +1.', fx:(f, fi) => { if (fi === POS_LEFT && NUMERIC(f.t)) { f.n++; addKw(f, 'deathwish'); } } },
   singularity:{ floor:9, name:'Singularity Core', icon:'🕳️', text:'The left face becomes ⚔8 Single-use.', pre:true, fx:(f, fi) => { if (fi === POS_LEFT) { f.t = 'D'; f.n = 8; f.kw = ['singleuse']; f.base = []; } } },
@@ -430,6 +432,7 @@ const FLOORS = [
 const floorPool = f => { const pool = []; FLOORS.slice(0, f).forEach((F2, i) => F2.news.forEach(t => { pool.push(t); if (i === f - 1) pool.push(t); })); return pool.length ? pool : ['guard']; };
 const UPGRADE_FLOORS = [2, 5, 8];   // die upgrade after these floors; floor item offers after the rest
 const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:3 };
+const CHARGE_MAX = 4;   // charge never goes above this
 // Enemy HP by squad size, tuned with bot runs so 1-4 operatives reach a similar floor on average.
 const HP_MULT = [0.9, 1.35, 2.0, 2.6];
 const SQUAD_DMG = [0, 0, 0, 0];
@@ -616,7 +619,13 @@ const lowestMate = (st, p) => { const m = living(st).filter(i => i !== p); retur
 function pickRandomTarget(st, p, t) {
   const al = foesAlive(st), lv = living(st);
   if (t === 'D') return al.length ? { k:'e', i: pick(st, al) } : null;
-  if (t === 'W' || t === 'H') return lv.length ? { k:'p', i: lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b, lv[0]) } : null;
+  if (t === 'H') {   // heal the most hurt ally; never someone at full HP if anyone is hurt
+    const hurt = lv.filter(i => st.players[i].hp < maxHp(st, i));
+    if (!hurt.length) return lv.length ? { k:'p', i: lv.includes(p) ? p : lv[0] } : null;
+    const most = Math.max(...hurt.map(i => maxHp(st, i) - st.players[i].hp));
+    return { k:'p', i: pick(st, hurt.filter(i => maxHp(st, i) - st.players[i].hp === most)) };
+  }
+  if (t === 'W') return lv.length ? { k:'p', i: lv.reduce((b, i) => incomingTo(st, i) - st.players[i].ward > incomingTo(st, b) - st.players[b].ward ? i : b, lv[0]) } : null;
   return null;
 }
 // The final number a face resolves for, given its keywords and target.
@@ -656,7 +665,7 @@ function resolveFace(st, p, di, f, tg, src, v) {
     hits.forEach(h => {
       if (hitEnemy(st, p, h.i, h.v, pierce, h.s)) killed = true;
       const T = st.enemies[h.i];
-      if (f.kw.includes('poison') && T.hp > 0) { T.poison++; L(st, 'ally', h.s, en(st, h.i), `Poisoned (${T.poison})`); }
+      if (f.kw.includes('poison') && T.hp > 0) { T.poison += Math.max(1, h.v); L(st, 'ally', h.s, en(st, h.i), `Poison +${Math.max(1, h.v)} (now ${T.poison})`); }
       if (f.kw.includes('stun') && T.hp > 0) { T.stun = true; L(st, 'ally', h.s, en(st, h.i), 'Stunned'); }
     });
     if (f.kw.includes('chain') && pos >= 0) {
@@ -671,7 +680,7 @@ function resolveFace(st, p, di, f, tg, src, v) {
       if (f.kw.includes('regen')) { T.regen++; L(st, 'ally', s2, pn(st, i), `Regen ${T.regen}`); } };
     give(tg.i, src);
     if (f.kw.includes('share')) { const m = lowestMate(st, tg.i === p ? p : tg.i); if (m != null && m !== tg.i) give(m, src + ' (share)'); }
-  } else if (f.t === 'C') { P.charge += v; L(st, 'ally', src, P.name, `+${v} ✦`); }
+  } else if (f.t === 'C') { const before = P.charge; P.charge = Math.min(CHARGE_MAX, P.charge + v); L(st, 'ally', src, P.name, `+${P.charge - before} ✦ (max ${CHARGE_MAX})`); }
   if (NUMERIC(f.t) && f.t !== 'C') {
     const half = Math.max(1, Math.floor(v / 2));
     if (f.kw.includes('selfshield')) { P.ward += half; L(st, 'ally', src, P.name, `+${half} ward (self)`); }
@@ -870,7 +879,7 @@ function enemyPhase(st) {
         if (f.kw.includes('spread')) { const lv = living(st), pos = lv.indexOf(tg); [lv[pos - 1], lv[pos + 1]].forEach(j => { if (j != null) hit.push(j); }); }
         hit.forEach((pi, k) => {
           hurtPlayer(st, pi, n, `${en(st, i)} ⚔${n}${k ? ' (spread)' : ''}`, true);
-          if (f.kw.includes('poison') && !st.players[pi].down) { st.players[pi].poison++; L(st, 'foe', en(st, i), pn(st, pi), `Poisoned (${st.players[pi].poison})`); }
+          if (f.kw.includes('poison') && !st.players[pi].down) { st.players[pi].poison += Math.max(1, n); L(st, 'foe', en(st, i), pn(st, pi), `Poison +${Math.max(1, n)} (now ${st.players[pi].poison})`); }
         });
         if (f.kw.includes('growth')) e.grow++;
       } else if (f.t === 'X') { living(st).forEach(pi => hurtPlayer(st, pi, n, `${en(st, i)} 💥${n}`, true)); if (f.kw.includes('growth')) e.grow++; }
@@ -1466,7 +1475,7 @@ function foeCard(i) {
     const to = (f.t === 'D' || f.t === 'K') ? (all ? '→ everyone' : `→ ${pname(st.taunt != null && f.t === 'D' ? st.taunt : it.tg)}`) : f.t === 'W' ? (all ? '→ all allies' : `→ ${foeLabel(it.tg, true)}`) : (f.t === 'H' || f.t === 'P') ? `→ ${foeLabel(it.tg, true)}` : f.t === 'X' ? '→ everyone' : f.t === 'U' ? 'summon' : '';
     const tags = f0.kw.filter(k => k !== 'all');
     const tip = 'Intent: ' + faceTip(f) + tags.map(k => `\n${k[0].toUpperCase() + k.slice(1)}: ${ENEMY_KW[k]}`).join('');
-    return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-tip="${esc(tip)}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div><span class="to">${to}</span></div>`;
+    return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-foedie="${i}" data-tip="${esc(tip + '\nClick to see every side.')}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div><span class="to">${to}</span></div>`;
   }).join('');
   const ok = canTarget('e', i) ? 'tg-ok' : '';
   return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
@@ -1482,7 +1491,7 @@ function opCard(p) {
   const statusTxt = P.away ? 'RECONNECTING' : ({ roll:'ROLLING', use:'IN ACTION', ready:'READY', down:'DOWN', gone:'LEFT', wait:'' }[status] || '');
   const dice = P.dice.map((dd, di) => {
     const d = P.roll[di];
-    if (!d) return `<div class="dcol"><div class="die empty">${gearBadges(dd.gear)}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button></div>`;
+    if (!d) return `<div class="dcol"><div class="die empty"></div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button></div>`;
     const f = effFace(st, p, di, d.fi);
     const key = p + ':' + di, isRoll = renderCache.roll[key] !== d.r; renderCache.rollNext[key] = d.r;
     const usable = mine && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
@@ -1490,7 +1499,7 @@ function opCard(p) {
     const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', locked ? 'kept' : '', mine && rolling && !d.k ? 'unlocked' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : ''].join(' ');
     const state = rolling ? (locked ? '<span class="lockhint on">🔒 LOCKED</span>' : mine ? '<span class="lockhint off">tap to lock</span>' : '') : d.used ? 'used' : '';
     const tip = dieName(P, di) + '\n' + faceTip(f) + (mine && rolling ? (locked ? '\nLocked: Reroll skips it. Tap to unlock.' : '\nTap to lock it, so Reroll skips it.') : '');
-    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(tip)}">${dieInner(f)}${gearBadges(dd.gear)}${locked ? '<span class="lock" aria-label="Locked">🔒</span>' : ''}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
+    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(tip)}">${dieInner(f)}${locked ? '<span class="lock" aria-label="Locked">🔒</span>' : ''}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
   }).join('');
   const abil = [C.sig, ...abilitiesOf(P)];
   let sig;
@@ -1506,12 +1515,21 @@ function opCard(p) {
   return `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
     <div class="hh"><b>${pname(p)}</b><span class="status ${status}">${statusTxt}</span></div>
     <div class="sub">${portrait(P.cls, 26)}<span>${C.name}</span><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
-    <div class="hp ally"><i style="width:${P.hp / mx * 100}%"></i><span>${P.down ? 'Down' : `${P.hp}/${mx}`}</span></div>
+    ${hpBar(p)}
     ${mine && st.phase === 'battle' && P.step === 'roll' && !P.roll.some(d => d.k) && st.floor === 1 && st.turn <= 2 ? '<div class="coach">👇 Tap a die to lock it</div>' : ''}
     <div class="dice">${dice}</div>
     ${sig}
     ${mine && st.phase === 'battle' ? `<div class="ctrlwrap">${ui.hint ? `<div class="hint" style="text-align:left">${ui.hint}</div>` : ''}<div class="row ctrl">${ui.controls || ''}</div></div>` : ''}
   </div>`;
+}
+// Operative health bar with the damage expected before your next turn striped on top
+// (enemy attacks aimed at you, after your ward, plus poison).
+function hpBar(p) {
+  const P = st.players[p], mx = maxHp(st, p);
+  if (P.down) return '<div class="hp ally"><i style="width:0%"></i><span>Down</span></div>';
+  const inc = st.phase === 'battle' ? Math.min(P.hp, Math.max(0, incomingTo(st, p) - P.ward) + P.poison) : 0;
+  const tip = inc ? `Incoming: about ${inc} damage before your next turn (attacks after your ward, plus poison).` : 'No damage incoming right now.';
+  return `<div class="hp ally" data-tip="${esc(tip)}"><i style="width:${P.hp / mx * 100}%"></i>${inc ? `<b class="inc" style="left:${(P.hp - inc) / mx * 100}%;width:${inc / mx * 100}%"></b>` : ''}<span>${P.hp}/${mx}${inc ? ` (−${inc} incoming)` : ''}</span></div>`;
 }
 function logTable(lines, title) {
   const rows = lines.map(l => l.side === 'sys' ? `<tr class="sys"><td colspan="3">${esc(l.src)}</td></tr>` : `<tr><td style="color:${l.side === 'ally' ? 'var(--ally)' : 'var(--foe)'}">${esc(l.src)}</td><td>${esc(l.tgt)}</td><td>${esc(l.res)}</td></tr>`).join('');
@@ -1568,7 +1586,10 @@ function netHtml(faces, size) {   // faces: effective face objects, laid out lik
   return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}">${iconHtml(f)}${FACE[f.t].num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
 }
 const effFaces = (p, di) => [0, 1, 2, 3, 4, 5].map(fi => effFace(st, p, di, fi));
-const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(ITEMS[g].text)}">${ITEMS[g].icon} <b style="color:var(--fg)">${ITEMS[g].name}</b>: ${ITEMS[g].text}</div>`).join('')}</div>` : '';
+// Wrap keyword names in item text so hovering (or tapping) them explains the keyword.
+const KW_RX = new RegExp('\\b(' + Object.values(KW).map(k => k.name).sort((a, b) => b.length - a.length).join('|') + ')\\b', 'g');
+const kwLink = text => esc(text).replace(KW_RX, m => { const k = Object.values(KW).find(x => x.name === m); return `<span class="kwref" tabindex="0" data-tip="${esc(k.g + ' ' + k.name + ': ' + k.text)}">${m}</span>`; });
+const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(ITEMS[g].text)}">${ITEMS[g].icon} <b style="color:var(--fg)">${ITEMS[g].name}</b>: ${kwLink(ITEMS[g].text)}</div>`).join('')}</div>` : '';
 function dieBlock(p, di, extra, movable) {
   const P = st.players[p], d = P.dice[di], sel = ui.moveSel;
   let gear = gearLine(d);
@@ -1577,7 +1598,7 @@ function dieBlock(p, di, extra, movable) {
       const picked = sel && sel.d === di && sel.g === gi;
       const ctrl = sel && sel.d !== di ? (d.gear.length >= RULES.gearPerDie ? `<button class="btn sm ghost" data-mv="swap" data-to="${di}" data-swap="${gi}">Swap here</button>` : '') :
         `${gi > 0 ? `<button class="btn sm ghost" data-mv="up" data-d="${di}" data-g="${gi}" data-tip="Move up (items apply top to bottom)">↑</button>` : ''}<button class="btn sm ${picked ? '' : 'ghost'}" data-mv="pick" data-d="${di}" data-g="${gi}">${picked ? 'Cancel' : 'Move'}</button>`;
-      return `<div class="row" style="gap:6px"><span data-tip="${esc(ITEMS[g].text)}" style="flex:1;min-width:0">${ITEMS[g].icon} <b style="color:var(--fg)">${ITEMS[g].name}</b>: ${ITEMS[g].text}</span>${ctrl}</div>`;
+      return `<div class="row" style="gap:6px"><span data-tip="${esc(ITEMS[g].text)}" style="flex:1;min-width:0">${ITEMS[g].icon} <b style="color:var(--fg)">${ITEMS[g].name}</b>: ${kwLink(ITEMS[g].text)}</span>${ctrl}</div>`;
     }).join('')}${sel && sel.d !== di && d.gear.length < RULES.gearPerDie ? `<button class="btn sm" data-mv="here" data-to="${di}">Move here (${d.gear.length}/${RULES.gearPerDie})</button>` : ''}${!d.gear.length && !(sel && sel.d !== di) ? '<span class="muted">No items yet</span>' : ''}</div>`;
   }
   return `<div class="mydie"><button class="dname" style="font-size:.9rem;align-self:flex-start" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button>
@@ -1587,6 +1608,20 @@ function abilitiesHtml(p) {
   const P = st.players[p], own = CLASSES[P.cls].sig;
   const rows = [own, ...abilitiesOf(P)].map(s => `<div>✦ <b style="color:#e6cfff">${SIGS[s].name}</b> (${sigCost(st, p, s)}✦): ${SIGS[s].text}${s === own ? ' <span class="tag">signature</span>' : ' <span class="tag">from gear</span>'}</div>`).join('');
   return `<div style="font-size:.85rem" class="stack"><b>Charge abilities</b>${rows}<span class="muted">✦ comes from ✦ faces and resets each floor.</span></div>`;
+}
+function showEnemyDie(i) {   // every intent this enemy can roll, as an unfolded die (each boss phase gets its own)
+  const e = st.enemies[i], E = ENEMIES[e.type], o = $('overlay');
+  const sets = E.phases ? E.phases.map((ph, k) => ({ label: k === 0 ? 'Opening phase' : `Below ${Math.round(ph.at * 100)}% HP${ph.enrage ? ' (enraged)' : ''}`, ints: ph.ints })) : [{ label: 'Every side', ints: E.ints }];
+  const faceOf = c => { const f0 = parse(c); return { t: f0.t, n: intentValue(st, e, f0), kw: [], base: [] }; };
+  const kwNotes = [...new Set(sets.flatMap(x => x.ints).flatMap(c => parse(c).kw).filter(k => k !== 'all'))].map(k => `<div><b>${k[0].toUpperCase() + k.slice(1)}</b>: ${ENEMY_KW[k]}</div>`).join('');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between"><div class="row">${enemyArt(e.type, 56)}<h3>${foeLabel(i)}</h3></div><button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <p class="muted" style="margin:0">Each turn it rolls one of these sides${e.acts > 1 ? ` (${e.acts} times)` : ''}. Numbers include its current bonuses. HP ${e.hp}/${e.mx}.</p>
+    <div class="netwrap">${sets.map(x => `<div class="mydie"><b>${esc(x.label)}</b>${netHtml(x.ints.map(faceOf), '3.2rem')}</div>`).join('')}</div>
+    ${kwNotes ? `<div class="stack" style="gap:4px;font-size:.85rem">${kwNotes}</div>` : ''}
+    ${E.selfWard ? `<div class="muted" style="font-size:.85rem">Gains 🛡${E.selfWard} every turn.</div>` : ''}${E.shatter ? `<div class="muted" style="font-size:.85rem">Shatters for ${E.shatter} damage to every operative when killed.</div>` : ''}${E.enrage ? '<div class="muted" style="font-size:.85rem">Enrage: +2 to every attack below half HP.</div>' : ''}
+  </div>`;
+  o.classList.remove('hidden');
 }
 function showDie(p, di) {
   const P = st.players[p], d = P.dice[di], o = $('overlay');
@@ -1612,7 +1647,7 @@ function upgradeHtml() {
       <div class="netwrap"><div class="mydie"><b>Now</b>${netHtml(effFaces(me, di), '2.9rem')}</div>
       ${D.plus.map((v, k) => `<div class="mydie"><b>${esc(D.name)}+ · ${esc(v.label)}</b>${netHtml(v.faces.map(parse), '2.9rem')}<button class="btn sm" data-plusv="${k}">Choose ${esc(v.label)}</button></div>`).join('')}</div>`;
     } else {
-      const tiles = P.offers.map((o, i) => { const d = offerDesc(o); return `<div class="tile ${ui.pend === i ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${d.text}</div><button class="btn sm" data-offer="${i}">Choose</button></div>`; }).join('');
+      const tiles = P.offers.map((o, i) => { const d = offerDesc(o); return `<div class="tile ${ui.pend === i ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${kwLink(d.text)}</div><button class="btn sm" data-offer="${i}">Choose</button></div>`; }).join('');
       let chooser = '';
       if (ui.pend != null) {
         const o = P.offers[ui.pend];
@@ -1770,7 +1805,7 @@ document.addEventListener('click', e => {
     }
   }
   if (e.target.id === 'overlay') { $('overlay').classList.add('hidden'); return; }   // click outside the box closes it
-  const el = e.target.closest('[data-ui],[data-cls],[data-clsinfo],[data-die],[data-cast],[data-offer],[data-plusv],[data-gear],[data-mv],[data-dev],[data-inspect]');
+  const el = e.target.closest('[data-ui],[data-cls],[data-clsinfo],[data-die],[data-cast],[data-offer],[data-plusv],[data-gear],[data-mv],[data-dev],[data-inspect],[data-foedie]');
   ac();
   if (el) {
     const d = el.dataset;
@@ -1778,6 +1813,7 @@ document.addEventListener('click', e => {
     if (d.dev) return devAction(d.dev);
     if (d.cls) { sfx.click(); return dispatch({ t:'class', cls: d.cls }); }
     if (d.clsinfo) return showClass(d.clsinfo);
+    if (d.foedie != null && ui.sel == null) return showEnemyDie(+d.foedie);   // while aiming, a click on the card targets it instead
     if (d.mv) {
       const m = ui.moveSel;
       if (d.mv === 'pick') { ui.moveSel = m && m.d === +d.d && m.g === +d.g ? null : { d: +d.d, g: +d.g }; return render(); }
@@ -1824,7 +1860,7 @@ document.addEventListener('keydown', e => {
 function devAction(k) {
   if (!st || st.phase !== 'battle') return;
   if (k === 'win') { st.enemies.forEach(x => x.hp = 0); floorCleared(st); }
-  if (k === 'charge') st.players[me].charge += 5;
+  if (k === 'charge') st.players[me].charge = CHARGE_MAX;
   if (k === 'heal') st.players.forEach((P, p) => { if (!P.gone) { P.hp = maxHp(st, p); } });
   if (k === 'auto') { clearInterval(autoTimer); autoTimer = setInterval(() => { if (!st || net.role === 'client') return clearInterval(autoTimer); const a = botNext(st, me); if (a) dispatch(a); else if (st.phase === 'over') clearInterval(autoTimer); }, 250); return; }
   afterChange();
