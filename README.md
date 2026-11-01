@@ -31,7 +31,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 ## How to play
 1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class. The class screen shows a portrait, a short description and the charge ability; **Details** shows the starting dice.
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target (with keyword symbols such as ↔ spread or ☠ poison).
-3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). Keeping all three moves on automatically; **Undo** goes back while you have rerolls. Cantrip faces fire as soon as they land.
+3. **Everyone rolls at once.** Tap dice to 🔒 lock them (a padlock badge and gold frame show it; unlocked dice have a dashed outline), then Reroll rolls only the unlocked ones (2 rerolls). Locking all three moves on automatically; **Undo** goes back while you have rerolls. Cantrip faces fire as soon as they land.
 4. **Use dice in real time.** Click a die, then its target; it happens right away. ✦ dice charge on click. Abilities fire once per turn each.
 5. **End turn.** It asks first if dice or abilities are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down and back next floor at 50% HP. The run ends when the whole squad is down.
@@ -50,7 +50,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 |---|---|---|
 | ⟂ | Pierce | Ignores the target's ward |
 | ⌁ | Chain | Also deals 1 to each enemy next to the target |
-| ↔ | Cleave | Also hits the enemies on both sides for the same amount |
+| ↔ | Cleave | Also hits the enemies on both sides with the whole face: Pierce, Poison and Stun apply to each, and Engage, Cruel and Duel are checked per target |
 | ☠ | Poison | Target takes 1 more at the end of every turn this floor (stacks, no cap) |
 | ✺ | Stun | Cancels every intent of the target this turn (rare: 2 floor-9 items and the Precog signature) |
 | ⊕ | Engage | Double vs a target at full HP |
@@ -97,6 +97,7 @@ Role changes: Slug Choke, Thermite Charge, Reactive Plating (Breach); Overcharge
 - **After floors 2, 5 and 8:** a random die that isn't upgraded yet is picked; you choose its + version or its role change.
 - **After floors 1, 3, 4, 6, 7 and 9:** pick 1 of 3 items from that floor's own pool of 7 (items that change at least one of your faces are offered first).
 - Each die holds up to **3 items**; installing on a full die asks which to replace. There is no player equipment.
+- **Rearranging:** on the between-floors screen, move items to another die (Move → Move here), swap them between full dice (Swap here), or reorder them (↑). Items apply **top to bottom**, so order matters: Tuning Fork above Glass Rune adds 1 before doubling.
 
 ## Items by floor
 | After floor | Items (tier) |
@@ -135,6 +136,7 @@ Two new enemies arrive on each regular floor and mix with earlier ones (new ones
 Each extra operative adds one boss escort. Measured with 100 bot runs per squad size (2026/11/01): bots win about 16-36% of runs and reach floor 7.4-8.5 on average; floors 1-2 ended only 5 of 100 solo runs and no squad runs. By class, solo: Riot Cleric 46%, Breach Mage 35%, Storm Witch 14%, Precog 11%.
 
 ## Multiplayer and reconnecting
+- **Names:** every player starts with a random callsign from a list of 25 (🎲 next to the name box picks another). Names show on every card. The host keeps names unique by adding a number (Static, Static 2).
 - **WebRTC peer-to-peer via PeerJS 1.5.4.** Room ids are `cheezy-kc-<CODE>`. The host runs the rules; guests send actions and draw the state.
 - **Phones losing focus no longer kick you out.** Each browser tab keeps a token. If a guest's connection drops (switching apps, locking the screen), the host marks them **away**: their turns are skipped and floor rewards are auto-picked, but their operative stays. The guest's page keeps retrying for about 2 minutes and reconnects automatically when it comes back to the front; they reclaim their seat and can still use that turn's dice.
 - **Leave** (the button) still removes you for good. If the host's tab closes, the run ends; a host that briefly loses the broker reconnects by itself.
