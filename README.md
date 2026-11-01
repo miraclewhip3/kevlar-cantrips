@@ -2,247 +2,162 @@
 
 # Kevlar & Cantrips
 
-A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operative with 3 class dice. The squad breaches a cursed corporate tower in the near-future city of Halcyon, one floor per round, for 10 floors. The tone follows Tactical Breach Wizards: wizards in tactical gear, police jargon applied to magic, and dry humor. Keywords follow Slice & Dice. All names and characters are original.
+A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operative with 3 class dice, built up with items as the squad climbs. The squad breaches a cursed corporate tower in the near-future city of Halcyon, one floor per round, for 10 floors. The tone follows Tactical Breach Wizards: wizards in tactical gear, police jargon applied to magic, and dry humor. Keywords follow Slice & Dice. All names and characters are original.
 
 **Play:** https://miraclewhip3.github.io/kevlar-cantrips/
 
 ## Vision
-*Assembled from the 2026/10/31 design rounds. It hasn't been confirmed as a written statement.*
+*The pillars and core loop are being written with the user in the [design document](https://claude.ai/artifact/RKCBMUDy1F6GxrhZR3KNkt). Until they're approved, this is the working version.*
 
-- **Fantasy:** you and your friends are a squad of wizard cops kicking in doors, one floor at a time.
-- **Feeling:** planning a turn together and watching it land. "You ward me, I stun the sniper."
-- **Pillars**
-  1. **Co-op planning.** Everyone rolls at once, every die lands in real time where the squad can see it, and the squad readies up together.
-  2. **One character, grown die by die.** You keep 3 dice all run, improved by die+ upgrades and die equipment.
-  3. **Readable at a glance.** Dice show an icon, a number and short keyword tags. Enemy intents show before you act.
-  4. **Zero setup.** Room codes, no accounts, no server.
+- **Core loop (the user's words):** "The core gameplay loop revolves around modifying and upgrading dice as you go up the tower. Putting equipment on the dice is really key."
+- **Fantasy:** a squad of wizard cops kicking in doors, one floor at a time.
 - **Non-goals:** positional tactics, per-floor rule modifiers (cut for now), PvP, long campaigns.
-- **When in doubt:** pick what makes the squad talk to each other.
 
 ## Contents
 - [How to play](#how-to-play)
-- [Faces](#faces)
+- [Dice and faces](#dice-and-faces)
 - [Keywords](#keywords)
 - [Classes and dice](#classes-and-dice)
 - [Between floors](#between-floors)
-- [Die equipment](#die-equipment)
-- [Player equipment](#player-equipment)
+- [Items by floor](#items-by-floor)
 - [Enemies and floors](#enemies-and-floors)
-- [Squad scaling](#squad-scaling)
-- [Multiplayer](#multiplayer)
+- [Squad scaling and balance](#squad-scaling-and-balance)
+- [Multiplayer and reconnecting](#multiplayer-and-reconnecting)
+- [Phones](#phones)
 - [Saving, audio, dev tools](#saving-audio-dev-tools)
 - [Design decisions](#design-decisions)
-- [Assumptions made in this prototype](#assumptions-made-in-this-prototype)
-- [To review later](#to-review-later)
-- [Roadmap to alpha](#roadmap-to-alpha)
+- [Assumptions and to review](#assumptions-and-to-review)
 
 ## How to play
-1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class (4 classes). The class screen shows a portrait, a short description and the charge ability; **Details** shows the starting dice as unfolded dice.
-2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target.
-3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). Keeping all three moves on automatically; **Undo** goes back to rolling while you have rerolls and haven't used anything. Your Reroll, Done rolling, Undo and End turn buttons sit in your own operative card, next to your dice. **Cantrip** faces fire on a random target the moment they land.
-4. **Use dice in real time.** Click a die, then its target. It happens right away, and everyone sees HP and ward change. ✦ dice charge as soon as you click them. Abilities (your signature, plus any your gear grants) also fire right away, once per turn each.
-5. **End turn.** Unused dice are lost. If you still have unused dice or a usable ability, End turn asks you to confirm first. When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then. Poison ticks at the end of the turn.
-6. **Down, not out.** At 0 HP you're down, and you're back next floor at 50% HP. The run ends when the whole squad is down.
-7. **Between floors** everyone heals half their missing HP and picks an upgrade (see below).
+1. **Squad up.** Play solo, or one player hosts and shares a 4-letter code (up to 4 players). Each player picks a different class. The class screen shows a portrait, a short description and the charge ability; **Details** shows the starting dice.
+2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target (with keyword symbols such as ↔ spread or ☠ poison).
+3. **Everyone rolls at once.** Click dice to keep them, then reroll the rest (2 rerolls). Keeping all three moves on automatically; **Undo** goes back while you have rerolls. Cantrip faces fire as soon as they land.
+4. **Use dice in real time.** Click a die, then its target; it happens right away. ✦ dice charge on click. Abilities fire once per turn each.
+5. **End turn.** It asks first if dice or abilities are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
+6. **Down, not out.** At 0 HP you're down and back next floor at 50% HP. The run ends when the whole squad is down.
+7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8.
 8. **Win** by clearing floor 10, the CEO.
 
-## Faces
-Numbers are shown as **pips** in the bottom-right corner, like Slice & Dice: each short tick is 1 and each tall bar is 5. Hover any face for the exact number.
-
-**Art:** all die faces, built-in pairings, class portraits, enemy portraits and the title tower are hand-drawn SVG inside `index.html` (no image files). Damage faces are hex rounds (bullets), Pierce is an armor-piercing slug, Ward is a badge shield. Gear and player equipment still use emoji icons.
-
-| Face | Effect |
-|---|---|
-| ⚔ Damage N | N damage to one enemy |
-| ➹ Pierce N | N damage to one enemy, ignoring its ward |
-| ⚡ Arc N | N damage to one enemy, and 1 to each enemy next to it |
-| 🛡 Ward N | N ward on any operative until enemies act |
-| ✚ Patch N | Heal any standing operative N |
-| ◉ Stun | Cancel every intent of one enemy this turn |
-| 👁 Foresight | Reroll one enemy's intent |
-| ✦ Charge N | N charge for abilities (lasts the floor) |
-| ✕ Blank | Nothing |
+## Dice and faces
+- Every face is one **primary** plus, on starting dice, at most one **keyword**. The primaries are ⚔ damage, 🛡 ward, ✚ heal and ✦ charge (plus ✕ blank).
+- **Face strength by position** (a guideline): left strongest, then middle; top, right and bottom about equal; rightmost weakest. Items that say "the left face" follow this layout.
+- **Power baseline:** about ⚔3 ⚔2 🛡1 🛡1 🛡1 ✕ (8 pips). Starting dice sit near it, with 1 or 2 keywords each.
+- **Pips:** numbers are shown as pips in the bottom-right corner: a tick is 1, a tall bar is 5. Hover (or tap on a phone) for the exact number.
+- **Built-in pairings** have their own icon (⚔ + Cleave = three spread rounds, ⚔ + Pierce = an armor-piercing slug). Keywords added by items show as small purple symbols.
 
 ## Keywords
-These come from the Slice & Dice wiki (slice-and-dice.fandom.com, Category:Keywords), adapted to co-op. Built-in pairings on class dice have their own icon (see below), so a die reads at a glance. Keywords added by gear show as small purple symbols at the bottom of a side; they never move the main icon. Hovering lists each keyword on its own line.
-
 | Symbol | Keyword | Effect |
 |---|---|---|
-| ↔ | Cleave | Also hits the enemies on both sides of the target for the same amount |
-| ⊕ | Engage | Double if the target is at full HP |
-| ✂ | Cruel | Double if the target is at half HP or less |
-| ! | Cantrip | Fires on a random target the moment it lands while rolling; the die can still be used |
+| ⟂ | Pierce | Ignores the target's ward |
+| ⌁ | Chain | Also deals 1 to each enemy next to the target |
+| ↔ | Cleave | Also hits the enemies on both sides for the same amount |
+| ☠ | Poison | Target takes 1 more at the end of every turn this floor (stacks, no cap) |
+| ✺ | Stun | Cancels every intent of the target this turn (rare: 2 floor-9 items and the Precog signature) |
+| ⊕ | Engage | Double vs a target at full HP |
+| ✂ | Cruel | Double vs a target at half HP or less |
 | ✧ | Pristine | Double if you're at full HP |
+| ✝ | Deathwish | Double if you're at 3 HP or less |
+| ♨ | Bloodlust | +1 per damaged enemy |
+| ↻ | Rampage | If it kills, the die rerolls and can be used again (once a turn) |
+| ✶ | Pain | You take 1 when you use it |
 | ▣ | Steel | +1 per point of ward you have |
-| ϟ | Charged | +1 per ✦ you have, up to +3 |
+| ϟ | Charged | +1 per ✦ you have (no cap) |
+| ↑ | Growth | This face gets +1 each use, for the floor |
 | ≈ | Echo | Takes the number of the last die you used this turn |
-| ⧗ | Patient | Double if this die wasn't used last turn |
-| ↑ | Growth | This face gets +1 each time it's used, for the rest of the floor |
-| ◈ | Self-shield | Also gives you half that much ward (at least 1) |
-| ♥ | Self-heal | Also heals you half that much (at least 1) |
-| ⛨ | Cover | Also gives half that much ward (at least 1) to the lowest-HP teammate, or you if alone |
-| ☠ | Poison | The target takes 1 more damage at the end of every turn this floor (stacks up to 3) |
-| ✶ | Pain | You take 1 damage when you use it |
+| ⧉ | Copycat | Also gets the keywords of the last face you used this turn |
+| ⚇ | Duel | Double vs an enemy targeting you |
+| ◎ | Focus | +2 if your last die hit the same enemy |
+| ⧗ | Patient | Double if the die wasn't used last turn (never on turn 1 of a floor) |
+| ⇯ | Exert | +2, but the die is blank next turn |
+| ① | Single-use | Blank for the rest of the floor after you use it |
+| ⚓ | Sticky | Can't be rerolled once rolled |
+| ⏭ | Future | Lands at the start of your next turn, with +1 |
+| ! | Cantrip | Fires on a random target the moment it lands while rolling |
+| ◈ | Self-shield | Also wards you for half its number (at least 1) |
+| ♥ | Self-heal | Also heals you for half its number (at least 1) |
+| ⇄ | Share | The ward or heal also goes to the lowest-HP teammate |
+| ❋ | Cleanse | Removes poison and curses from the target |
+| ✿ | Regen | Target heals 1 at the start of each turn this floor (stacks) |
 
-### Built-in pairings
-| Icon | Name | Face + keyword |
-|---|---|---|
-| 🪓 | Cleaving Strike | ⚔ + Cleave |
-| 💢 | Opening Round | ⚔ + Engage (shown as a round with a full heart) |
-| 🔪 | Cruel Strike | ⚔ + Cruel |
-| 🔨 | Steel Strike | ⚔ + Steel |
-| 🎯 | Aimed Shot | ⚔ + Patient |
-| 🔁 | Echo Shot | ⚔ + Echo |
-| 🏹 | Breaching Shot | ➹ + Engage |
-| 🔱 | Piercing Spread | ➹ + Cleave |
-| 🌩️ | Charged Arc | ⚡ + Charged |
-| 💫 | Static Arc | ⚡ + Cantrip |
-| ⛓️ | Chain Lightning | ⚡ + Cleave |
-| 🪖 | Self Ward | 🛡 + Self-shield |
-| 🏰 | Steel Ward | 🛡 + Steel |
-| 💠 | Pristine Ward | 🛡 + Pristine |
-| 🔆 | Snap Stun | ◉ + Cantrip |
-| 🔮 | Flash Vision | 👁 + Cantrip |
-| 🌟 | Spark Charge | ✦ + Cantrip |
+**Enemy keywords:** Spread (also hits the operatives next to the target), Poison (1 damage per turn this floor), Curse (your highest face is blank next turn), Growth (+1 each use), Charged (+1 per turn alive), Enrage (+2 below half HP), Empower (an ally's attacks +1 for the floor), Shatter (damages everyone when killed).
 
 ## Classes and dice
-| Class | HP | Dice (base) | Signature |
-|---|---|---|---|
-| 💥 Breach Mage | 15 | Scattershot ⚔2 CLV, ⚔2, ⚔3, ➹1, ➹2 ENG, ✕ · Breaching Charge ⚔4 ENG, ➹3, ➹2, ⚔1, ✕, ✕ · Kevlar Ward 🛡2, 🛡2, 🛡3, 🛡1, ✦1, ✕ | Door Kick (3✦): 2 piercing to every enemy |
-| ⚡ Storm Witch | 13 | Arc Lash ⚡2, ⚡2, ⚡3 CHG, ⚡1 CAN, ✦1, ✕ · Downdraft 🛡2, 🛡1, ⚡1, ◉, ✕, ✕ · Squall ✦2, ✦1 CAN, ⚡2, ⚔2 CRU, 🛡1, ✕ | Thunderhead (4✦): 2 to every enemy |
-| 👁 Precog | 12 | Foresight ◉, ⚔2, 👁, 👁 CAN, ✦1, ⚔1 · Second Guess 👁, 🛡2, ⚔2, ✦2, ➹2, ⚔1 · Sidearm ⚔3 PAT, ⚔2, ⚔3, ⚔2, ⚔1 ECH, ⚔1 | Told You So (3✦): stun the 2 biggest intents |
-| 🛡️ Riot Cleric | 13 | Riot Ward 🛡2, 🛡2, 🛡1, 🛡1, ✦1, ✕ · Flashbang ◉, ◉, ⚔1, ⚔1, 🛡1, ✕ · Censure ⚔3 STL, ⚔2, ⚔2, ✚1, ✦1, ✕ | Riot Line (3✦): 🛡2 on everyone; enemy attacks hit you this turn |
+Faces are listed **left · middle · top · right · bottom · rightmost**. Each die has two upgrades: the **+** version (same idea, better) and a **role change** (same theme, new job).
 
-Four classes for now (Necromedic and Drone Hexer were cut). Every die has **two + versions**: one mostly raises numbers, the other leans on keywords (for example Scattershot+ Heavy Load or Wide Spread). Hover any die's name for a quick preview of all six sides; click it to open the full unfolded die and hover each side (click outside to close). Equipped gear is listed only if there is any.
+| Class | HP | Signature | Dice (base) |
+|---|---|---|---|
+| Breach Mage | 9 | Door Kick (3✦): 2 Pierce to every enemy | Scattershot ⚔2 Cleave · ⚔2 · ⚔1 · ⚔1 · 🛡1 · ✕ / Breaching Charge ⚔3 Engage · ⚔2 Pierce · ⚔1 · ⚔1 · ✦1 · ✕ / Kevlar Ward 🛡3 · ⚔2 Steel · 🛡1 · 🛡1 · ✦1 · ✕ |
+| Storm Witch | 8 | Thunderhead (4✦): 2 to every enemy | Arc Lash ⚔2 Chain · ⚔2 Chain · ⚔1 · ⚔1 · ✦1 · ✕ / Downdraft 🛡2 Share · 🛡2 · 🛡1 · ✦1 · 🛡1 · ✕ / Squall ✦2 Cantrip · ✦2 · ⚔1 · ✦1 · ⚔1 · ✕ |
+| Precog | 8 | Told You So (4✦): stun the biggest intent | Foresight ⚔3 Future · 🛡2 Future · ⚔1 · 🛡1 · ✦1 · ✕ / Second Guess ⚔2 Copycat · ✦2 · 🛡1 · ⚔1 · ✦1 · ✕ / Sidearm ⚔3 Patient · ⚔2 · ⚔1 Echo · ⚔1 · 🛡1 · ✕ |
+| Riot Cleric | 10 | Riot Line (3✦): 🛡2 on everyone; enemies target you this turn | Riot Ward 🛡3 · 🛡2 Share · 🛡1 · 🛡1 · ✚1 · ✕ / Flashbang ⚔2 Cleave · ⚔2 · 🛡1 · ⚔1 · ✦1 · ✕ / Censure ⚔3 Steel · ✚2 · ✚1 · ⚔1 · ✦1 · ✕ |
+
+Role changes: Slug Choke, Thermite Charge, Reactive Plating (Breach); Overcharge, Eye of the Storm, Static Build-up (Storm); Precognition, Double Take, Called Shot (Precog); Bastion, Tear Gas, Absolution (Riot). Full faces are in the design document and in the game's Details and upgrade screens.
 
 ## Between floors
-- **After floors 2, 5 and 8:** a die upgrade. A random die that isn't upgraded yet is picked for you, and you choose which of its two + versions it becomes. By floor 9 all three dice are +.
-- **After floors 1, 3, 4, 6, 7 and 9:** pick 1 of 3 offers. Two are die equipment and one is player equipment.
-- Gear offers only include die equipment that changes at least one of your faces (ability gear always qualifies).
-- Die equipment: **2 per die**. Installing on a full die asks which piece to replace.
-- Player equipment: **2 per operative**. Taking a third asks which to replace.
+- **After floors 2, 5 and 8:** a random die that isn't upgraded yet is picked; you choose its + version or its role change.
+- **After floors 1, 3, 4, 6, 7 and 9:** pick 1 of 3 items from that floor's own pool of 7 (items that change at least one of your faces are offered first).
+- Each die holds up to **3 items**; installing on a full die asks which to replace. There is no player equipment.
 
-## Die equipment
-24 pieces, three times the old 7. They change faces, add pips, add keywords, or grant a ✦ ability.
-
-| Gear | Kind | Effect on that die |
-|---|---|---|
-| 🔴 Laser Sight | Pips | ⚔ +1 |
-| 🧤 Breaching Gauntlet | Pips | ➹ +1 |
-| 🎚️ Tuning Fork | Pips | ⚡ +1 |
-| 💉 Med-Gel Cartridge | Pips | ✚ +1 |
-| 🧱 Ceramic Plate | Face change | Blanks become 🛡2 |
-| 🔋 Battery Pack | Face change | Blanks become ✦1 |
-| 🔁 Echo Chamber | Face change | Blanks become ⚔1 Echo |
-| 🫧 Riot Foam | Keyword | ⚔ gains Cover |
-| ♻️ Conversion Rig | Face change | ✚ becomes ⚔ of the same number, with Cruel |
-| 🪚 Serrated Edge | Keyword | ⚔ gains Cruel |
-| 🎺 Opening Salvo | Keyword | Number faces gain Engage |
-| 🪓 Broadhead Rounds | Keyword | ⚔ and ➹ gain Cleave |
-| 🧵 Spellwire | Keyword | The highest-number face(s) gain Cantrip |
-| 🪞 Mirror Polish | Keyword | Number faces gain Pristine |
-| 🔌 Capacitor | Keyword | Number faces gain Charged |
-| 🦺 Kevlar Lining | Keyword | ⚔ and ➹ gain Self-shield |
-| 🩸 Leech Coil | Keyword | ⚔ and ⚡ gain Self-heal |
-| ⏳ Hourglass | Keyword | Number faces gain Patient |
-| 🌱 Bonsai Chip | Keyword | Number faces gain Growth |
-| 🧪 Toxin Vial | Keyword | ⚔, ➹ and ⚡ gain Poison |
-| 🔮 Glass Rune | Pips + keyword | Doubles ⚔, ➹ and ⚡ numbers; any that reach 6+ gain Pain |
-| 💳 Taser Spellcard | Ability | Zap (3✦): stun a random enemy |
-| 🎇 Flare Rune | Ability | Flare (3✦): 3 to the enemy with the most HP |
-| ⚕️ Triage Sigil | Ability | Triage (2✦): heal the most hurt operative 3 |
-
-Order of effects: face changes first, then pips and keywords, then Glass Rune doubling, then Growth.
-
-## Player equipment
-Formerly "relics". These belong to the operative, never a die. You can carry 2.
-
-| Equipment | Effect |
+## Items by floor
+| After floor | Items (tier) |
 |---|---|
-| ☕ Thermos of Dark Roast | +1 reroll every turn |
-| 🧉 Hip Flask of Ether | Start every floor with 2 ✦ |
-| 🪪 Union Card | +5 max HP |
-| 🦺 Spare Vest | Start every turn with 🛡1 |
-| 📎 Expired Warrant | +1 damage against bosses |
-| 💼 Overtime Pay | Each enemy you kill gives you 2 ✦ |
-| 📻 Squad Radio | Your 🛡 and ✚ give +1 when used on a teammate (or on yourself when alone) |
-| 💉 Adrenaline Shot | Once per floor, survive a hit that would down you, at 1 HP |
-| 📹 Body Cam | Your signature costs 2 less (minimum 1) |
-| 🎒 Hex Ammo Pouch | The first damage die you use each turn gets +1 |
+| 1 Reception | Duct Tape (rightmost blank → 🛡1), Spare Battery (rightmost blank → ✦1), Laser Sight (left +1), Grip Tape (middle +1), Field Dressing (bottom → ✚1), Kevlar Patch (lowest 🛡 +1), Lucky Keychain (top gains Cantrip) |
+| 3 Open-Plan Office | Serrated Edge (left Cruel), Opening Salvo (left Engage), Stapler Rounds (middle ⚔ Pierce), Toxin Vial (middle ⚔ Poison), Mirror Polish (left Pristine), Med-Gel Cartridge (✚ +1), Spark Spellcard (Zap 3✦: 2 to the lowest-HP enemy) |
+| 4 Server Farm | Tuning Fork (⚔ +1), Broadhead Rounds (left and middle ⚔ Cleave), Capacitor (left Charged), Grounding Coil (Chain hits 2 each side), Leech Coil (left Self-heal), Hourglass (left Patient), Flare Rune (Flare 3✦: 3 to the highest-HP enemy) |
+| 6 Executive Gym | Ceramic Plate (🛡 +1), Echo Chamber (blanks → ⚔2 Echo), Mirror Shard (rightmost copies the middle), Kevlar Lining (⚔ Self-shield), Bonsai Chip (left and middle Growth), Rampage Rounds (left ⚔ Rampage), Triage Sigil (Triage 3✦: heal 3) |
+| 7 R&D Ritual Lab | Glass Rune (⚔ doubles; 6+ gain Pain), Overclock Chip (all +1, Exert), Spellwire (left Cantrip), Bloodlust Sigil (⚔ Bloodlust), Duelist's Badge (⚔ Duel), Focus Lens (⚔ Focus), Regen Weave (🛡 Regen) |
+| 9 Glass Atrium | Flashbang Pin (middle ⚔ Stun), Neural Taser (Stun Burst 5✦), Twin-Barrel Mod (left Copycat +2), Phoenix Sigil (left Deathwish +1), Singularity Core (left → ⚔8 Single-use), Arcane Amplifier (all +1), Share Link (🛡 and ✚ Share) |
 
 ## Enemies and floors
-Floors no longer have rule modifiers. Each floor has a name and an enemy pool.
+Two new enemies arrive on each regular floor and mix with earlier ones (new ones are twice as likely). HP below is solo, before floor growth (+10% per floor) and squad scaling.
 
-| Enemy | HP (base) | Intents |
-|---|---|---|
-| 👮 Hexsec Guard | 6 | ⚔1–3 on an operative |
-| 🛰️ Ward Drone | 4 | 🛡2–3 on an enemy, sometimes ⚔1 |
-| 🧟 Riot Necro | 7 | ✚2–3 on the most hurt enemy, or ⚔1–2 |
-| 🎯 Sniper Seer | 5 | ⚔3–5 on the lowest-HP operative |
-| 🦾 Mag-Boot Heavy | 12 | ⚔2–4, +🛡2 on itself every turn |
-| 🐀 Intern Familiar | 2 | ⚔1–2 (summoned) |
-| 🧛 Regional Manager Vex (floor 5) | 24 per operative | ⚔3–5, 🛡4, 📎 summon; 1 action per operative |
-| 💀 Halcyon Grieve, CEO (floor 10) | 40 per operative | ⚔4–6, 🛡5, 📎, 💥3 to all; +1 action below 50% HP |
+| Floor | New enemies |
+|---|---|
+| 1 Reception | Hexsec Guard (4 HP, ⚔1-2), Lobby Drone (3, 🛡2 an ally or ⚔1) |
+| 2 Mailroom | Mailroom Golem (6, ⚔2 Growth), Paper Imp (2, ⚔1 Poison) |
+| 3 Open-Plan Office | Middle Manager (5, ⚔2 or Empower an ally), Cubicle Ghoul (4, ⚔1 Spread) |
+| 4 Server Farm | Server Wraith (5, ⚔2 Charged), Firewall Drone (6, 🛡3 all allies or ⚔1) |
+| 5 | **Regional Manager Vex** (13 per operative): ⚔3, 🛡3, summons Interns; below half: Enrage, ⚔2 Spread |
+| 6 Executive Gym | Gym Golem (8, ⚔3, Enrage), Riot Necro (6, ✚3 an ally or ⚔2) |
+| 7 R&D Ritual Lab | Ritual Acolyte (5, Curse or ⚔2), Hex Construct (9, ⚔2 Spread Growth) |
+| 8 Legal Department | Paralegal Specter (6, ⚔1 Poison or Curse), Litigation Golem (12, ⚔4, +🛡2 each turn) |
+| 9 Glass Atrium | Sniper Seer (6, ⚔5 at the lowest HP), Glass Elemental (7, ⚔3 Spread, shatters for 2) |
+| 10 | **Halcyon Grieve, CEO** (24 per operative): ⚔4, 🛡4; below 2/3 curses everyone; below 1/3 2 damage to all and Growth |
 
-Enemy numbers get +1 from floor 4 and +2 from floor 8.
+## Squad scaling and balance
+| Operatives | Enemies per floor | Enemy HP | Boss actions |
+|---|---|---|---|
+| 1 | 2 | ×0.9 | 1 |
+| 2 | 3 (4 on floors 7-9) | ×1.35 | 2 |
+| 3 | 4 (5 on floors 7-9) | ×2.0 | 2 |
+| 4 | 5 (6 on floors 7-9) | ×2.6 | 3 |
 
-## Squad scaling
-| Operatives | Enemies per floor | Enemy HP | Enemy numbers | Boss actions |
-|---|---|---|---|---|
-| 1 | 2 | ×1.0 | +0 | 1 |
-| 2 | 3 (4 on floors 7–9) | ×1.6 | +0 | 2 |
-| 3 | 4 (5 on floors 7–9) | ×2.0 | +1 | 3 |
-| 4 | 5 (6 on floors 7–9) | ×2.9 | +1 | 4 |
+Each extra operative adds one boss escort. Measured with 100 bot runs per squad size (2026/11/01): bots win about 16-36% of runs and reach floor 7.4-8.5 on average; floors 1-2 ended only 5 of 100 solo runs and no squad runs. By class, solo: Riot Cleric 46%, Breach Mage 35%, Storm Witch 14%, Precog 11%.
 
-Normal enemy HP also grows 10% per floor, and each extra operative adds one escort on boss floors. Re-tuned after the 2026/10/31 balance audit (see BALANCE.md): a simple bot now wins about 9–13% of squad runs (floor 8.6–8.8 on average) and 5–42% solo depending on class (300 runs each). Real players should do better.
-
-## Multiplayer
-- **WebRTC peer-to-peer via PeerJS 1.5.4** (from unpkg). Room ids are `cheezy-kc-<CODE>`.
-- **The host is authoritative.** The host runs `act(state, player, action)` for everyone and applies dice in the order they arrive. Guests send actions and draw the state they receive; the RNG seed is stripped first.
-- Up to 4 players can join in the lobby. If a guest leaves mid-run, their operative leaves and the rest carry on. If the host leaves, the run ends.
+## Multiplayer and reconnecting
+- **WebRTC peer-to-peer via PeerJS 1.5.4.** Room ids are `cheezy-kc-<CODE>`. The host runs the rules; guests send actions and draw the state.
+- **Phones losing focus no longer kick you out.** Each browser tab keeps a token. If a guest's connection drops (switching apps, locking the screen), the host marks them **away**: their turns are skipped and floor rewards are auto-picked, but their operative stays. The guest's page keeps retrying for about 2 minutes and reconnects automatically when it comes back to the front; they reclaim their seat and can still use that turn's dice.
+- **Leave** (the button) still removes you for good. If the host's tab closes, the run ends; a host that briefly loses the broker reconnects by itself.
 - Strict networks may block direct connections (no TURN relay).
 
-**Deploy to itch.io with butler:** `./deploy-itch.sh <itch-user>/<game>` rebuilds the zip and pushes it to the `html` channel (butler is installed at `~/butler/butler.exe`; run `butler login` once first).
+**Deploy:** `./deploy-itch.sh` rebuilds `dist/kevlar-cantrips-itch.zip` and pushes it to `miraclewhip3/kevlar-and-cantrips:html` with butler. The 630×500 cover is `dist/cover-630x500.png`.
 
-**itch.io:** a ready zip is at `dist/kevlar-cantrips-itch.zip` (just `index.html`), plus a 630×500 cover image at `dist/cover-630x500.png`. To rebuild: zip `index.html` on its own, set the project kind to HTML, tick "played in the browser", and use a viewport of about 1150 × 900 or fullscreen.
+## Phones
+- One column, bigger dice and buttons, the combat log collapsed by default (tap "Combat log" to open), and a compact top bar.
+- Tap any face, badge or label to read its tooltip (there's no hover on phones). Tap a die's name to inspect all six sides.
 
 ## Saving, audio, dev tools
-- Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before this update (version 1) can't be loaded.
-- Procedural WebAudio sound effects and a low synth loop, with 🎵 and 🔊 toggles. Each event has its own sound (hex-round shot, armor-piercing crack, lightning zap, ward clink, heal chime, flashbang, vision shimmer, charge sparkle, kill, enemy hit, down, summon, ability cast, new turn).
-- **Animations:** each combat-log event replays in order (140 ms apart): hit cards shake with a red flash, heals glow green, wards glow blue, stuns flash and wobble, kills pop and fade, and attacking enemies lunge. Banners announce each floor and each cleared floor. Reduced-motion settings turn the shakes off.
-- `?dev` adds these top-bar buttons: **Clear floor**, **+5 ✦**, **Heal** and **Auto-play**. `window.KC` exposes `act`, `botNext`, `newRun` and `addPlayer`.
+- Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before the first-draft update can't be loaded.
+- Procedural WebAudio: a distinct sound per event and a low synth loop, with 🎵 and 🔊 toggles. `?mute` silences everything.
+- **Animations:** events replay in order (hits shake, heals and wards glow, kills pop, enemies lunge), and banners announce each floor.
+- `?dev` adds **Clear floor**, **+5 ✦**, **Heal** and **Auto-play**. `window.KC` exposes `act`, `botNext`, `newRun`, `addPlayer`, `ITEMS` and `ENEMIES`.
 
 ## Design decisions
-- **The user's choices (2026/10/31, round 8):**
-  - Up to 2 die equipment per die, and 2 player equipment per operative.
-  - Relics were renamed to player equipment.
-  - About triple the die equipment, built around Slice & Dice keywords.
-  - Whole-die upgrades after floors 2, 5 and 8.
-  - No floor modifiers.
-  - Dice apply in real time instead of showing "incoming" previews.
-- **Co-op rules (round 7):** one operative per player, 3 dice, unique classes, simultaneous rolling, own offers, revive at 50% next floor.
-- **Round 9 (user's choices):** dice sit in one row; click a die name to inspect every side; keyword symbols replace the purple counts; tooltips put each keyword on its own line; "Reroll" instead of "Reroll unkept"; two + versions per die with the die picked at random; End turn confirms when dice or abilities are left; 4 classes.
-- **Round 10 (user's choices):** auto-continue when all dice are kept, plus Undo; controls inside your own card; phase and hint moved above the combat log; no "kept" label and no Cancel button; unique icons for built-in pairings, with indicators only for gear-added keywords; inspector closes on click-outside and previews on hover.
-- **Real-time dice:** there's no resolve step for the squad; the enemy turn happens when everyone is ready. This removed the incoming badges and the resolve order (pillar 3).
-- **Cantrip** fires on landing even if you reroll later; it doesn't use up the die (as in Slice & Dice).
+- **First draft (2026/11/01, from the user):** primaries are charge, damage, ward and heal; Pierce, Chain and Stun are keywords; Stun is rare; Foresight is cut; per-floor item pools of 7; 3 items per die; no player equipment; much weaker starting operatives; more keywords and enemies; enemy keywords; random die upgrades with a + and a role change; no caps on Poison or Charged; Patient never on turn 1; phone layout; reconnecting after focus loss.
+- **Earlier:** co-op 1-4, one operative with 3 dice, real-time dice, no floor modifiers, Tactical Breach Wizards tone, hand-drawn SVG art.
 
-## Assumptions made in this prototype
-I filled these in; change any of them freely.
-- All keyword choices and the 14 adapted keywords. I left out Copycat, Exert, Heavy, Petrify, Sticky, Single-use, Death and Future to keep the first pass readable.
-- Both + versions of every die, all 24 die equipment and 10 player equipment, and every number.
-- Die sides in the unfolded view have a green frame (my reading of "the sides should be green").
-- There's no undo once a die is used.
-- Gear offers are random, so a class may be offered gear that doesn't match its faces.
-- Abilities can each be cast once per turn.
-
-## To review later
-- With 4 players the screen is busy (up to 6 enemies plus 4 operative cards).
-- See BALANCE.md for the latest bot numbers; the Riot Cleric is still the strongest class.
-- Offers could be biased toward gear that fits your faces.
-- The old mockup page doesn't show this update.
-
-## Roadmap to alpha
-- More keywords (Copycat, Exert, Single-use, Sticky), elites, and a branching floor map.
-- Banter lines between operatives at the start of each floor.
-- Turn timer, reconnect for dropped guests, spectators.
-- An in-game wiki.
+## Assumptions and to review
+- All dice, items, enemies and numbers come from the draft design document and still need the user's review.
+- Boss numbers were lowered from the draft (Vex 20 → 13, Grieve 36 → 24 per operative, fewer boss actions in big squads) so runs don't stall on floor 5.
+- Storm Witch and Precog are weaker than the other two classes in solo bot play; the bot underplays Future, Copycat and Echo.
+- Floor 7 (Ritual Acolyte curses and Hex Construct spread) is the biggest difficulty spike.
