@@ -7,7 +7,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 **Play:** https://miraclewhip3.github.io/kevlar-cantrips/
 
 ## Vision
-*The pillars and core loop are being written with the user in the [design document](https://claude.ai/artifact/RKCBMUDy1F6GxrhZR3KNkt). Until they're approved, this is the working version.*
+*The pillars and core loop are being written with the user in the design document. Until they're approved, this is the working version.*
 
 - **Core loop (the user's words):** "The core gameplay loop revolves around modifying and upgrading dice as you go up the tower. Putting equipment on the dice is really key."
 - **Fantasy:** a squad of wizard cops kicking in doors, one floor at a time.
