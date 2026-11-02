@@ -7,7 +7,12 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 **Play:** https://miraclewhip3.github.io/kevlar-cantrips/
 
 ## Vision
-*The pillars and core loop are being written with the user in the design document. Until they're approved, this is the working version.*
+*Pillars from the user's words (2026/11/01). The full design is in the private design document.*
+
+1. **Build options come first.** The game must have good options for builds and a lot of flexibility. Everything else serves this.
+2. **Start basic, get really powerful.** You choose a character who starts out basic and ends up really powerful.
+3. **A good build barely wins; a broken build thrashes.** A good build can just barely beat the game. Sometimes synergistic equipment makes a really powerful, broken build that thrashes enemies. Both are fun.
+4. **A real challenge worth talking about.** The game is hard enough that squads strategize together: what could we have done differently, and what equipment is good for what?
 
 - **Core loop (the user's words):** "The core gameplay loop revolves around modifying and upgrading dice as you go up the tower. Putting equipment on the dice is really key."
 - **Fantasy:** a squad of wizard cops kicking in doors, one floor at a time.
