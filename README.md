@@ -16,13 +16,14 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 
 - **Core loop (the user's words):** "The core gameplay loop revolves around modifying and upgrading dice as you go up the tower. Putting equipment on the dice is really key."
 - **Fantasy:** a squad of wizard cops kicking in doors, one floor at a time.
-- **Non-goals:** positional tactics, per-floor rule modifiers (cut for now), PvP, long campaigns.
+- **Non-goals:** PvP and long games. Positional tactics and per-floor rule modifiers are also out for now.
 
 ## Contents
 - [How to play](#how-to-play)
 - [Dice and faces](#dice-and-faces)
 - [Keywords](#keywords)
 - [Classes and dice](#classes-and-dice)
+- [Ability upgrades](#ability-upgrades)
 - [Between floors](#between-floors)
 - [Items by floor](#items-by-floor)
 - [Enemies and floors](#enemies-and-floors)
@@ -44,7 +45,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
    - Click an enemy's intent die to see every side it can roll (each boss phase separately).
 5. **End turn.** It asks first if dice are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down and back next floor at 50% HP. The run ends when the whole squad is down.
-7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8 (which also gives +2 max HP). Then everyone presses **Ready**; the next floor starts when the whole squad is ready.
+7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8 (which also gives +2 max HP). After floor 5 each operative also picks 1 of 3 upgrades for their class ability. Then everyone presses **Ready**; the next floor starts when the whole squad is ready.
 8. **Win** by clearing floor 10, the CEO.
 
 ## Dice and faces
@@ -96,12 +97,24 @@ Faces are listed **left · middle · top · right · bottom · rightmost**. Each
 
 | Class | HP | Signature | Dice (base) |
 |---|---|---|---|
-| Breach Mage | 9 | Door Kick (3✦): 2 Pierce to every enemy | Scattershot ⚔2 Cleave · ⚔2 · ⚔1 · ⚔1 · 🛡1 · ✕ / Breaching Charge ⚔3 Engage · ⚔2 Pierce · ⚔1 · ⚔1 · ✦1 · ✕ / Kevlar Ward 🛡3 · ⚔2 Steel · 🛡1 · 🛡1 · ✦1 · ✕ |
-| Storm Witch | 8 | Thunderhead (4✦): 2 to every enemy | Arc Lash ⚔2 Chain · ⚔2 Chain · ⚔1 · ⚔1 · ✦1 · ✕ / Downdraft 🛡2 Share · 🛡2 · 🛡1 · ✦1 · 🛡1 · ✕ / Squall ✦2 Cantrip · ✦2 · ⚔1 · ✦1 · ⚔1 · ✕ |
-| Precog | 8 | Told You So (4✦): stun the biggest intent | Foresight ⚔3 Future · 🛡2 Future · ⚔1 · 🛡1 · ✦1 · ✕ / Second Guess ⚔2 Copycat · ✦2 · 🛡1 · ⚔1 · ✦1 · ✕ / Sidearm ⚔3 Patient · ⚔2 · ⚔1 Echo · ⚔1 · 🛡1 · ✕ |
-| Riot Cleric | 10 | Riot Line (3✦): 🛡3 on you; enemies target you this turn | Riot Ward 🛡3 · 🛡2 Share · 🛡1 · 🛡1 · ✚1 · ✕ / Flashbang ⚔2 Cleave · ⚔2 · 🛡1 · ⚔1 · ✦1 · ✕ / Censure ⚔3 Steel · ✚2 · ✚1 · ⚔1 · ✦1 · ✕ |
+| Breach Mage | 9 | Door Kick (1✦): 1 Pierce to every enemy | Scattershot ⚔2 Cleave · ⚔2 · ⚔1 · ⚔1 · 🛡1 · ✕ / Breaching Charge ⚔3 Engage · ⚔2 Pierce · ⚔1 · ⚔1 · ✦1 · ✕ / Kevlar Ward 🛡3 · ⚔2 Steel · 🛡1 · 🛡1 · ✦1 · ✕ |
+| Storm Witch | 8 | Thunderhead (3✦): 2 to every enemy, +1 for each ✦ left after paying | Arc Lash ⚔2 Chain · ⚔2 Chain · ⚔1 · ⚔1 · ✦1 · ✕ / Downdraft 🛡2 Share · 🛡2 · 🛡1 · ✦1 · 🛡1 · ✕ / Squall ✦2 Cantrip · ✦2 · ⚔1 · ✦1 · ⚔1 · ✕ |
+| Precog | 8 | Told You So (3✦): stun the biggest intent | Foresight ⚔3 Future · 🛡2 Future · ⚔1 · 🛡1 · ✦1 · ✕ / Second Guess ⚔2 Copycat · ✦2 · 🛡1 · ⚔1 · ✦1 · ✕ / Sidearm ⚔3 Patient · ⚔2 Wind-up · ⚔1 Echo · ⚔1 · 🛡1 · ✕ |
+| Riot Cleric | 10 | Riot Line (2✦): 🛡3 on you; enemies target you this turn | Riot Ward 🛡3 · 🛡2 Share · 🛡1 · 🛡1 · ✚1 · ✕ / Flashbang ⚔2 Cleave · ⚔2 · 🛡1 · ⚔1 · ✦1 · ✕ / Censure ⚔3 Steel · ✚2 · ✚1 · ⚔1 · ✦1 · ✕ |
 
 Role changes: Slug Choke, Thermite Charge, Reactive Plating (Breach); Overcharge, Eye of the Storm, Static Build-up (Storm); Precognition, Double Take, Called Shot (Precog); Bastion, Tear Gas, Absolution (Riot). Full faces are in the design document and in the game's Details and upgrade screens.
+
+## Ability upgrades
+After floor 5, on top of the die upgrade, each operative picks 1 of 3 upgrades for their class ability. It lasts the rest of the run.
+
+| Ability | Upgrades |
+|---|---|
+| Door Kick | Battering Ram: 2 Pierce to every enemy. Cleared Room: also strips all ward from every enemy. Follow Through: your next ⚔ this turn gains Pierce and +2. |
+| Riot Line | Shield Wall: also 🛡1 on every teammate. Retribution: each attack that hits you this turn deals 1 back. Hold the Line: 🛡5 instead of 🛡3. |
+| Told You So | Saw It Coming: costs 2✦. Called It: also deals damage equal to the stunned enemy's biggest attack. Déjà Vu: also lets you use your last used die again this turn. |
+| Thunderhead | Supercell: costs 2✦. Conduit: your ⚔ faces gain Chain this turn. Eye of the Storm: also 🛡2 on every operative. |
+
+**Saving a teammate:** if a teammate's health bar says they'd go down, and your die or ability takes that away, sparks fly off their bar with a three-note chime, and the combat log records it.
 
 ## Between floors
 - **After floors 2, 5 and 8:** a random die that isn't upgraded yet is picked; you choose its + version or its role change.
@@ -140,11 +153,11 @@ Two new enemies arrive on each regular floor and mix with earlier ones (new ones
 | Operatives | Enemies per floor | Enemy HP | Boss actions |
 |---|---|---|---|
 | 1 | 2 | ×0.9 | 1 |
-| 2 | 3 (4 on floors 7-9) | ×1.35 | 2 |
-| 3 | 4 (5 on floors 7-9) | ×2.0 | 2 |
-| 4 | 5 (6 on floors 7-9) | ×2.6 | 3 |
+| 2 | 3 (4 on floors 7-9) | ×1.5 | 2 |
+| 3 | 4 (5 on floors 7-9) | ×2.4 | 2 |
+| 4 | 5 (6 on floors 7-9) | ×3.2 | 3 |
 
-Each extra operative adds one boss escort. Measured with 100 bot runs per setup (2026/11/01, after +2 max HP per die upgrade and full Self-shield): squads of 2, 3 and 4 win 52%, 58% and 67%, reaching floor 8.6-9.3 on average. Solo: Riot 73%, Breach 72%, Precog 32%, Storm 23%. The bots pick items without any plan, so this is well above the target of a good build barely winning, and enemies need retuning. Floor 7 is still the biggest squad killer (14-20 of 100 runs).
+Each extra operative adds one boss escort. Enemy HP also grows 11% per floor, and enemy attacks get +1 on floors 8-10. Measured with 150 bot runs per setup (2026/11/01, `tests/bots.js`). Wins for squads of 1, 2, 3 and 4: no plan 38/27/33/39%, a sensible build 41/33/46/51%, a lucky stacked build 51/62/68/71%. These bots don't really exploit combos, so human broken builds should do better. Floor 8 is now the biggest run-ender. Solo Precog and Riot still lose too often on floor 2 (21% and 14% of runs).
 
 ## Multiplayer and reconnecting
 - **Names:** every player starts with a random callsign from a list of 25 (🎲 next to the name box picks another). Names show on every card. The host keeps names unique by adding a number (Static, Static 2).
