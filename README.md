@@ -38,11 +38,13 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 2. **Each turn**, every enemy shows its **intent**: an icon, a number and a target (with keyword symbols such as ↔ spread or ☠ poison).
 3. **Everyone rolls at once.** Tap dice to 🔒 lock them (a padlock badge and gold frame show it; unlocked dice have a dashed outline), then Reroll rolls only the unlocked ones (2 rerolls). Locking all three moves on automatically; **Undo** goes back while you have rerolls. Cantrip faces fire as soon as they land.
 4. **Use dice in real time.** Click a die, then its target; it happens right away. ✦ dice charge on click (charge maxes at **4**). Abilities fire once per turn each.
-   - Your health bar stripes the damage coming at you before your next turn (attacks after ward, plus poison).
+   - Your health bar shows what's coming before your next turn: red stripes for attacks left after your ward, green for poison, and the HP you'll end on (`6/8 → 2`).
+   - Enemy health bars stripe the poison due this turn. Pick a die and each enemy you can hit shows what it would take; hover one to see it on the bar, including Cleave and Chain splash. A tick marks where it enrages or changes phase.
+   - Dice show their number as it stands right now, so Charged, Steel, Patient and the like change the pips, which turn gold.
    - Click an enemy's intent die to see every side it can roll (each boss phase separately).
-5. **End turn.** It asks first if dice or abilities are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
+5. **End turn.** It asks first if dice are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down and back next floor at 50% HP. The run ends when the whole squad is down.
-7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8.
+7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8 (which also gives +2 max HP). Then everyone presses **Ready**; the next floor starts when the whole squad is ready.
 8. **Win** by clearing floor 10, the CEO.
 
 ## Dice and faces
@@ -75,12 +77,13 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 | ⚇ | Duel | Double vs an enemy targeting you |
 | ◎ | Focus | +2 if your last die hit the same enemy |
 | ⧗ | Patient | Double if the die wasn't used last turn (never on turn 1 of a floor) |
+| ⟳ | Wind-up | Use it to wind up: the die locks on this face and sits out next turn. The turn after, it comes back with triple its number. Sitting out also sets off Patient, for six times the number |
 | ⇯ | Exert | +2, but the die is blank next turn |
 | ① | Single-use | Blank for the rest of the floor after you use it |
 | ⚓ | Sticky | Can't be rerolled once rolled |
 | ⏭ | Future | Lands at the start of your next turn, with +1 |
 | ! | Cantrip | Fires on a random target the moment it lands while rolling |
-| ◈ | Self-shield | Also wards you for half its number (at least 1) |
+| ◈ | Self-shield | Also wards you for its number |
 | ♥ | Self-heal | Also heals you for half its number (at least 1) |
 | ⇄ | Share | The ward or heal also goes to the lowest-HP teammate |
 | ❋ | Cleanse | Removes poison and curses from the target |
@@ -96,7 +99,7 @@ Faces are listed **left · middle · top · right · bottom · rightmost**. Each
 | Breach Mage | 9 | Door Kick (3✦): 2 Pierce to every enemy | Scattershot ⚔2 Cleave · ⚔2 · ⚔1 · ⚔1 · 🛡1 · ✕ / Breaching Charge ⚔3 Engage · ⚔2 Pierce · ⚔1 · ⚔1 · ✦1 · ✕ / Kevlar Ward 🛡3 · ⚔2 Steel · 🛡1 · 🛡1 · ✦1 · ✕ |
 | Storm Witch | 8 | Thunderhead (4✦): 2 to every enemy | Arc Lash ⚔2 Chain · ⚔2 Chain · ⚔1 · ⚔1 · ✦1 · ✕ / Downdraft 🛡2 Share · 🛡2 · 🛡1 · ✦1 · 🛡1 · ✕ / Squall ✦2 Cantrip · ✦2 · ⚔1 · ✦1 · ⚔1 · ✕ |
 | Precog | 8 | Told You So (4✦): stun the biggest intent | Foresight ⚔3 Future · 🛡2 Future · ⚔1 · 🛡1 · ✦1 · ✕ / Second Guess ⚔2 Copycat · ✦2 · 🛡1 · ⚔1 · ✦1 · ✕ / Sidearm ⚔3 Patient · ⚔2 · ⚔1 Echo · ⚔1 · 🛡1 · ✕ |
-| Riot Cleric | 10 | Riot Line (3✦): 🛡2 on everyone; enemies target you this turn | Riot Ward 🛡3 · 🛡2 Share · 🛡1 · 🛡1 · ✚1 · ✕ / Flashbang ⚔2 Cleave · ⚔2 · 🛡1 · ⚔1 · ✦1 · ✕ / Censure ⚔3 Steel · ✚2 · ✚1 · ⚔1 · ✦1 · ✕ |
+| Riot Cleric | 10 | Riot Line (3✦): 🛡3 on you; enemies target you this turn | Riot Ward 🛡3 · 🛡2 Share · 🛡1 · 🛡1 · ✚1 · ✕ / Flashbang ⚔2 Cleave · ⚔2 · 🛡1 · ⚔1 · ✦1 · ✕ / Censure ⚔3 Steel · ✚2 · ✚1 · ⚔1 · ✦1 · ✕ |
 
 Role changes: Slug Choke, Thermite Charge, Reactive Plating (Breach); Overcharge, Eye of the Storm, Static Build-up (Storm); Precognition, Double Take, Called Shot (Precog); Bastion, Tear Gas, Absolution (Riot). Full faces are in the design document and in the game's Details and upgrade screens.
 
@@ -112,7 +115,7 @@ Role changes: Slug Choke, Thermite Charge, Reactive Plating (Breach); Overcharge
 |---|---|
 | 1 Reception | Duct Tape (rightmost blank → 🛡1), Spare Battery (rightmost blank → ✦1), Laser Sight (left +1), Grip Tape (middle +1), Field Dressing (bottom → ✚1), Kevlar Patch (lowest 🛡 +1), Lucky Keychain (top gains Cantrip) |
 | 3 Open-Plan Office | Serrated Edge (left Cruel), Opening Salvo (left Engage), Stapler Rounds (middle ⚔ Pierce), Toxin Vial (middle ⚔ Poison), Mirror Polish (left Pristine), Med-Gel Cartridge (✚ +1), Spark Spellcard (Zap 3✦: 2 to the lowest-HP enemy) |
-| 4 Server Farm | Tuning Fork (⚔ +1), Broadhead Rounds (left and middle ⚔ Cleave), Capacitor (left Charged), Grounding Coil (Chain hits 2 each side), Leech Coil (left Self-heal), Hourglass (left Patient), Flare Rune (Flare 3✦: 3 to the highest-HP enemy) |
+| 4 Server Farm | Tuning Fork (⚔ +1), Broadhead Rounds (left and middle ⚔ Cleave), Capacitor (left Charged), Grounding Coil (Chain hits 2 each side), Leech Coil (left Self-heal), Mainspring (left Wind-up), Hourglass (left Patient), Flare Rune (Flare 3✦: 3 to the highest-HP enemy) |
 | 6 Executive Gym | Ceramic Plate (🛡 +1), Echo Chamber (blanks → ⚔2 Echo), Mirror Shard (rightmost copies the middle), Kevlar Lining (⚔ Self-shield), Bonsai Chip (left and middle Growth), Rampage Rounds (left ⚔ Rampage), Triage Sigil (Triage 3✦: heal 3) |
 | 7 R&D Ritual Lab | Glass Rune (⚔ doubles; 6+ gain Pain), Overclock Chip (all +1, Exert), Spellwire (left Cantrip), Bloodlust Sigil (⚔ Bloodlust), Duelist's Badge (⚔ Duel), Focus Lens (⚔ Focus), Regen Weave (🛡 Regen) |
 | 9 Glass Atrium | Flashbang Pin (middle ⚔ Stun), Neural Taser (Stun Burst 5✦), Twin-Barrel Mod (left Copycat +2), Phoenix Sigil (left Deathwish +1), Singularity Core (left → ⚔8 Single-use), Arcane Amplifier (all +1), Share Link (🛡 and ✚ Share) |
@@ -141,7 +144,7 @@ Two new enemies arrive on each regular floor and mix with earlier ones (new ones
 | 3 | 4 (5 on floors 7-9) | ×2.0 | 2 |
 | 4 | 5 (6 on floors 7-9) | ×2.6 | 3 |
 
-Each extra operative adds one boss escort. Measured with 100 bot runs per squad size (2026/11/01): bots win about 16-36% of runs and reach floor 7.4-8.5 on average; floors 1-2 ended only 5 of 100 solo runs and no squad runs. By class, solo: Riot Cleric 46%, Breach Mage 35%, Storm Witch 14%, Precog 11%.
+Each extra operative adds one boss escort. Measured with 100 bot runs per setup (2026/11/01, after +2 max HP per die upgrade and full Self-shield): squads of 2, 3 and 4 win 52%, 58% and 67%, reaching floor 8.6-9.3 on average. Solo: Riot 73%, Breach 72%, Precog 32%, Storm 23%. The bots pick items without any plan, so this is well above the target of a good build barely winning, and enemies need retuning. Floor 7 is still the biggest squad killer (14-20 of 100 runs).
 
 ## Multiplayer and reconnecting
 - **Names:** every player starts with a random callsign from a list of 25 (🎲 next to the name box picks another). Names show on every card. The host keeps names unique by adding a number (Static, Static 2).

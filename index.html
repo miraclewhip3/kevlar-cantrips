@@ -155,6 +155,12 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .sigtxt{font-size:.78rem;color:#e6cfff}
 .kwref{color:#e2c6ff;border-bottom:1px dotted var(--arcane);cursor:help}
 .hp .inc{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(255,107,91,.95) 0 4px,rgba(255,107,91,.45) 4px 8px)}
+.hp .inc.psn{background:repeating-linear-gradient(135deg,rgba(155,227,123,.95) 0 4px,rgba(155,227,123,.4) 4px 8px)}
+.hp .inc.prev{background:repeating-linear-gradient(135deg,rgba(255,209,102,.98) 0 4px,rgba(255,209,102,.5) 4px 8px)}
+.hp .mark{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;opacity:.85}
+.pvb{font:700 .78rem var(--mono);color:#ffd166;border:1px solid #ffd166;border-radius:3px;padding:0 5px}
+.enrb{font:700 .68rem var(--mono);color:#ffb86b}
+.die.boosted .pips{color:#ffd166}
 .sigcell{display:inline-flex;flex-direction:column;gap:2px}
 .sigwhy{font-size:.72rem;color:var(--muted)}
 .center{margin:12px 0;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
@@ -275,7 +281,7 @@ const SIGS = {
   doorkick:{ name:'Door Kick',   cost:3, text:'2 Pierce damage to every enemy.' },
   thunder: { name:'Thunderhead', cost:4, text:'2 damage to every enemy.' },
   toldyou: { name:'Told You So', cost:4, text:'Stun the enemy with the biggest intent.' },
-  riotline:{ name:'Riot Line',   cost:3, text:'🛡2 on every operative, and every enemy attack this turn hits you instead.' },
+  riotline:{ name:'Riot Line',   cost:3, text:'🛡3 on you, and every enemy attack this turn hits you instead.' },
   // abilities granted by items
   zap:      { name:'Zap',        cost:3, text:'2 damage to the lowest-HP enemy.' },
   flare:    { name:'Flare',      cost:3, text:'3 damage to the enemy with the most HP.' },
@@ -316,12 +322,13 @@ const KW = {
   duel:      { g:'⚇', name:'Duel',        text:'Double against an enemy that is targeting you.' },
   focus:     { g:'◎', name:'Focus',       text:'+2 if your last die hit the same enemy.' },
   patient:   { g:'⧗', name:'Patient',     text:'Double if this die was not used last turn (never on turn 1 of a floor).' },
+  windup:    { g:'⟳', name:'Wind-up',     text:'Use it to wind up: the die locks on this face and sits out next turn. The turn after, it comes back with triple its number. Sitting out also sets off Patient.' },
   exert:     { g:'⇯', name:'Exert',       text:'+2, but this die is blank next turn.' },
   singleuse: { g:'①', name:'Single-use',  text:'After you use it, this face is blank for the rest of the floor.' },
   sticky:    { g:'⚓', name:'Sticky',      text:'Once rolled, this face can\'t be rerolled.' },
   future:    { g:'⏭', name:'Future',      text:'Lands at the start of your next turn, with +1.' },
   cantrip:   { g:'!', name:'Cantrip',     text:'Fires on a random target the moment it lands while rolling. You can still use the die afterward.' },
-  selfshield:{ g:'◈', name:'Self-shield', text:'Also gives you ward equal to half its number (at least 1).' },
+  selfshield:{ g:'◈', name:'Self-shield', text:'Also gives you ward equal to its number.' },
   selfheal:  { g:'♥', name:'Self-heal',   text:'Also heals you by half its number (at least 1).' },
   share:     { g:'⇄', name:'Share',       text:'The ward or heal also goes to the lowest-HP teammate.' },
   cleanse:   { g:'❋', name:'Cleanse',     text:'Removes poison and curses from the target.' },
@@ -364,6 +371,7 @@ const ITEMS = {
   coil:     { floor:4, name:'Grounding Coil',  icon:'🧲', text:'Chain faces hit 2 enemies on each side.', coil:true, fx:() => {} },
   leech:    { floor:4, name:'Leech Coil',      icon:'🩸', text:'The left face gains Self-heal.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'selfheal'); } },
   hourglass:{ floor:4, name:'Hourglass',       icon:'⏳', text:'The left face gains Patient.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'patient'); } },
+  mainspring:{ floor:4, name:'Mainspring',     icon:'🕰️', text:'The left face gains Wind-up.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'windup'); } },
   flarerune:{ floor:4, name:'Flare Rune',      icon:'🎇', text:'Grants Flare (3✦): 3 damage to the enemy with the most HP.', ability:'flare' },
   // after floor 6 · Executive Gym (tier 2.5)
   plate:    { floor:6, name:'Ceramic Plate',   icon:'🧱', text:'All 🛡 faces +1.', fx:f => { if (f.t === 'W') f.n++; } },
@@ -431,7 +439,7 @@ const FLOORS = [
 // A floor's pool: its two new enemies twice as likely as anything met on earlier floors.
 const floorPool = f => { const pool = []; FLOORS.slice(0, f).forEach((F2, i) => F2.news.forEach(t => { pool.push(t); if (i === f - 1) pool.push(t); })); return pool.length ? pool : ['guard']; };
 const UPGRADE_FLOORS = [2, 5, 8];   // die upgrade after these floors; floor item offers after the rest
-const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:3 };
+const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:3, hpPerUpgrade:2 };
 const CHARGE_MAX = 4;   // charge never goes above this
 // Enemy HP by squad size, tuned with bot runs so 1-4 operatives reach a similar floor on average.
 const HP_MULT = [0.9, 1.35, 2.0, 2.6];
@@ -480,7 +488,7 @@ const artKey = f => { const c = comboOf(f); return c ? f.t + ':' + f.base.slice(
 const iconHtml = f => `<i class="ico">${svgIcon(artKey(f))}</i>`;
 const living = st => st.players.map((p, i) => i).filter(i => !st.players[i].gone && !st.players[i].down);
 const foesAlive = st => st.enemies.map((e, i) => i).filter(i => st.enemies[i].hp > 0);
-const maxHp = (st, p) => CLASSES[st.players[p].cls].hp;
+const maxHp = (st, p) => CLASSES[st.players[p].cls].hp + (st.players[p].bonusHp || 0);
 const floorDef = st => FLOORS[st.floor - 1];
 const dieDef = (P, di) => CLASSES[P.cls].dice[di];
 const facesOf = (P, di) => P.dice[di].plus != null ? dieDef(P, di).plus[P.dice[di].plus].faces : dieDef(P, di).faces;
@@ -491,14 +499,14 @@ function newRun(mode, seed) {
   return { v:3, mode, seed: seed | 0, phase:'lobby', floor:0, players:[], enemies:[], taunt:null, future:[], turn:0, log:[], result:null, rollN:0, resolveN:0, msg:'' };
 }
 function addPlayer(st, name, token) {
-  st.players.push({ name, token: token || null, cls:null, hp:0, dice:[], charge:0, ward:0, poison:0, regen:0, curse:false, down:false, gone:false, away:false, step:'wait', roll:[], rerolls:0, lastN:null, lastKw:[], lastTarget:null, usedLast:[], offers:[], picked:true });
+  st.players.push({ name, token: token || null, cls:null, hp:0, dice:[], charge:0, ward:0, poison:0, regen:0, curse:false, down:false, gone:false, away:false, step:'wait', roll:[], rerolls:0, lastN:null, lastKw:[], lastTarget:null, usedLast:[], offers:[], picked:true, ready:false, bonusHp:0 });
   return st.players.length - 1;
 }
 function removePlayer(st, i) { st.players.splice(i, 1); }
 function setupOperative(st, p) {
   const P = st.players[p];
   P.dice = CLASSES[P.cls].dice.map(() => ({ plus:null, gear:[], grow:[0,0,0,0,0,0], spent:[false,false,false,false,false,false], exertNext:false }));
-  P.hp = CLASSES[P.cls].hp; P.down = false; P.charge = 0;
+  P.bonusHp = 0; P.ready = false; P.hp = CLASSES[P.cls].hp; P.down = false; P.charge = 0;
 }
 
 // The face as it plays right now: item face changes, then pips and keywords, then doubling; plus Growth.
@@ -530,7 +538,7 @@ function startFloor(st) {
   st.enemies = [];
   if (F2.boss) { st.enemies.push(makeEnemy(st, F2.boss)); for (let i = 1; i < s.n; i++) st.enemies.push(makeEnemy(st, pick(st, pool))); }
   else { const count = enemyCount(s.n, st.floor); for (let i = 0; i < count; i++) st.enemies.push(makeEnemy(st, pick(st, pool))); }
-  st.players.forEach(P => { P.charge = 0; P.poison = 0; P.regen = 0; P.curse = false; P.dice.forEach(d => { d.grow = [0,0,0,0,0,0]; d.spent = [false,false,false,false,false,false]; d.exertNext = false; }); P.usedLast = []; });
+  st.players.forEach(P => { P.charge = 0; P.poison = 0; P.regen = 0; P.curse = false; P.dice.forEach(d => { d.grow = [0,0,0,0,0,0]; d.spent = [false,false,false,false,false,false]; d.exertNext = false; d.wind = null; }); P.usedLast = []; });
   startTurn(st);
 }
 
@@ -567,9 +575,13 @@ function startTurn(st) {
     P.step = P.away ? 'ready' : 'roll'; P.lastN = null; P.lastKw = []; P.lastTarget = null; P.cast = [];
     P.ward = 0; P.rerolls = RULES.rerolls;
     P.roll = P.dice.map(() => ({ fi: 0, k: false, used: false, r: 0, ramped: false }));
-    P.roll.forEach((d, di) => { if (P.dice[di].exertNext) { P.dice[di].exertNext = false; d.fi = -1; d.k = true; d.r = ++st.rollN; } else rollDie(st, p, di); });
+    P.roll.forEach((d, di) => { const w = P.dice[di].wind;
+      if (w) {   // sits out one turn, then comes back on the same face at triple
+        d.fi = w.fi; d.k = true; d.r = ++st.rollN;
+        if (w.wait > 0) { w.wait--; d.used = true; d.winding = true; } else { d.released = true; P.dice[di].wind = null; }
+      } else if (P.dice[di].exertNext) { P.dice[di].exertNext = false; d.fi = -1; d.k = true; d.r = ++st.rollN; } else rollDie(st, p, di); });
     if (P.curse && P.roll.length) {   // cursed: the highest rolled face is blank this turn
-      let bi = -1, bn = -1; P.roll.forEach((d, di) => { const f = effFace(st, p, di, d.fi); if (NUMERIC(f.t) && f.n > bn) { bn = f.n; bi = di; } });
+      let bi = -1, bn = -1; P.roll.forEach((d, di) => { if (d.winding || d.released) return; const f = effFace(st, p, di, d.fi); if (NUMERIC(f.t) && f.n > bn) { bn = f.n; bi = di; } });
       if (bi >= 0) { P.roll[bi].fi = -1; P.roll[bi].k = true; L(st, 'foe', 'Curse', P.name, `${dieName(P, bi)} is blank this turn`); }
       P.curse = false;
     }
@@ -613,6 +625,7 @@ function hurtPlayer(st, pi, v, src, wardable) {
 }
 function healPlayer(st, pi, v, src) {
   const T = st.players[pi]; if (!T || T.gone || T.down) return;
+  if (T.hp >= maxHp(st, pi)) { L(st, 'ally', src, T.name, 'Already at full HP'); return; }
   const before = T.hp; T.hp = Math.min(maxHp(st, pi), T.hp + v); L(st, 'ally', src, T.name, `${before} → ${T.hp}`);
 }
 const lowestMate = (st, p) => { const m = living(st).filter(i => i !== p); return m.length ? m.reduce((b, i) => st.players[i].hp / maxHp(st, i) < st.players[b].hp / maxHp(st, b) ? i : b) : null; };
@@ -649,6 +662,7 @@ function faceValue(st, p, di, f, tg) {
   if (f.kw.includes('pristine') && P.hp === maxHp(st, p)) mult *= 2;
   if (f.kw.includes('deathwish') && P.hp <= 3) mult *= 2;
   if (f.kw.includes('patient') && st.turn > 1 && !P.usedLast[di]) mult *= 2;
+  if (P.roll[di] && P.roll[di].released) mult *= 3;
   return v * mult;
 }
 // Apply a face's effect at value v (already computed) to its target.
@@ -683,7 +697,7 @@ function resolveFace(st, p, di, f, tg, src, v) {
   } else if (f.t === 'C') { const before = P.charge; P.charge = Math.min(CHARGE_MAX, P.charge + v); L(st, 'ally', src, P.name, `+${P.charge - before} ✦ (max ${CHARGE_MAX})`); }
   if (NUMERIC(f.t) && f.t !== 'C') {
     const half = Math.max(1, Math.floor(v / 2));
-    if (f.kw.includes('selfshield')) { P.ward += half; L(st, 'ally', src, P.name, `+${half} ward (self)`); }
+    if (f.kw.includes('selfshield')) { P.ward += v; L(st, 'ally', src, P.name, `+${v} ward (self)`); }
     if (f.kw.includes('selfheal')) healPlayer(st, p, half, src + ' (self-heal)');
   }
   if (f.kw.includes('pain')) hurtPlayer(st, p, 1, `${P.name} · Pain`, false);
@@ -697,20 +711,20 @@ function applyFace(st, p, di, f0, tg, cantrip) {
   if (!tg && !['C', 'B'].includes(f.t)) return;
   const name = dieName(P, di);
   if (f.kw.includes('future') && !cantrip) {   // lands next turn instead, with +1
-    st.future.push({ p, di, name, f: { ...f, n: f.n + 1, kw: f.kw.filter(k => k !== 'future') }, tg });
+    st.future.push({ p, di, name, f: { ...f, n: f.n * (P.roll[di] && P.roll[di].released ? 3 : 1) + 1, kw: f.kw.filter(k => k !== 'future') }, tg });
     L(st, 'ally', `${P.name} · ${name} ${FACE[f.t].icon}${f.n}`, f.t === 'D' ? en(st, tg.i) : pn(st, tg.i), 'Lands next turn (+1)');
   } else {
     const v = NUMERIC(f.t) ? faceValue(st, p, di, f, tg) : 0;
     const src = `${P.name} · ${name} ${faceIcon(f)}${NUMERIC(f.t) ? v : ''}${cantrip ? ' (cantrip)' : ''}`;
     const killed = resolveFace(st, p, di, f, tg, src, v);
     if (!cantrip && killed && f.kw.includes('rampage') && P.roll[di] && !P.roll[di].ramped) {
-      const d = P.roll[di]; d.ramped = true; d.used = false; d.fi = ri(st, 6); d.r = ++st.rollN;
+      const d = P.roll[di]; d.ramped = true; d.used = false; d.released = false; d.fi = ri(st, 6); d.r = ++st.rollN;
       L(st, 'ally', `${P.name} · Rampage`, name, 'Rerolled and ready again');
     }
   }
   if (!cantrip) {
     if (NUMERIC(f.t)) P.lastN = f.n;
-    P.lastKw = f.kw.filter(k => k !== 'copycat');
+    P.lastKw = f.kw.filter(k => k !== 'copycat' && k !== 'windup');
     const fi = P.roll[di] ? P.roll[di].fi : -1;
     if (f.kw.includes('growth') && fi >= 0) P.dice[di].grow[fi]++;
     if (f.kw.includes('singleuse') && fi >= 0) P.dice[di].spent[fi] = true;
@@ -723,17 +737,44 @@ function castAbility(st, p, s) {
   if (s === 'doorkick') al.forEach(i => hitEnemy(st, p, i, 2, true, src));
   if (s === 'thunder') al.forEach(i => hitEnemy(st, p, i, 2, false, src));
   if (s === 'toldyou') { const c = al.filter(i => !st.enemies[i].stun).sort((a, b) => intentSize(st, st.enemies[b]) - intentSize(st, st.enemies[a])); if (c.length) { st.enemies[c[0]].stun = true; L(st, 'ally', src, en(st, c[0]), 'Stunned'); } }
-  if (s === 'riotline') { st.taunt = p; living(st).forEach(i => st.players[i].ward += 2); L(st, 'ally', src, 'Squad', `+2 ward each; enemies target ${P.name}`); }
+  if (s === 'riotline') { st.taunt = p; P.ward += 3; L(st, 'ally', src, P.name, `+3 ward; enemies target ${P.name}`); }
   if (s === 'zap' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp < st.enemies[b].hp ? i : b), 2, false, src);
   if (s === 'flare' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp > st.enemies[b].hp ? i : b), 3, false, src);
   if (s === 'triage') { const lv = living(st); if (lv.length) healPlayer(st, lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b), 3, src); }
   if (s === 'stunburst') { const c = al.filter(i => !st.enemies[i].stun); if (c.length) { const i = pick(st, c); st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); } }
 }
 const intentSize = (st, e) => e.ints.reduce((s, it) => { const f = parse(it.c), n = intentValue(st, e, f); return s + (f.t === 'D' ? n * (f.kw.includes('spread') ? 2 : 1) : f.t === 'X' ? n * 3 : f.t === 'U' || f.t === 'K' ? 2 : n * 0.5); }, 0);
-function incomingTo(st, p) {
-  let n = 0;
-  st.enemies.forEach(e => { if (e.hp <= 0 || e.stun) return; e.ints.forEach(it => { const f = parse(it.c), v = intentValue(st, e, f); if (f.t === 'D' && (st.taunt != null ? st.taunt : it.tg) === p) n += v; if (f.t === 'X') n += v; }); });
-  return n;
+// What will land on an operative when enemies act: attacks (ward blocks them) and poison (it doesn't).
+// Poison from this turn's attacks ticks in the same enemy phase, so it counts too.
+function incomingParts(st, p) {
+  let hit = 0, psn = st.players[p].poison || 0;
+  const lv = living(st), taunt = st.taunt != null && st.players[st.taunt] && !st.players[st.taunt].down ? st.taunt : null;
+  st.enemies.forEach(e => { if (e.hp <= 0 || e.stun) return; e.ints.forEach(it => {
+    const f = parse(it.c), v = intentValue(st, e, f);
+    if (f.t === 'X') hit += v;
+    if (f.t !== 'D') return;
+    const tg = taunt != null ? taunt : it.tg, pos = lv.indexOf(tg);
+    if (tg === p || (f.kw.includes('spread') && pos >= 0 && (lv[pos - 1] === p || lv[pos + 1] === p))) { hit += v; if (f.kw.includes('poison')) psn += Math.max(1, v); }
+  }); });
+  return { hit, psn };
+}
+const incomingTo = (st, p) => incomingParts(st, p).hit;
+// What a damage face would do if aimed at enemy tgi, per enemy hit: { i: { dmg, psn, stun } }.
+function previewHits(st, p, di, f0, tgi) {
+  const P = st.players[p], out = {}, al = foesAlive(st), pos = al.indexOf(tgi);
+  const f = f0.kw.includes('copycat') && P.lastKw.length ? { ...f0, kw: [...new Set([...f0.kw, ...P.lastKw])] } : f0;
+  const add = (i, v, pierce, full) => {
+    const e = st.enemies[i], o = out[i] || (out[i] = { dmg: 0, psn: 0, stun: false });
+    o.dmg += Math.max(0, v - (pierce ? 0 : e.ward));
+    if (full && f.kw.includes('poison')) o.psn += Math.max(1, v);
+    if (full && f.kw.includes('stun')) o.stun = true;
+  };
+  const val = i => f.kw.includes('future') ? f.n + 1 : faceValue(st, p, di, f, { k:'e', i });
+  const pierce = f.kw.includes('pierce');
+  add(tgi, val(tgi), pierce, true);
+  if (f.kw.includes('cleave') && pos >= 0) [al[pos - 1], al[pos + 1]].forEach(j => { if (j != null) add(j, val(j), pierce, true); });
+  if (f.kw.includes('chain') && pos >= 0) { const reach = P.dice[di].gear.includes('coil') ? 2 : 1; for (let k = 1; k <= reach; k++) [al[pos - k], al[pos + k]].forEach(j => { if (j != null) add(j, 1, false, false); }); }
+  return out;
 }
 function validTarget(st, t, tg) {
   if (!tg) return false;
@@ -742,6 +783,7 @@ function validTarget(st, t, tg) {
   return false;
 }
 const needsTarget = t => !['C', 'B'].includes(t);
+const windsUp = (P, di, f) => f.kw.includes('windup') && !(P.roll[di] && P.roll[di].released);
 // Back to rolling is allowed while rerolls remain and nothing has been used yet this turn.
 const canUndo = P => P.step === 'use' && P.rerolls > 0 && !P.roll.some(d => d.used) && !(P.cast || []).length;
 function abilityUsable(st, p, s) {
@@ -778,6 +820,7 @@ function act(st, p, a) {
         if (P.step !== 'roll' || !P.roll[a.i]) return 'bad';
         const f = effFace(st, p, a.i, P.roll[a.i].fi);
         if (f.kw.includes('sticky') && P.roll[a.i].k) return 'That face is Sticky';
+        if (P.roll[a.i].winding || P.roll[a.i].released) return 'That die is wound up';
         P.roll[a.i].k = !P.roll[a.i].k;
         if (P.roll.every(d => d.k)) P.step = 'use';   // all kept: same as Done rolling (Undo goes back)
         return null;
@@ -798,6 +841,11 @@ function act(st, p, a) {
         const d = P.roll[a.i]; if (!d || d.used) return 'That die is already used';
         const f = effFace(st, p, a.i, d.fi);
         if (f.t === 'B') return 'Blank';
+        if (windsUp(P, a.i, f)) {
+          d.used = true; P.dice[a.i].wind = { fi: d.fi, wait: 1 };
+          L(st, 'ally', `${P.name} · ${dieName(P, a.i)} ${FACE[f.t].icon}${f.n}`, P.name, 'Winding up: back in 2 turns at triple');
+          trimLog(st); checkState(st); return null;
+        }
         if (needsTarget(f.t) && !validTarget(st, f.t, a.tg)) return 'Invalid target';
         d.used = true;
         applyFace(st, p, a.i, f, needsTarget(f.t) ? a.tg : null, false);
@@ -828,14 +876,20 @@ function act(st, p, a) {
       const o = P.offers[a.i]; if (!o) return 'bad';
       if (o.k === 'plus') {
         const d = P.dice[o.d]; if (!d || d.plus != null || !(a.v === 0 || a.v === 1)) return 'Pick one of the two upgrades';
-        d.plus = a.v;
+        d.plus = a.v; P.bonusHp = (P.bonusHp || 0) + RULES.hpPerUpgrade; P.hp += RULES.hpPerUpgrade;
       } else if (o.k === 'item') {
         const d = P.dice[a.d]; if (!d) return 'Pick a die';
         if (d.gear.length >= RULES.gearPerDie) { if (!(a.r >= 0 && a.r < d.gear.length)) return 'Pick an item to replace'; d.gear.splice(a.r, 1); }
         d.gear.push(o.id);
       }
       P.picked = true;
-      if (st.players.every(x => x.picked || x.gone)) { st.floor++; startFloor(st); }
+      return null;
+    }
+    case 'cont': {   // ready for the next floor, once your pick is in
+      if (st.phase !== 'upgrade') return 'Not between floors';
+      if (!P.picked) return 'Pick your upgrade first';
+      P.ready = a.on !== false;
+      nextFloorIfReady(st);
       return null;
     }
     case 'restart': {
@@ -893,7 +947,7 @@ function enemyPhase(st) {
   });
   st.enemies.forEach((e, i) => { if (e.hp > 0 && e.poison) { const before = e.hp; e.hp = Math.max(0, e.hp - e.poison); L(st, 'ally', 'Poison', en(st, i), `${before} → ${e.hp}${e.hp === 0 ? ' ✖' : ''}`); } });
   st.players.forEach((P, p) => { if (!P.gone && !P.down && P.poison) hurtPlayer(st, p, P.poison, 'Poison', false); });
-  st.players.forEach(P => { P.ward = 0; P.usedLast = P.roll.map(d => d.used); });
+  st.players.forEach(P => { P.ward = 0; P.usedLast = P.roll.map(d => d.used && !d.winding); });
   st.resolveN++;
   if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; return; }
   if (!foesAlive(st).length) { floorCleared(st); return; }
@@ -906,6 +960,7 @@ function gearFits(P, g) {
   if (G.coil) return P.dice.some((d, di) => facesOf(P, di).some(c => parse(c).kw.includes('chain')));
   return P.dice.some((d, di) => { const base = facesOf(P, di); return base.some((c, fi) => { const f = parse(c), before = JSON.stringify(f); G.fx(f, fi, base); return JSON.stringify(f) !== before; }); });
 }
+function nextFloorIfReady(st) { if (st.players.every(x => x.gone || (x.picked && x.ready))) { st.floor++; startFloor(st); } }
 function floorCleared(st) {
   st.resolveN++;
   if (st.floor >= RULES.floors) { st.phase = 'over'; st.result = 'won'; return; }
@@ -915,7 +970,7 @@ function floorCleared(st) {
     const mx = maxHp(st, p);
     if (P.down) { P.down = false; P.hp = Math.ceil(mx / 2); }
     else P.hp = Math.min(mx, P.hp + Math.ceil((mx - P.hp) / 2));
-    P.picked = false; P.step = 'wait'; P.roll = []; P.ward = 0; P.cast = []; P.poison = 0; P.curse = false; P.regen = 0;
+    P.picked = false; P.ready = false; P.step = 'wait'; P.roll = []; P.ward = 0; P.cast = []; P.poison = 0; P.curse = false; P.regen = 0;
     const free = P.dice.map((d, i) => i).filter(i => P.dice[i].plus == null);
     if (UPGRADE_FLOORS.includes(st.floor) && free.length) P.offers = [{ k:'plus', d: pick(st, free) }];   // the die is random; you pick which upgrade
     else {
@@ -925,17 +980,18 @@ function floorCleared(st) {
     }
     if (P.away) {   // an absent operative takes the first offer so the squad isn't held up
       const o = P.offers[0];
-      if (o.k === 'plus') P.dice[o.d].plus = 0;
+      if (o.k === 'plus') { P.dice[o.d].plus = 0; P.bonusHp = (P.bonusHp || 0) + RULES.hpPerUpgrade; P.hp += RULES.hpPerUpgrade; }
       else { const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0); if (P.dice[d].gear.length < RULES.gearPerDie) P.dice[d].gear.push(o.id); }
-      P.picked = true;
+      P.picked = true; P.ready = true;
     }
   });
-  if (st.players.every(x => x.picked || x.gone)) { st.floor++; startFloor(st); }
+  nextFloorIfReady(st);
 }
 
 // ================= TEST BOT (dev harness and auto-play) =================
 function botNext(st, p) {
   const P = st.players[p]; if (!P) return null;
+  if (st.phase === 'upgrade' && P.picked && !P.ready && !P.gone) return { t:'cont' };
   if (st.phase === 'upgrade' && !P.picked) {
     const o = P.offers[0];
     if (o.k === 'plus') return { t:'take', i: 0, v: (p + st.floor) % 2 };
@@ -1250,9 +1306,11 @@ function hostOnData(conn, d) {
   } else if (d.t === 'bye' && g.pi != null) { g.leaving = true; }
 }
 function autoPick(st, p) {   // an absent operative takes its first offer so the squad isn't held up
-  const P = st.players[p], o = P.offers[0]; if (!o || P.picked) return;
+  const P = st.players[p], o = P.offers[0]; if (!o) return;
+  if (P.picked) { act(st, p, { t:'cont' }); return; }
   if (o.k === 'plus') act(st, p, { t:'take', i: 0, v: 0 });
   else { const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0); act(st, p, { t:'take', i: 0, d, r: P.dice[d].gear.length >= RULES.gearPerDie ? 0 : undefined }); }
+  act(st, p, { t:'cont' });
 }
 function dropGuest(id) {
   const g = net.conns.get(id); net.conns.delete(id);
@@ -1264,7 +1322,7 @@ function dropGuest(id) {
   } else if (g.leaving) {
     const P = st.players[g.pi]; P.gone = true; P.picked = true; P.step = 'gone';
     if (st.phase === 'battle') checkState(st);
-    if (st.phase === 'upgrade' && st.players.every(x => x.picked || x.gone)) { st.floor++; startFloor(st); }
+    if (st.phase === 'upgrade') nextFloorIfReady(st);
     st.msg = `${P.name} left the run.`;
   } else {
     const P = st.players[g.pi]; P.away = true; st.msg = `${P.name} lost connection. Their turns are skipped until they reconnect.`;
@@ -1340,6 +1398,9 @@ function faceChip(f, extra = '', attrs = '') {
 const kwGlyphs = kw => kw.length ? `<i class="kwg">${kw.map(k => KW[k].g).join('')}</i>` : '';
 const codeHtml = (c, extra, attrs) => faceChip(parse(c), extra, attrs);
 const effHtml = (p, di, fi, extra, attrs) => faceChip(effFace(st, p, di, fi), extra, attrs);
+// A rolled face with its number as it stands right now: Charged, Steel, Patient, wind-up and so on.
+// Target-based keywords (Engage, Cruel, Duel, Focus) show when aiming, on the enemy cards.
+const liveFace = (st, p, di, f) => !NUMERIC(f.t) ? f : { ...f, n: f.kw.includes('future') ? f.n + 1 : faceValue(st, p, di, f, null) };
 const dieInner = f => { const k = f.kw ? shownKw(f) : []; return `${iconHtml(f)}${FACE[f.t].num ? pipBars(f.n) : ''}${k.length ? `<em class="kws">${k.map(x => KW[x].g).join('')}</em>` : ''}`; };
 const gearBadges = gear => gear.length ? `<span class="gears">${gear.map(g => `<span class="gear" data-tip="${esc(ITEMS[g].name + ': ' + ITEMS[g].text)}">${ITEMS[g].icon}</span>`).join('')}</span>` : '';
 const pname = i => esc(st.players[i].name);
@@ -1478,10 +1539,12 @@ function foeCard(i) {
     return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-foedie="${i}" data-tip="${esc(tip + '\nClick to see every side.')}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div><span class="to">${to}</span></div>`;
   }).join('');
   const ok = canTarget('e', i) ? 'tg-ok' : '';
+  const sf = ok ? selFace() : null, pvd = sf && sf.t === 'D' ? previewHits(st, me, ui.sel, sf, i)[i] : null;
+  const aim = pvd ? `<span class="pvb" data-tip="This die would deal ${pvd.dmg} to it${pvd.psn ? ` and add ${pvd.psn} poison` : ''}${pvd.stun ? ' and stun it' : ''}.">−${pvd.dmg}${pvd.psn ? ` +☠${pvd.psn}` : ''}${pvd.stun ? ' ✺' : ''}</span>` : '';
   return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
     ${enemyArt(e.type, E.boss ? 64 : 52)}<span class="nm">${foeLabel(i)}</span>
-    <div class="hp"><i style="width:${e.hp / e.mx * 100}%"></i><span>${dead ? 'Down' : `${e.hp}/${e.mx}`}</span></div>
-    <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}${enraged(e) && !dead ? '<span class="stunb" data-tip="Enraged: +2 to every attack below half HP.">ENRAGED</span>' : ''}${e.buff && !dead ? `<span class="wardb" data-tip="Empowered: attacks +${e.buff} this floor.">📈${e.buff}</span>` : ''}${E.shatter && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Shatters for ${E.shatter} damage to every operative when killed.">shatters</span>` : ''}</div>
+    ${foeHp(i)}
+    <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${aim}${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}${enraged(e) && !dead ? '<span class="stunb" data-tip="Enraged: +2 to every attack below half HP.">ENRAGED</span>' : enrageBelow(e) && !dead ? `<span class="enrb" data-tip="At less than half HP it gets +2 to every attack. The tick on its health bar marks the spot.">Enrages below ${enrageBelow(e)}</span>` : ''}${e.buff && !dead ? `<span class="wardb" data-tip="Empowered: attacks +${e.buff} this floor.">📈${e.buff}</span>` : ''}${E.shatter && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Shatters for ${E.shatter} damage to every operative when killed.">shatters</span>` : ''}</div>
     <div class="ints">${ints}</div>
   </div>`;
 }
@@ -1494,12 +1557,14 @@ function opCard(p) {
     if (!d) return `<div class="dcol"><div class="die empty"></div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button></div>`;
     const f = effFace(st, p, di, d.fi);
     const key = p + ':' + di, isRoll = renderCache.roll[key] !== d.r; renderCache.rollNext[key] = d.r;
-    const usable = mine && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
+    const usable = mine && !d.winding && !(P.step === 'roll' && d.released) && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
     const rolling = P.step === 'roll', locked = rolling && d.k;
-    const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', locked ? 'kept' : '', mine && rolling && !d.k ? 'unlocked' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : ''].join(' ');
-    const state = rolling ? (locked ? '<span class="lockhint on">🔒 LOCKED</span>' : mine ? '<span class="lockhint off">tap to lock</span>' : '') : d.used ? 'used' : '';
-    const tip = dieName(P, di) + '\n' + faceTip(f) + (mine && rolling ? (locked ? '\nLocked: Reroll skips it. Tap to unlock.' : '\nTap to lock it, so Reroll skips it.') : '');
-    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(tip)}">${dieInner(f)}${locked ? '<span class="lock" aria-label="Locked">🔒</span>' : ''}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
+    const live = liveFace(st, p, di, f), boosted = live.n !== f.n;
+    const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', locked ? 'kept' : '', mine && rolling && !d.k ? 'unlocked' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : '', boosted ? 'boosted' : ''].join(' ');
+    const wound = d.winding ? 'sits out, back next turn' : P.dice[di].wind ? 'winding up, back in 2 turns' : d.released ? 'wound up: triple' : '';
+    const state = wound ? `<span class="lockhint on">⟳ ${wound}</span>` : rolling ? (locked ? '<span class="lockhint on">🔒 LOCKED</span>' : mine ? '<span class="lockhint off">tap to lock</span>' : '') : d.used ? 'used' : '';
+    const tip = dieName(P, di) + '\n' + faceTip(live) + (boosted ? `\nWorth ${live.n} right now (${f.n} before modifiers).` : '') + (mine && rolling ? (locked ? '\nLocked: Reroll skips it. Tap to unlock.' : '\nTap to lock it, so Reroll skips it.') : '');
+    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(tip)}">${dieInner(live)}${locked ? '<span class="lock" aria-label="Locked">🔒</span>' : ''}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
   }).join('');
   const abil = [C.sig, ...abilitiesOf(P)];
   let sig;
@@ -1527,10 +1592,30 @@ function opCard(p) {
 function hpBar(p) {
   const P = st.players[p], mx = maxHp(st, p);
   if (P.down) return '<div class="hp ally"><i style="width:0%"></i><span>Down</span></div>';
-  const inc = st.phase === 'battle' ? Math.min(P.hp, Math.max(0, incomingTo(st, p) - P.ward) + P.poison) : 0;
-  const tip = inc ? `Incoming: about ${inc} damage before your next turn (attacks after your ward, plus poison).` : 'No damage incoming right now.';
-  return `<div class="hp ally" data-tip="${esc(tip)}"><i style="width:${P.hp / mx * 100}%"></i>${inc ? `<b class="inc" style="left:${(P.hp - inc) / mx * 100}%;width:${inc / mx * 100}%"></b>` : ''}<span>${P.hp}/${mx}${inc ? ` (−${inc} incoming)` : ''}</span></div>`;
+  const inc = st.phase === 'battle' ? incomingParts(st, p) : { hit: 0, psn: 0 };
+  const atk = Math.min(P.hp, Math.max(0, inc.hit - P.ward)), psn = Math.min(P.hp - atk, inc.psn), left = P.hp - atk - psn;
+  const tip = atk || psn ? [`Before your next turn: ${P.hp} → ${left} HP.`, inc.hit ? `Attacks: ${inc.hit}${P.ward ? `, your ward blocks ${Math.min(P.ward, inc.hit)}` : ''}.` : '', inc.psn ? `Poison: ${inc.psn} (ward doesn't stop it).` : ''].filter(Boolean).join('\n') : (inc.hit ? `Your ward blocks all ${inc.hit} incoming.` : 'No damage incoming right now.');
+  return `<div class="hp ally" data-tip="${esc(tip)}"><i style="width:${P.hp / mx * 100}%"></i>${stripes(P.hp, mx, atk, psn)}<span>${P.hp}/${mx}${atk || psn ? ` → ${left || 'DOWN'}` : ''}</span></div>`;
 }
+const stripes = (hp, mx, atk, psn, cls = '') => (atk ? `<b class="inc ${cls}" style="left:${(hp - atk) / mx * 100}%;width:${atk / mx * 100}%"></b>` : '') + (psn ? `<b class="inc psn" style="left:${(hp - atk - psn) / mx * 100}%;width:${psn / mx * 100}%"></b>` : '');
+// Enemy health bar: poison due at the end of the turn is always striped; pv adds what the aimed die would do.
+// Ticks mark the HP where it enrages or changes phase.
+function enrageBelow(e) { const E = ENEMIES[e.type]; return E.enrage || (E.phases && E.phases.some(x => x.enrage)) ? Math.ceil(e.mx / 2) : 0; }
+function foeHp(i, pv) {
+  const e = st.enemies[i], E = ENEMIES[e.type];
+  if (e.hp <= 0) return '<div class="hp"><i style="width:0%"></i><span>Down</span></div>';
+  const marks = [...(enrageBelow(e) ? [enrageBelow(e) / e.mx] : []), ...(E.phases ? E.phases.filter(x => x.at < 1 && !x.enrage).map(x => x.at) : [])];
+  const atk = pv ? Math.min(e.hp, pv.dmg) : 0, psn = Math.min(e.hp - atk, e.poison + (pv ? pv.psn : 0)), left = e.hp - atk - psn;
+  const wake = enrageBelow(e) && !enraged(e) && atk && (e.hp - atk) * 2 < e.mx;
+  const tip = atk || psn ? [`After this turn: ${e.hp} → ${left} HP.`, atk ? `This die: ${atk}.` : '', psn ? `Poison at the end of the turn: ${psn}.` : ''].filter(Boolean).join('\n') : '';
+  return `<div class="hp" ${tip ? `data-tip="${esc(tip)}"` : ''}><i style="width:${e.hp / e.mx * 100}%"></i>${stripes(e.hp, e.mx, atk, psn, 'prev')}${marks.map(m => `<b class="mark" style="left:${m * 100}%"></b>`).join('')}<span>${e.hp}/${e.mx}${atk || psn ? ` → ${left || '✖'}` : ''}${wake ? ' ENRAGES' : ''}</span></div>`;
+}
+function showHitPreview(i) {
+  const f = selFace(); if (!f || f.t !== 'D') return;
+  const pv = previewHits(st, me, ui.sel, f, i);
+  Object.keys(pv).forEach(j => { const el = document.querySelector(`[data-key="e:${j}"] .hp`); if (el) el.outerHTML = foeHp(+j, pv[j]); });
+}
+function clearHitPreview() { if (!st || !st.enemies) return; st.enemies.forEach((_, j) => { const el = document.querySelector(`[data-key="e:${j}"] .hp`); if (el) el.outerHTML = foeHp(j); }); }
 function logTable(lines, title) {
   const rows = lines.map(l => l.side === 'sys' ? `<tr class="sys"><td colspan="3">${esc(l.src)}</td></tr>` : `<tr><td style="color:${l.side === 'ally' ? 'var(--ally)' : 'var(--foe)'}">${esc(l.src)}</td><td>${esc(l.tgt)}</td><td>${esc(l.res)}</td></tr>`).join('');
   return rows ? `${title ? `<h3 style="font-size:1rem;margin-bottom:4px">${title}</h3>` : ''}<table>${rows}</table>` : '';
@@ -1550,9 +1635,8 @@ function battleHtml() {
     const f = selFace();
     hint = f ? (needsTarget(f.t) ? 'Click a highlighted enemy or operative. It happens right away.' : '') : 'Click a die to use it: it hits right away. ✦ dice charge on click. Click a die\'s name to see all its sides.';
     const left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
-    const abil = [CLASSES[P.cls].sig, ...abilitiesOf(P)].filter(s => !(P.cast || []).includes(s) && P.charge >= sigCost(st, me, s) && abilityUsable(st, me, s)).length;
-    if (ui.confirmEnd && (left || abil)) {
-      hint = `You still have ${left ? `${left} unused ${left > 1 ? 'dice' : 'die'}` : ''}${left && abil ? ' and ' : ''}${abil ? `${abil} ability ready` : ''}. End your turn anyway?`;
+    if (ui.confirmEnd && left) {
+      hint = `You still have ${left} unused ${left > 1 ? 'dice' : 'die'}. End your turn anyway?`;
       buttons = '<button class="btn ghost" data-ui="keepgoing">Keep playing</button><button class="btn" data-ui="endnow">End turn anyway</button>';
     } else buttons = `${canUndo(P) ? `<button class="btn ghost" data-ui="undo" data-tip="Back to rolling (${P.rerolls} reroll${P.rerolls > 1 ? 's' : ''} left)">↶ Undo</button>` : ''}<button class="btn ${left ? 'ghost' : ''}" data-ui="ready">End turn</button>`;
   } else {
@@ -1619,7 +1703,7 @@ function showEnemyDie(i) {   // every intent this enemy can roll, as an unfolded
     <p class="muted" style="margin:0">Each turn it rolls one of these sides${e.acts > 1 ? ` (${e.acts} times)` : ''}. Numbers include its current bonuses. HP ${e.hp}/${e.mx}.</p>
     <div class="netwrap">${sets.map(x => `<div class="mydie"><b>${esc(x.label)}</b>${netHtml(x.ints.map(faceOf), '3.2rem')}</div>`).join('')}</div>
     ${kwNotes ? `<div class="stack" style="gap:4px;font-size:.85rem">${kwNotes}</div>` : ''}
-    ${E.selfWard ? `<div class="muted" style="font-size:.85rem">Gains 🛡${E.selfWard} every turn.</div>` : ''}${E.shatter ? `<div class="muted" style="font-size:.85rem">Shatters for ${E.shatter} damage to every operative when killed.</div>` : ''}${E.enrage ? '<div class="muted" style="font-size:.85rem">Enrage: +2 to every attack below half HP.</div>' : ''}
+    ${E.selfWard ? `<div class="muted" style="font-size:.85rem">Gains 🛡${E.selfWard} every turn.</div>` : ''}${E.shatter ? `<div class="muted" style="font-size:.85rem">Shatters for ${E.shatter} damage to every operative when killed.</div>` : ''}${enrageBelow(e) ? `<div class="muted" style="font-size:.85rem">Enrage: +2 to every attack below ${enrageBelow(e)} HP.</div>` : ''}
   </div>`;
   o.classList.remove('hidden');
 }
@@ -1637,7 +1721,7 @@ function showDie(p, di) {
 }
 function upgradeHtml() {
   const P = st.players[me];
-  const status = st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}">${pname(i)} ${x.gone ? '· left' : x.picked ? '✓' : '· choosing'}</span>`).join(' ');
+  const status = st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}">${pname(i)} ${x.gone ? '· left' : x.ready ? '✓ ready' : x.picked ? '· picked' : '· choosing'}</span>`).join(' ');
   const next = FLOORS[st.floor];
   let body = '';
   if (P && !P.picked && !P.gone) {
@@ -1655,7 +1739,11 @@ function upgradeHtml() {
       }
       body = `<p class="muted" style="margin:0">Pick 1 of your 3 offers.</p><div class="tiles">${tiles}</div>${chooser}`;
     }
-  } else body = `<p class="muted">${P && P.gone ? 'You left this run.' : 'Picked. Waiting for your squad…'}</p>`;
+  } else if (P && !P.gone) {
+    const waitingOn = st.players.filter(x => !x.gone && !x.ready && x !== P).map(x => esc(x.name));
+    body = P.ready ? `<div class="row"><span class="muted">Ready.${waitingOn.length ? ` Waiting for ${waitingOn.join(', ')}…` : ''}</span><button class="btn ghost sm" data-ui="uncont">Not ready yet</button></div>`
+      : `<div class="row"><button class="btn" data-ui="cont">Ready for floor ${st.floor + 1}</button><span class="muted">Your pick is in. Move items below if you like, then press Ready.</span></div>`;
+  } else body = '<p class="muted">You left this run.</p>';
   const mine = P && !P.gone && ui.pend == null ? `<div class="box stack"><h3>Your loadout · ${CLASSES[P.cls].icon} ${CLASSES[P.cls].name}</h3><p class="muted" style="margin:0;font-size:.85rem">Move items between dice or reorder them before the next floor. Items apply top to bottom.</p><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, '', true)).join('')}</div>
     <div class="muted" style="font-size:.85rem">HP ${P.hp}/${maxHp(st, me)} · up to ${RULES.gearPerDie} items per die</div>${abilitiesHtml(me)}</div>` : '';
   const nextUp = UPGRADE_FLOORS.includes(st.floor + 1) ? ' After it: a die upgrade.' : '';
@@ -1700,6 +1788,7 @@ function replayEvents(fromN) {
       else if (/→/.test(l.res)) { sfx.enemyHit(); animate(el, 'an-hit'); }
       return;
     }
+    if (/full HP/.test(l.res)) return;
     if (/✖/.test(l.res)) { sfx.kill(); animate(el, 'an-kill'); }
     else if (/Stunned/.test(l.res)) { sfx.stun(); animate(el, 'an-stun'); }
     else if (/Intent rewritten/.test(l.res)) { sfx.sight(); animate(el, 'an-stun'); }
@@ -1764,18 +1853,18 @@ function logoBig() {
 function showHelp() {
   const o = $('overlay');
   const faces = ['D2', 'W2', 'H2', 'C2', 'B'].map(c => { const { t } = parse(c); return `<tr><td>${codeHtml(c)}</td><td><b>${FACE[t].name}</b></td><td>${FACE[t].text('N')}</td></tr>`; }).join('');
-  const kws = Object.values(KW).map(k => `<tr><td class="mono" style="color:var(--arcane)">${k.g}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
+  const kws = Object.values(KW).sort((a, b) => a.name.localeCompare(b.name)).map(k => `<tr><td class="mono" style="color:var(--arcane)">${k.g}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
   o.innerHTML = `<div class="box">
     <div class="row" style="justify-content:space-between">${logoBig()}<button class="btn ghost" data-ui="closehelp">Close</button></div>
     <h3>How to play</h3>
     <ul>
       <li>You are one operative with <b>3 class dice</b>. Up to 4 friends breach a 10-floor tower; each floor is one fight, and bosses wait on floors 5 and 10.</li>
       <li><b>Each turn</b> every enemy shows its intent (what it will do and to whom). Everyone rolls at once: tap dice to 🔒 lock them, then Reroll rolls only the unlocked ones (2 rerolls). Locking all three moves on automatically; Undo goes back while you have rerolls.</li>
-      <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>End turn</b> when you're done (it checks with you if dice or abilities are left).</li>
+      <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>End turn</b> when you're done (it checks with you if dice are left).</li>
       <li>When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then.</li>
       <li><b>✦ Charge</b> pays for your class signature and any abilities your gear grants.</li>
       <li>At 0 HP you're <b>down</b>. You're back next floor at 50% HP. The run ends if the whole squad is down.</li>
-      <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 a random die of yours is upgraded, and you pick which of its two + versions it becomes. After the others you pick die equipment (2 per die) or player equipment (2 per operative).</li>
+      <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 a random die of yours is upgraded, you pick which of its two + versions it becomes, and you gain 2 max HP. After the others you pick an item for a die (up to 3 per die). Then press Ready; the next floor starts when the whole squad is ready.</li>
     </ul>
     <h3>Faces</h3><p class="muted" style="margin:0;font-size:.85rem">Numbers are shown as pips, like Slice &amp; Dice: each short tick is 1 and each tall bar is 5 (${faceChip(parse('D7'))} is 7 damage). Hover any face for the exact number.</p><table>${faces}</table>
     <h3>Keywords</h3><p class="muted" style="margin:0;font-size:.85rem">Class dice show built-in keyword pairings as their own icon (🪓 Cleaving Strike = ⚔ + Cleave). Small purple symbols mean gear added that keyword.</p><table>${kws}</table>
@@ -1824,12 +1913,13 @@ document.addEventListener('click', e => {
     if (d.cast) { ui.sel = null; return dispatch({ t:'cast', s: d.cast }); }
     if (d.die != null && +d.p === me && st && st.phase === 'battle') {
       const P = st.players[me], di = +d.die;
+      if (P.roll[di].winding || (P.step === 'roll' && P.roll[di].released)) return;
       if (P.step === 'roll') { sfx.click(); return dispatch({ t:'keep', i: di }); }
       if (P.step === 'use') {
         const dd = P.roll[di]; if (dd.used) return;
         const f = effFace(st, me, di, dd.fi);
         if (f.t === 'B') return;
-        if (!needsTarget(f.t)) { ui.sel = null; return dispatch({ t:'use', i: di }); }
+        if (!needsTarget(f.t) || windsUp(P, di, f)) { ui.sel = null; return dispatch({ t:'use', i: di }); }
         ui.sel = ui.sel === di ? null : di; return render();
       }
     }
@@ -1890,11 +1980,10 @@ function uiAction(k) {
     case 'start': dispatch({ t:'start' }); break;
     case 'reroll': dispatch({ t:'reroll' }); break;
     case 'done': dispatch({ t:'done' }); break;
-    case 'ready': {   // ask first if dice or abilities are left, so a stray click doesn't waste a turn
+    case 'ready': {   // ask first if dice are left, so a stray click doesn't waste a turn
       ui.sel = null;
       const P = st.players[me], left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
-      const abil = [CLASSES[P.cls].sig, ...abilitiesOf(P)].some(s => !(P.cast || []).includes(s) && P.charge >= sigCost(st, me, s) && abilityUsable(st, me, s));
-      if (left || abil) { ui.confirmEnd = true; render(); } else dispatch({ t:'ready' });
+      if (left) { ui.confirmEnd = true; render(); } else dispatch({ t:'ready' });
       break;
     }
     case 'endnow': ui.confirmEnd = false; dispatch({ t:'ready' }); break;
@@ -1903,6 +1992,8 @@ function uiAction(k) {
     case 'desel': ui.sel = null; ui.confirmEnd = false; render(); break;
     case 'undo': dispatch({ t:'undo' }); break;
     case 'unpend': ui.pend = null; render(); break;
+    case 'cont': sfx.click(); ui.moveSel = null; dispatch({ t:'cont' }); break;
+    case 'uncont': dispatch({ t:'cont', on: false }); break;
     case 'restart': dispatch({ t:'restart' }); break;
   }
 }
@@ -1914,6 +2005,8 @@ function diePreview(p, di) {
   return `<b>${esc(dieName(P, di))}</b>${netHtml(effFaces(p, di), '3.2rem')}${d.gear.length ? `<div>${d.gear.map(g => ITEMS[g].icon + ' ' + ITEMS[g].name).join('<br>')}</div>` : ''}<div class="muted">Click to inspect each side</div>`;
 }
 document.addEventListener('mouseover', e => {
+  const aimAt = st && st.phase === 'battle' ? e.target.closest('.foe.tg-ok') : null;
+  if (aimAt !== ui.aimAt) { ui.aimAt = aimAt; clearHitPreview(); if (aimAt) showHitPreview(+aimAt.dataset.ti); }
   const ins = e.target.closest('[data-inspect]');
   if (ins && st && screen === 'game') {
     const [ip, idi] = ins.dataset.inspect.split(':').map(Number);
@@ -1936,7 +2029,7 @@ document.addEventListener('focusin', e => {
 document.addEventListener('focusout', () => tipEl.style.display = 'none');
 
 // exposed for the playtest harness
-window.KC = { get st() { return st; }, set st(v) { st = v; }, act, botNext, newRun, addPlayer, dispatch, uiAction, CLASSES, RULES, ITEMS, ENEMIES };
+window.KC = { get st() { return st; }, set st(v) { st = v; }, act, botNext, newRun, addPlayer, dispatch, uiAction, CLASSES, RULES, ITEMS, ENEMIES, effFace, faceValue, incomingParts, previewHits, enemyPhase, startFloor };
 render();
 </script>
 </body>
