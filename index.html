@@ -141,6 +141,11 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .net .nf .kwg{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 calc(var(--s,3rem) * .25) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px;line-height:1}
 .net .p0{grid-area:1/2}.net .p1{grid-area:2/1}.net .p2{grid-area:2/2}.net .p3{grid-area:2/3}.net .p4{grid-area:2/4}.net .p5{grid-area:3/2}
 .netwrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.upnet{align-items:stretch}
+.uparrow{align-self:center;font:700 2.2rem/1 var(--display);color:var(--hud)}
+.upor{align-self:center;font:700 .9rem var(--display);color:var(--muted);text-transform:uppercase}
+.mydie.chosen{border-color:var(--hud);box-shadow:0 0 0 1px var(--hud)}
+@media (max-width:640px){.upnet{flex-direction:column;align-items:center}.uparrow{transform:rotate(90deg)}}
 .op .badges{display:flex;gap:4px;flex-wrap:wrap;min-height:1.2rem}
 .bdg{font:700 .7rem var(--mono);padding:1px 6px;border-radius:3px;background:#0b1018;border:1px solid var(--line)}
 .bdg.D{color:var(--dmg);border-color:#6b3329}.bdg.W{color:var(--ward)}.bdg.H{color:var(--heal)}
@@ -924,7 +929,7 @@ function act(st, p, a) {
       } else if (o.k === 'item') {
         const d = P.dice[a.d]; if (!d) return 'Pick a die';
         if (d.gear.length >= RULES.gearPerDie) { if (!(a.r >= 0 && a.r < d.gear.length)) return 'Pick an item to replace'; d.gear.splice(a.r, 1); }
-        d.gear.push(o.id);
+        d.gear.push(o.id); P.took = a.i;
       }
       P.picked = true;
       return null;
@@ -1774,34 +1779,46 @@ function showDie(p, di) {
   </div>`;
   o.classList.remove('hidden');
 }
+// A die upgrade's faces with the gear already on that die, so the choice matches what you'd get.
+function plusFaces(P, di, v) {
+  const gear = P.dice[di].gear.map(g => ITEMS[g]).filter(g => g.fx);
+  return v.faces.map((c, fi) => { const f = parse(c); gear.forEach(g => g.fx(f, fi, v.faces)); f.kw = [...new Set(f.kw)]; return f; });
+}
 function upgradeHtml() {
   const P = st.players[me];
   const status = st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}">${pname(i)} ${x.gone ? '· left' : x.ready ? '✓ ready' : x.picked ? '· picked' : '· choosing'}</span>`).join(' ');
   const next = FLOORS[st.floor];
   let body = '';
-  if (P && !P.picked && !P.gone && P.offers[0].k === 'plus' && P.dice[P.offers[0].d].plus != null) {
-    const sig = CLASSES[P.cls].sig, ups = SIG_UPS[sig];
-    body = `<p class="muted" style="margin:0"><b style="color:var(--fg)">Step 2 of 2: upgrade your ability.</b> ${SIGS[sig].name} (${sigCost(st, me, sig)}✦): ${SIGS[sig].text} Choose one upgrade; it lasts the rest of the run.</p>
-      <div class="tiles">${Object.entries(ups).map(([id, u]) => `<div class="tile"><div class="hh"><span class="ic">✦</span><b>${u.name}</b></div><div class="desc">${kwLink(u.text)}</div><button class="btn sm" data-sigup="${id}">Choose ${u.name}</button></div>`).join('')}</div>`;
-  } else if (P && !P.picked && !P.gone) {
-    if (P.offers[0].k === 'plus') {
-      const di = P.offers[0].d, D = dieDef(P, di);
-      body = `<p class="muted" style="margin:0">${needsSigUp(st, P) ? '<b style="color:var(--fg)">Step 1 of 2.</b> ' : ''}Upgrade floor. The tower picked your <b style="color:var(--fg)">${esc(D.name)}</b> die. Choose how it upgrades (gear on it stays).</p>
-      <div class="netwrap"><div class="mydie"><b>Now</b>${netHtml(effFaces(me, di), '2.9rem')}</div>
-      ${D.plus.map((v, k) => `<div class="mydie"><b>${esc(D.name)}+ · ${esc(v.label)}</b>${netHtml(v.faces.map(parse), '2.9rem')}<button class="btn sm" data-plusv="${k}">Choose ${esc(v.label)}</button></div>`).join('')}</div>`;
-    } else {
-      const tiles = P.offers.map((o, i) => { const d = offerDesc(o); return `<div class="tile ${ui.pend === i ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${kwLink(d.text)}</div><button class="btn sm" data-offer="${i}">Choose</button></div>`; }).join('');
-      let chooser = '';
-      if (ui.pend != null) {
-        const o = P.offers[ui.pend];
-        chooser = `<div class="box stack"><h3>Which die gets the ${ITEMS[o.id].icon} ${ITEMS[o.id].name}?</h3><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, d.gear.length < RULES.gearPerDie ? `<button class="btn sm" data-gear="${di}">Install here</button>` : `<div class="row" style="gap:6px">${d.gear.map((g, r) => `<button class="btn sm ghost" data-gear="${di}" data-r="${r}">Replace ${ITEMS[g].icon} ${ITEMS[g].name}</button>`).join('')}</div>`)).join('')}</div><div><button class="btn ghost sm" data-ui="unpend">Cancel</button></div></div>`;
+  const pickKey = st.floor + ':' + st.resolveN;
+  if (ui.pickKey !== pickKey) { ui.pickKey = pickKey; ui.plusSel = null; ui.sigSel = null; }
+  if (P && !P.gone) {
+    const o = P.offers[0];
+    if (o.k === 'plus') {
+      const di = o.d, D = dieDef(P, di), vName = v => v.label === '+' ? D.name + '+' : v.label;
+      if (P.picked) {
+        const v = D.plus[P.dice[di].plus], u = P.sigUp && st.floor === RULES.abilityFloor ? SIG_UPS[CLASSES[P.cls].sig][P.sigUp] : null;
+        body = `<p style="margin:0">✓ <b>${esc(D.name)}</b> upgraded to <b>${esc(vName(v))}</b>, and you gained ${RULES.hpPerUpgrade} max HP.${u ? ` ${SIGS[CLASSES[P.cls].sig].name} gained <b>${u.name}</b>.` : ''}</p>`;
+      } else {
+        const sig = CLASSES[P.cls].sig;
+        body = `<p class="muted" style="margin:0">Upgrade floor. The tower picked your <b style="color:var(--fg)">${esc(D.name)}</b> die. Choose how it upgrades (gear on it stays). You also gain ${RULES.hpPerUpgrade} max HP.</p>
+      <div class="netwrap upnet"><div class="mydie"><b>Now</b>${netHtml(effFaces(me, di), '2.9rem')}</div><span class="uparrow" aria-label="upgrades into">➜</span>
+      ${D.plus.map((v, k) => `${k ? '<span class="upor">or</span>' : ''}<div class="mydie ${ui.plusSel === k ? 'chosen' : ''}"><b>${esc(vName(v))}</b>${netHtml(plusFaces(P, di, v), '2.9rem')}<button class="btn sm ${ui.plusSel != null && ui.plusSel !== k ? 'ghost' : ''}" data-plusv="${k}">${ui.plusSel === k ? 'Chosen ✓' : `Choose ${esc(vName(v))}`}</button></div>`).join('')}</div>`;
+        if (needsSigUp(st, P)) body += `<p class="muted" style="margin:0"><b style="color:var(--fg)">Also upgrade your ability.</b> ${SIGS[sig].name} (${sigCost(st, me, sig)}✦): ${SIGS[sig].text} Your choice lasts the rest of the run.</p>
+      <div class="tiles">${Object.entries(SIG_UPS[sig]).map(([id, u]) => `<div class="tile ${ui.sigSel === id ? 'picked' : ''}"><div class="hh"><span class="ic">✦</span><b>${u.name}</b></div><div class="desc">${kwLink(u.text)}</div><button class="btn sm ${ui.sigSel && ui.sigSel !== id ? 'ghost' : ''}" data-sigup="${id}">${ui.sigSel === id ? 'Chosen ✓' : `Choose ${u.name}`}</button></div>`).join('')}</div>`;
       }
-      body = `<p class="muted" style="margin:0">Pick 1 of your 3 offers.</p><div class="tiles">${tiles}</div>${chooser}`;
+    } else {
+      const tiles = P.offers.map((x, i) => { const d = offerDesc(x), took = P.picked && P.took === i; return `<div class="tile ${ui.pend === i || took ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${kwLink(d.text)}</div>${P.picked ? (took ? '<span class="tag" style="align-self:flex-start">Installed ✓</span>' : '') : '<button class="btn sm" data-offer="' + i + '">Choose</button>'}</div>`; }).join('');
+      let chooser = '';
+      if (!P.picked && ui.pend != null) {
+        const x = P.offers[ui.pend];
+        chooser = `<div class="box stack"><h3>Which die gets the ${ITEMS[x.id].icon} ${ITEMS[x.id].name}?</h3><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, d.gear.length < RULES.gearPerDie ? `<button class="btn sm" data-gear="${di}">Install here</button>` : `<div class="row" style="gap:6px">${d.gear.map((g, r) => `<button class="btn sm ghost" data-gear="${di}" data-r="${r}">Replace ${ITEMS[g].icon} ${ITEMS[g].name}</button>`).join('')}</div>`)).join('')}</div><div><button class="btn ghost sm" data-ui="unpend">Cancel</button></div></div>`;
+      }
+      body = `<p class="muted" style="margin:0">${P.picked ? 'Your item is installed.' : 'Pick 1 of your 3 offers.'}</p><div class="tiles">${tiles}</div>${chooser}`;
     }
-  } else if (P && !P.gone) {
     const waitingOn = st.players.filter(x => !x.gone && !x.ready && x !== P).map(x => esc(x.name));
-    body = P.ready ? `<div class="row"><span class="muted">Ready.${waitingOn.length ? ` Waiting for ${waitingOn.join(', ')}…` : ''}</span><button class="btn ghost sm" data-ui="uncont">Not ready yet</button></div>`
-      : `<div class="row"><button class="btn" data-ui="cont">Ready for floor ${st.floor + 1}</button><span class="muted">Your pick is in. Move items below if you like, then press Ready.</span></div>`;
+    const can = P.picked || (o.k === 'plus' && ui.plusSel != null && (!needsSigUp(st, P) || ui.sigSel));
+    if (ui.pend == null) body += P.ready ? `<div class="row"><span class="muted">Ready.${waitingOn.length ? ` Waiting for ${waitingOn.join(', ')}…` : ''}</span><button class="btn ghost sm" data-ui="uncont">Not ready yet</button></div>`
+      : `<div class="row"><button class="btn" data-ui="cont" ${can ? '' : 'disabled'}>Ready for floor ${st.floor + 1}</button><span class="muted">${can ? 'Move items below if you like, then press Ready.' : 'Make your choice above first.'}</span></div>`;
   } else body = '<p class="muted">You left this run.</p>';
   const mine = P && !P.gone && ui.pend == null ? `<div class="box stack"><h3>Your loadout · ${CLASSES[P.cls].icon} ${CLASSES[P.cls].name}</h3><p class="muted" style="margin:0;font-size:.85rem">Move items between dice or reorder them before the next floor. Items apply top to bottom.</p><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, '', true)).join('')}</div>
     <div class="muted" style="font-size:.85rem">HP ${P.hp}/${maxHp(st, me)} · up to ${RULES.gearPerDie} items per die</div>${abilitiesHtml(me)}</div>` : '';
@@ -1997,8 +2014,8 @@ document.addEventListener('click', e => {
       const P = st.players[me], o = P.offers[+d.offer];
       ui.pend = +d.offer; return render();
     }
-    if (d.plusv != null) return dispatch({ t:'take', i: 0, v: +d.plusv });
-    if (d.sigup) { sfx.click(); return dispatch({ t:'sigup', id: d.sigup }); }
+    if (d.plusv != null) { sfx.click(); ui.plusSel = +d.plusv; return render(); }
+    if (d.sigup) { sfx.click(); ui.sigSel = d.sigup; return render(); }
     if (d.inspect) { const [ip, idi] = d.inspect.split(':').map(Number); return showDie(ip, idi); }
     if (d.gear != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, d: +d.gear, r: d.r != null ? +d.r : undefined }); }
     if (d.equip != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, r: +d.equip }); }
@@ -2063,7 +2080,12 @@ function uiAction(k) {
     case 'desel': ui.sel = null; ui.confirmEnd = false; render(); break;
     case 'undo': dispatch({ t:'undo' }); break;
     case 'unpend': ui.pend = null; render(); break;
-    case 'cont': sfx.click(); ui.moveSel = null; dispatch({ t:'cont' }); break;
+    case 'cont': {   // a die upgrade locks in here, so you can change your mind until you press Ready
+      sfx.click(); ui.moveSel = null;
+      const P = st.players[me];
+      if (!P.picked && P.offers[0].k === 'plus') { if (ui.plusSel == null) break; dispatch({ t:'take', i: 0, v: ui.plusSel }); if (ui.sigSel) dispatch({ t:'sigup', id: ui.sigSel }); }
+      dispatch({ t:'cont' }); break;
+    }
     case 'uncont': dispatch({ t:'cont', on: false }); break;
     case 'restart': dispatch({ t:'restart' }); break;
   }

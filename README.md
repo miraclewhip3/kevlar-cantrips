@@ -45,7 +45,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
    - Click an enemy's intent die to see every side it can roll (each boss phase separately).
 5. **End turn.** It asks first if dice are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
 6. **Down, not out.** At 0 HP you're down and back next floor at 50% HP. The run ends when the whole squad is down.
-7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8 (which also gives +2 max HP). After floor 5 each operative also picks 1 of 3 upgrades for their class ability. Then everyone presses **Ready**; the next floor starts when the whole squad is ready.
+7. **Between floors** everyone heals half their missing HP and picks an item, or upgrades a die on floors 2, 5 and 8 (which also gives +2 max HP). After floor 5 each operative also picks 1 of 3 upgrades for their class ability. An arrow shows the die turning into either upgrade, and you can change your mind until you press Ready. Then everyone presses **Ready**; the next floor starts when the whole squad is ready.
 8. **Win** by clearing floor 10, the CEO.
 
 ## Dice and faces
