@@ -63,9 +63,6 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .die.mine.unlocked{outline:2px dashed rgba(240,178,60,.55);outline-offset:3px}
 .lockhint{font:700 .68rem var(--mono);letter-spacing:.06em;text-align:center;min-height:.9rem}
 .lockhint.on{color:var(--hud)}.lockhint.off{color:var(--muted)}
-.coach{align-self:center;background:var(--hud);color:#231702;font:700 .85rem var(--display);padding:.3rem .7rem;border-radius:999px;animation:coach 1.2s ease-in-out infinite}
-@keyframes coach{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-@media (prefers-reduced-motion:reduce){.coach{animation:none}}
 .die.sel{box-shadow:0 0 0 4px #fff,0 3px 0 #5d6779;transform:scale(1.06)}
 .die.used{opacity:.55}
 .die.empty{background:#1b2436;border-color:var(--line);box-shadow:none;color:var(--muted);font-size:.9rem}
@@ -1640,7 +1637,6 @@ function opCard(p) {
     <div class="hh"><b>${pname(p)}</b><span class="status ${status}">${statusTxt}</span></div>
     <div class="sub">${portrait(P.cls, 26)}<span>${C.name}</span><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
     ${hpBar(p)}
-    ${mine && st.phase === 'battle' && P.step === 'roll' && !P.roll.some(d => d.k) && st.floor === 1 && st.turn <= 2 ? '<div class="coach">👇 Tap a die to lock it</div>' : ''}
     <div class="dice">${dice}</div>
     ${sig}
     ${mine && st.phase === 'battle' ? `<div class="ctrlwrap">${ui.hint ? `<div class="hint" style="text-align:left">${ui.hint}</div>` : ''}<div class="row ctrl">${ui.controls || ''}</div></div>` : ''}
