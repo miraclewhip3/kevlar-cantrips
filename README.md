@@ -175,6 +175,9 @@ Each extra operative adds one boss escort. Enemy HP also grows 11% per floor, an
 - Animations: hits flash a slash and shake the target, the attacker lunges, wards pop a shield, kills and downed operatives show a skull and fade to grey. When a floor ends, the battle stays on screen about 2.5 seconds under the banner before moving on.
 - **Battle layout** (after Slice & Dice, built 2026/11/03): heroes as slim bars on the left with you first, your dice big in the middle tray, enemies as slim bars on the right with their intent dice facing the squad, and Reroll, Done, End turn and abilities along the bottom. Text scales with the window height, so a whole turn fits on a sideways phone. Upright phones stack it: enemies, your dice, buttons, then the squad. The approved mockup is [mockups-compact-layout.html](mockups-compact-layout.html).
 - Your operative is always the top hero, with teammates below.
+- **Squad of 3 (built 2026/11/03):** every run has exactly 3 operatives. Solo: you pick a class for each and run all three; when one ends their turn, control moves to the next (click a hero to switch any time). Between floors you choose upgrades for each one. Multiplayer is 2 or 3 people; with 2, the **Field Intern** fills the third seat.
+- **Field Intern** (AI only, 2-player games): HP 9, plain dice with no keywords (Stapler, Clipboard, Coffee Cart), signature **Coffee Run** (2✦: heal every operative 1). Floor 5 upgrades: Espresso (heal 2), Donuts (also 🛡1 each), Crunch Time (also 1 damage to every enemy). It plays one step every 0.7 seconds so you can watch, and picks its own items for now.
+- Health bar numbers sit in a small dark label so they read over the stripes.
 
 ## Saving, audio, dev tools
 - Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before the first-draft update can't be loaded.

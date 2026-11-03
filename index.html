@@ -101,7 +101,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .hp{width:100%;height:.95rem;background:#0b1018;border:1px solid var(--line);border-radius:3px;position:relative;overflow:hidden}
 .hp i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#b8432f,#ff6b5b);transition:width .3s}
 .hp.ally i{background:linear-gradient(90deg,#2f7bb8,#5aa9ff)}
-.hp span{position:relative;display:block;text-align:center;font:600 .66rem/.85rem var(--mono)}
+.hp span{position:relative;display:block;width:fit-content;margin:0 auto;padding:0 5px;border-radius:3px;background:rgba(8,12,18,.78);color:#fff;text-shadow:0 1px 2px #000;font:700 .66rem/.85rem var(--mono)}
 .wardb{font:700 .7rem var(--mono);color:var(--ward)}
 .stunb{font:700 .7rem var(--mono);color:var(--stun)}
 .tg-ok{border-color:var(--hud)!important;box-shadow:0 0 0 2px var(--hud-dim);cursor:crosshair}
@@ -212,6 +212,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:7px}
 .tile.taken{opacity:.45}
 .tile.picked{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
+.slot.picked{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
 .tile .hh{display:flex;gap:8px;align-items:center}
 .tile .hh .ic{font-size:1.4rem}
 .ctile .hh b{font-size:1.25rem}
@@ -265,19 +266,21 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
 html.inbattle{font-size:clamp(11px,2.3vh,17px)}
 html.inbattle .wrap{max-width:1400px;padding:4px 10px 12px}
 html.inbattle .topbar{padding-bottom:3px;margin-bottom:4px;gap:6px}
-.cb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);gap:8px;align-items:stretch}
+.cb{display:grid;grid-template-columns:minmax(0,19rem) minmax(0,1fr) auto;gap:8px;align-items:stretch}
 .cb-l,.cb-r{display:flex;flex-direction:column;gap:5px;min-width:0}
 .cb .ops,.cb .enemyrow{display:flex;flex-direction:column;gap:5px;margin:0}
 .cb .op{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"hh dice" "hp dice" "sub dice";gap:3px 8px;padding:5px 8px;align-items:center}
 .cb .op>.hh{grid-area:hh;align-items:center}.cb .op>.hp{grid-area:hp}.cb .op>.sub{grid-area:sub;font-size:.72rem;min-height:0}.cb .op>.dice{grid-area:dice;min-height:0;gap:3px}
 .cb .op .hh .portrait{width:3.4rem;height:3.4rem}
+.cb .op .hh,.cb .op .hh>.row{flex-wrap:nowrap;min-width:0}.cb .op .hh .stack{min-width:0}.cb .op .hh b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb .op:not(.me) .hh .portrait{width:2.6rem;height:2.6rem}.cb .op:not(.me) .status{display:none}
 .cb .op .hh b{font-size:1rem}.cb .op .status{font-size:.62rem}
 .cb .op>.sigtxt,.cb .op .dname,.cb .op .tg{display:none}
 .cb .op .dcol{width:auto}.cb .op .die{width:2.2rem;height:2.2rem;--s:2.2rem;border-radius:6px}
 .cb .op.me{border-width:2px}
-.cb .foe{width:auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"ints nm art" "ints hp art" "ints bd art";gap:2px 8px;padding:5px 8px;align-items:center}
-.cb .foe>.portrait{grid-area:art;width:3.4rem;height:3.4rem}.cb .foe>.nm{grid-area:nm;text-align:left;font-size:.9rem}
-.cb .foe>.hp{grid-area:hp;max-width:9rem;height:.8rem}.cb .foe>.hp span{font-size:.58rem;line-height:.68rem}
+.cb .foe{width:auto;display:grid;grid-template-columns:auto 9rem auto;grid-template-areas:"ints nm art" "ints hp art" "ints bd art";gap:2px 8px;padding:5px 8px;align-items:center}
+.cb .foe>.portrait{grid-area:art;justify-self:start;width:3.4rem;height:3.4rem}.cb .foe>.nm{grid-area:nm;text-align:left;font-size:.9rem}
+.cb .foe>.hp{grid-area:hp;width:100%}
 .cb .foe>.row{grid-area:bd;justify-content:flex-start!important;min-height:0!important;font-size:.75rem}
 .cb .foe>.ints{grid-area:ints;flex-direction:column;gap:3px}.cb .foe .die{width:2.4rem;height:2.4rem;--s:2.4rem}
 .cb-m{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px;border:1px dashed var(--line);border-radius:8px;justify-content:center;background:rgba(255,255,255,.015)}
@@ -296,7 +299,7 @@ html.inbattle .topbar{padding-bottom:3px;margin-bottom:4px;gap:6px}
   html.inbattle{font-size:15px}
   .cb{grid-template-columns:1fr}
   .cb-r{order:1}.cb-m{order:2}.cbar{order:3}.cb-l{order:4}
-  .cb .foe>.hp{max-width:none}
+  .cb .foe{grid-template-columns:auto minmax(0,1fr) auto}
   .cbar::before{content:'Tip: turn your phone sideways for the best view.';flex-basis:100%;text-align:center;font-size:.72rem;color:var(--muted)}
 }
 details.logd summary{cursor:pointer;font:600 .9rem var(--display);color:var(--muted);padding:2px 0}
@@ -333,8 +336,14 @@ const CLASSES = {
     { name:'Riot Ward', faces:F('W3','W2:share','W1','W1','H1','B'),                plus:[{ label:'+', faces:F('W4','W2:share','W2:share','W1','H1','W1') }, { label:'Bastion', faces:F('W2:share','W2:share','D2:steel','W1','H1:regen','W1') }] },
     { name:'Flashbang', faces:F('D2:cleave','D2','W1','D1','C1','B'),               plus:[{ label:'+', faces:F('D3:cleave','D2:cleave','W2','D1','C1','D1') }, { label:'Tear Gas', faces:F('D2:poison','D2:cleave','W2','D1:poison','C1','D1') }] },
     { name:'Censure',   faces:F('D3:steel','H2','H1','D1','C1','B'),                plus:[{ label:'+', faces:F('D4:steel','H3','H2:cleanse','D1','C1','H1') }, { label:'Absolution', faces:F('H3:share','H2:regen','H2','D1:steel','C1','H1') }] } ] },
+  // AI only: fills the third seat when two people play. Plain dice so a simple AI plays it well.
+  intern:{ name:'Field Intern', icon:'📋', hp:9, ai:true, role:'AI teammate (2-player games)', blurb:'Unpaid, over-caffeinated and somehow still alive. Does exactly what the manual says.', sig:'coffee', dice:[
+    { name:'Stapler',     faces:F('D2','D2','D1','D1','W1','B'), plus:[{ label:'+', faces:F('D3','D2','D2','D1','W1','D1') }, { label:'Nail Gun', faces:F('D3:pierce','D2:pierce','D2','D1','W1','D1') }] },
+    { name:'Clipboard',   faces:F('W2','W2','W1','H1','C1','B'), plus:[{ label:'+', faces:F('W3','W2','W2','H1','C1','W1') }, { label:'First-Aid Binder', faces:F('H2','H2','W2','H1','C1','W1') }] },
+    { name:'Coffee Cart', faces:F('C2','H2','H1','D1','C1','B'), plus:[{ label:'+', faces:F('C2','H2','H2','D2','C1','H1') }, { label:'Double Shot', faces:F('C2','C2','H2','D2','C1','H1') }] } ] },
 };
 const SIGS = {
+  coffee:  { name:'Coffee Run',  cost:2, text:'Heal every operative 1.' },
   doorkick:{ name:'Door Kick',   cost:1, text:'1 Pierce damage to every enemy.' },
   thunder: { name:'Thunderhead', cost:3, text:'2 damage to every enemy, +1 for each ✦ you still have after paying.' },
   toldyou: { name:'Told You So', cost:3, text:'Stun the enemy with the biggest intent.' },
@@ -347,6 +356,7 @@ const SIGS = {
 };
 // Pick 1 of 3 after floor 5: each upgrades that class's signature.
 const SIG_UPS = {
+  coffee:{ espresso:{ name:'Espresso', text:'Heal 2 instead of 1.' }, donuts:{ name:'Donuts', text:'Also 🛡1 on every operative.' }, crunch:{ name:'Crunch Time', text:'Also 1 damage to every enemy.' } },
   doorkick:{ ram:{ name:'Battering Ram', text:'2 Pierce to every enemy instead of 1.' }, cleared:{ name:'Cleared Room', text:'Also strips all ward from every enemy.' }, follow:{ name:'Follow Through', text:'Your next ⚔ this turn gains Pierce and +2.' } },
   riotline:{ wall:{ name:'Shield Wall', text:'Also 🛡1 on every teammate.' }, retrib:{ name:'Retribution', text:'Each attack that hits you this turn deals 1 back.' }, hold:{ name:'Hold the Line', text:'🛡5 instead of 🛡3.' } },
   toldyou: { sawit:{ name:'Saw It Coming', text:'Costs 2✦.' }, called:{ name:'Called It', text:"Also deals damage equal to the stunned enemy's biggest attack." }, dejavu:{ name:'Déjà Vu', text:'Also lets you use your last used die again this turn.' } },
@@ -503,7 +513,7 @@ const FLOORS = [
 // A floor's pool: its two new enemies twice as likely as anything met on earlier floors.
 const floorPool = f => { const pool = []; FLOORS.slice(0, f).forEach((F2, i) => F2.news.forEach(t => { pool.push(t); if (i === f - 1) pool.push(t); })); return pool.length ? pool : ['guard']; };
 const UPGRADE_FLOORS = [2, 5, 8];   // die upgrade after these floors; floor item offers after the rest
-const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:3, hpPerUpgrade:2, abilityFloor:5 };
+const RULES = { floors:10, rerolls:2, maxPlayers:3, squad:3, gearPerDie:3, hpPerUpgrade:2, abilityFloor:5 };
 const CHARGE_MAX = 4;   // charge never goes above this
 // Enemy HP by squad size, tuned with bot runs so 1-4 operatives reach a similar floor on average.
 const HP_MULT = [0.9, 1.5, 2.4, 3.2];
@@ -832,6 +842,12 @@ function castAbility(st, p, s) {
   if (s === 'zap' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp < st.enemies[b].hp ? i : b), 2, false, src);
   if (s === 'flare' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp > st.enemies[b].hp ? i : b), 3, false, src);
   if (s === 'triage') { const lv = living(st); if (lv.length) healPlayer(st, lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b), 3, src); }
+  if (s === 'coffee') {
+    const h = hasUp(P, 'espresso') ? 2 : 1;
+    living(st).forEach(i => { if (st.players[i].hp < maxHp(st, i)) healPlayer(st, i, h, src); });
+    if (hasUp(P, 'donuts')) { living(st).forEach(i => { st.players[i].ward += 1; }); L(st, 'ally', src, 'Squad', '+1 ward each'); }
+    if (hasUp(P, 'crunch')) al.forEach(i => hitEnemy(st, p, i, 1, false, src));
+  }
   if (s === 'stunburst') { const c = al.filter(i => !st.enemies[i].stun); if (c.length) { const i = pick(st, c); st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); } }
 }
 const intentSize = (st, e) => e.ints.reduce((s, it) => { const f = parse(it.c), n = intentValue(st, e, f); return s + (f.t === 'D' ? n * (f.kw.includes('spread') ? 2 : 1) : f.t === 'X' ? n * 3 : f.t === 'U' || f.t === 'K' ? 2 : n * 0.5); }, 0);
@@ -894,7 +910,7 @@ const windsUp = (P, di, f) => f.kw.includes('windup') && !(P.roll[di] && P.roll[
 // Back to rolling is allowed while rerolls remain and nothing has been used yet this turn.
 const canUndo = P => P.step === 'use' && P.rerolls > 0 && !P.roll.some(d => d.used) && !(P.cast || []).length;
 function abilityUsable(st, p, s) {
-  if (s === 'riotline' || s === 'triage') return true;
+  if (s === 'riotline' || s === 'triage' || s === 'coffee') return true;
   return foesAlive(st).length > 0;
 }
 // After anything that can end the fight or down someone.
@@ -910,13 +926,15 @@ function act(st, p, a) {
   switch (a.t) {
     case 'class': {
       if (st.phase !== 'lobby') return 'The run already started';
-      if (!CLASSES[a.cls]) return 'bad';
+      if (!CLASSES[a.cls] || CLASSES[a.cls].ai) return 'bad';
       if (st.players.some((x, i) => i !== p && x.cls === a.cls)) return 'Another operative already took that class';
       P.cls = a.cls; return null;
     }
     case 'start': {
-      if (st.phase !== 'lobby' || p !== 0) return 'Only the host can start';
+      if (st.phase !== 'lobby' || (p !== 0 && st.mode !== 'solo')) return 'Only the host can start';
       if (st.players.some(x => !x.cls)) return 'Everyone needs a class first';
+      if (st.mode === 'mp' && st.players.length < 2) return 'Squads need 2 or 3 players. For one player, play Solo.';
+      if (st.players.length === 2) { const ip = addPlayer(st, 'Field Intern'); st.players[ip].cls = 'intern'; st.players[ip].ai = true; }
       st.players.forEach((x, i) => setupOperative(st, i));
       st.floor = 1; startFloor(st); return null;
     }
@@ -1196,6 +1214,7 @@ const svgIcon = key => `<svg viewBox="0 0 24 24" aria-hidden="true">${ART[key] |
 const PORTRAIT = {
   breach: '<rect width="48" height="48" rx="10" fill="#1f2a3d"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2c3a55"/><path d="M14 40h20v8H14z" fill="#3a4b6e"/><rect x="18" y="38" width="12" height="4" rx="1" fill="#f0b23c"/><circle cx="24" cy="24" r="9" fill="#d9a77c"/><path d="M13 22c0-8 5-12 11-12s11 4 11 12v2H13z" fill="#26324a"/><rect x="14" y="21" width="20" height="5" rx="2.5" fill="#ff8a3c"/><path d="M35 15l6-6M37 19l7-2" stroke="#ff8a3c" stroke-width="2" stroke-linecap="round"/>',
   storm: '<rect width="48" height="48" rx="10" fill="#1a2740"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#22385c"/><circle cx="24" cy="26" r="8.5" fill="#e0b48c"/><path d="M10 22L24 1l14 21z" fill="#18243a"/><rect x="9" y="20" width="30" height="4" rx="2" fill="#2c4470"/><path d="M15 26a9 9 0 0 0 4 6" stroke="#9be7ff" stroke-width="2" fill="none"/><circle cx="19" cy="32.5" r="1.4" fill="#9be7ff"/><path d="M40 28l-5 7h4l-2 6 6-8h-4z" fill="#9be7ff"/>',
+  intern: '<rect width="48" height="48" rx="10" fill="#1d2b2a"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#e4e8f0"/><path d="M21 34l3 8l3-8" fill="#c0392b"/><path d="M18 34l6 14l6-14" fill="none" stroke="#5aa9ff" stroke-width="1.6"/><rect x="21" y="41" width="6" height="5" rx="1" fill="#f0b23c"/><circle cx="24" cy="24" r="9" fill="#d9a77c"/><path d="M15 22c0-7 4-10 9-10s9 3 9 10c-3-3-6-4-9-4s-6 1-9 4z" fill="#5b3a29"/><circle cx="20.5" cy="25" r="2.6" fill="none" stroke="#1b2230" stroke-width="1.3"/><circle cx="27.5" cy="25" r="2.6" fill="none" stroke="#1b2230" stroke-width="1.3"/><path d="M23 25h2" stroke="#1b2230" stroke-width="1.2"/><path d="M36 30h6v8c0 2-1 3-3 3s-3-1-3-3z" fill="#f6f1e7"/><path d="M42 32c2 0 2 4 0 4" fill="none" stroke="#f6f1e7" stroke-width="1.4"/><path d="M38 27c0-1 1-1 1-2M40 27c0-1 1-1 1-2" stroke="#8e9ab3" stroke-width=".9" fill="none"/>',
   precog: '<rect width="48" height="48" rx="10" fill="#211a35"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a2b5c"/><path d="M10 34C10 16 16 8 24 8s14 8 14 26z" fill="#4b2f6b"/><ellipse cx="24" cy="27" rx="8" ry="9" fill="#120d20"/><circle cx="20.5" cy="27" r="1.8" fill="#7fe0d0"/><circle cx="27.5" cy="27" r="1.8" fill="#7fe0d0"/><path d="M19 18.5C21 16 27 16 29 18.5C27 21 21 21 19 18.5Z" fill="#7fe0d0"/><circle cx="24" cy="18.5" r="1.2" fill="#120d20"/>',
   riot: '<rect width="48" height="48" rx="10" fill="#1f2a3d"/><ellipse cx="24" cy="7" rx="10" ry="2.6" fill="none" stroke="#f0b23c" stroke-width="2"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2c3a55"/><circle cx="24" cy="25" r="9" fill="#c9926a"/><path d="M13 25c0-9 5-14 11-14s11 5 11 14v1H13z" fill="#3b4a66"/><path d="M14 23h20v8c0 2-2 3-4 3H18c-2 0-4-1-4-3z" fill="#7fb2ff" opacity=".45"/><path d="M32 30h10v12c0 3-2 5-5 6-3-1-5-3-5-6z" fill="#5aa9ff"/><path d="M37 33v10" stroke="#fff" stroke-width="1.6" opacity=".6"/>',
 };
@@ -1362,7 +1381,26 @@ function dispatch(a) {
   ui.err = '';
   afterChange();
 }
+// Solo: you run all three operatives. Focus moves on to the next one that still has something to do.
+function setMe(i) { if (me === i) return; me = i; ui.sel = null; ui.pend = null; ui.plusSel = null; ui.sigSel = null; ui.moveSel = null; ui.confirmEnd = false; }
+function soloFocus() {
+  if (!st || st.mode !== 'solo') return;
+  const n = st.players.length, open = i => { const P = st.players[i]; if (!P) return false;
+    if (st.phase === 'lobby') return !P.cls;
+    if (st.phase === 'battle') return !P.down && !P.gone && P.step !== 'ready';
+    if (st.phase === 'upgrade') return !P.ready;
+    return false; };
+  if (open(me)) return;
+  for (let k = 1; k < n; k++) { const i = (me + k) % n; if (open(i)) return setMe(i); }
+}
+// AI teammates (the Field Intern) take one visible step at a time, run by the host (or the solo game).
+setInterval(() => {
+  if (!st || net.role === 'client' || screen !== 'game' || (ui.hold && Date.now() < ui.hold.until)) return;
+  const p = st.players.findIndex((P, i) => P.ai && botNext(st, i)); if (p < 0) return;
+  if (!act(st, p, botNext(st, p))) afterChange();
+}, 700);
 function afterChange() {
+  soloFocus();
   if (st.mode === 'solo') saveSolo();
   if (net.role === 'host') broadcastState();
   render();
@@ -1421,7 +1459,7 @@ function hostOnData(conn, d) {
       conn.send({ t:'you', pi: back }); sfx.join(); afterChange(); return;
     }
     if (st.phase !== 'lobby') { conn.send({ t:'full', msg:'That squad already started its run.' }); setTimeout(() => conn.close(), 300); return; }
-    if (st.players.length >= RULES.maxPlayers) { conn.send({ t:'full', msg:'That squad is full (4 operatives).' }); setTimeout(() => conn.close(), 300); return; }
+    if (st.players.length >= RULES.maxPlayers) { conn.send({ t:'full', msg:'That squad is full (3 operatives).' }); setTimeout(() => conn.close(), 300); return; }
     g.pi = addPlayer(st, uniqueName(st, String(d.name || randomCallsign()).trim().slice(0, 14) || randomCallsign()), d.token);
     conn.send({ t:'you', pi: g.pi }); sfx.join(); afterChange();
   } else if (d.t === 'act' && g.pi != null) {
@@ -1648,22 +1686,26 @@ function showClass(id) {
 }
 function lobbyHtml() {
   const P = st.players[me];
-  const slots = [0, 1, 2, 3].slice(0, st.mode === 'solo' ? 1 : 4).map(i => {
+  const solo = st.mode === 'solo';
+  const slots = [0, 1, 2].map(i => {
     const x = st.players[i];
-    if (!x) return `<div class="slot"><span class="muted">Open slot<br>Share code <b class="mono" style="color:var(--hud)">${esc(net.code)}</b></span></div>`;
-    return `<div class="slot full"><b style="color:var(--ally)">${esc(x.name)}${i === me ? ' (you)' : ''}${i === 0 && st.mode === 'mp' ? ' ★' : ''}</b><br><span class="muted">${x.cls ? CLASSES[x.cls].icon + ' ' + CLASSES[x.cls].name : 'Choosing…'}</span></div>`;
+    if (!x) return i === 2 && st.players.length === 2
+      ? `<div class="slot"><b style="color:var(--muted)">${CLASSES.intern.icon} Field Intern (AI)</b><br><span class="muted">Fills this seat if no one else joins</span></div>`
+      : `<div class="slot"><span class="muted">Open slot<br>Share code <b class="mono" style="color:var(--hud)">${esc(net.code)}</b></span></div>`;
+    const label = solo ? `Operative ${i + 1}` : esc(x.name) + (i === me ? ' (you)' : '') + (i === 0 ? ' ★' : '');
+    return `<div class="slot full ${solo && i === me ? 'picked' : ''}" ${solo ? `data-seat="${i}" style="cursor:pointer"` : ''}><b style="color:var(--ally)">${solo ? esc(x.name) : label}</b><br><span class="muted">${x.cls ? CLASSES[x.cls].icon + ' ' + CLASSES[x.cls].name : solo && i === me ? 'Pick a class below' : 'Choosing…'}</span></div>`;
   }).join('');
-  const tiles = Object.keys(CLASSES).map(id => { const by = st.players.findIndex((x, i) => i !== me && x.cls === id); return classTile(id, by >= 0 ? by : null, P && P.cls === id); }).join('');
-  const ready = st.players.every(x => x.cls), n = st.players.length;
+  const tiles = Object.keys(CLASSES).filter(id => !CLASSES[id].ai).map(id => { const by = st.players.findIndex((x, i) => i !== me && x.cls === id); return classTile(id, by >= 0 ? by : null, P && P.cls === id); }).join('');
+  const ready = st.players.every(x => x.cls), n = st.players.length, sq = Math.max(n, n === 2 ? 3 : n);
   return `<div class="stack">
     <div class="row" style="justify-content:space-between;align-items:flex-start">
-      <div class="stack" style="gap:6px"><h2>${st.mode === 'solo' ? 'Pick your operative' : 'Squad select'}</h2>
-        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Click Details to see its dice.</p>'}
+      <div class="stack" style="gap:6px"><h2>${solo ? 'Pick your squad' : 'Squad select'}</h2>
+        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 3 joined · one of each class${n === 2 ? ' · a Field Intern (AI) takes the third seat' : ''}</p>` : '<p class="muted" style="margin:0">You run all three operatives. Pick a class for each one; click an operative to change it. Click Details to see a class\'s dice.</p>'}
       </div>
-      <div class="row">${me === 0 ? `<button class="btn" data-ui="start" ${ready ? '' : 'disabled'}>Breach floor 1</button>${ready ? '' : '<span class="muted" style="font-size:.85rem">Everyone needs a class.</span>'}` : '<span class="muted">The host starts the run.</span>'}</div>
+      <div class="row">${me === 0 || solo ? `<button class="btn" data-ui="start" ${ready && (solo || n > 1) ? '' : 'disabled'}>Breach floor 1</button>${!ready ? `<span class="muted" style="font-size:.85rem">${solo ? 'Each operative needs a class.' : 'Everyone needs a class.'}</span>` : !solo && n < 2 ? '<span class="muted" style="font-size:.85rem">Waiting for a second player (or play Solo).</span>' : ''}` : '<span class="muted">The host starts the run.</span>'}</div>
     </div>
     <div class="slots">${slots}</div>
-    <p class="muted" style="font-size:.85rem;margin:0">Squad of ${n}: ${enemyCount(n, 1)} enemies per floor${n > 1 ? ' (+1 on floors 7 to 9)' : ''}, enemy HP ×${HP_MULT[n - 1]}, bosses ×${n} HP and ${n} action${n > 1 ? 's' : ''} a turn.</p>
+    <p class="muted" style="font-size:.85rem;margin:0">Squad of ${sq}: ${enemyCount(sq, 1)} enemies per floor${sq > 1 ? ' (+1 on floors 7 to 9)' : ''}, enemy HP ×${HP_MULT[sq - 1]}, bosses ×${sq} HP and ${1 + Math.floor(sq / 2)} action${sq > 1 ? 's' : ''} a turn.</p>
     <div class="tiles ctiles">${tiles}</div>
   </div>`;
 }
@@ -1806,7 +1848,7 @@ function battleGrid() {
   const order = st.players.map((_, p) => p).sort((a, b) => (b === me) - (a === me));
   const heroes = order.map(opCard).join(''), foes = st.enemies.map((_, i) => foeCard(i)).join('');
   const P = st.players[me], active = P && !P.down && !P.gone;
-  const tray = active && ui.myDice ? `<div class="who">Your dice</div><div class="dice">${ui.myDice}</div>` : '';
+  const tray = active && ui.myDice ? `<div class="who">${st.mode === 'solo' ? pname(me) + '\'s dice' : 'Your dice'}</div><div class="dice">${ui.myDice}</div>` : '';
   return `<div class="cb">
     <div class="cb-l"><div class="ops">${heroes}</div></div>
     <div class="cb-m">${tray}${ui.hint ? `<div class="hint">${ui.hint}</div>` : ''}</div>
@@ -1883,7 +1925,7 @@ function plusFaces(P, di, v) {
 }
 function upgradeHtml() {
   const P = st.players[me];
-  const status = st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}">${pname(i)} ${x.gone ? '· left' : x.ready ? '✓ ready' : x.picked ? '· picked' : '· choosing'}</span>`).join(' ');
+  const status = (st.mode === 'solo' ? `<span class="muted" style="font-size:.85rem">Choosing for <b style="color:var(--arcane)">${pname(me)}</b> ·</span> ` : '') + st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}" ${st.mode === 'solo' ? `data-seat="${i}" style="cursor:pointer${i === me ? ';outline:1px solid var(--arcane)' : ''}"` : ''}>${pname(i)} ${x.gone ? '· left' : x.ready ? '✓ ready' : x.picked ? '· picked' : '· choosing'}</span>`).join(' ');
   const next = FLOORS[st.floor];
   let body = '';
   const pickKey = st.floor + ':' + st.resolveN;
@@ -2087,6 +2129,12 @@ document.addEventListener('click', e => {
     }
   }
   if (e.target.id === 'overlay') { $('overlay').classList.add('hidden'); return; }   // click outside the box closes it
+  if (st && st.mode === 'solo' && screen === 'game') {
+    const seat = e.target.closest('[data-seat]');
+    if (seat && (st.phase === 'lobby' || st.phase === 'upgrade')) { setMe(+seat.dataset.seat); sfx.click(); return render(); }
+    const op = st.phase === 'battle' ? e.target.closest('.op') : null;
+    if (op && !op.classList.contains('tg-ok') && !e.target.closest('button,.die,[data-inspect]') && +op.dataset.ti !== me) { setMe(+op.dataset.ti); sfx.click(); render(); }
+  }
   if (touchUI && st && st.phase === 'battle') {   // tap a hero (not a die or button) to light up who is attacking them; tap again to clear
     const op = e.target.closest('.op');
     if (op && !op.classList.contains('tg-ok') && !e.target.closest('button,.die,[data-inspect]')) { const mp = +op.dataset.ti; ui.markP = ui.markP === mp ? null : mp; markAttackers(ui.markP); }
@@ -2157,6 +2205,7 @@ function uiAction(k) {
   switch (k) {
     case 'solo':
       teardown(); st = newRun('solo', (Math.random() * 2 ** 31) | 0); addPlayer(st, myName());
+      while (st.players.length < RULES.squad) addPlayer(st, uniqueName(st, randomCallsign()));
       me = 0; screen = 'game'; ui.err = ''; renderCache.sig = null; afterChange(); break;
     case 'continue': try { const s = JSON.parse(store.get(SAVE_KEY)); if (s.v !== 3) throw 0; st = s; me = 0; screen = 'game'; renderCache.sig = null; afterChange(); } catch { ui.err = 'That save is from an older version and can\'t be loaded.'; render(); } break;
     case 'export': showText('Export save', exportSave()); break;
