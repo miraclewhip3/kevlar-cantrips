@@ -171,6 +171,9 @@ Each extra operative adds one boss escort. Enemy HP also grows 11% per floor, an
 ## Phones
 - One column, bigger dice and buttons, the combat log collapsed by default (tap "Combat log" to open), and a compact top bar.
 - Tap any face, badge or label to read its tooltip (there's no hover on phones). Tap a die's name to inspect all six sides.
+- Hover a hero (tap on a phone) to light up the enemies attacking them and their intent dice. An enemy's target is also in its intent die's tooltip.
+- Animations: hits flash a slash and shake the target, the attacker lunges, wards pop a shield, kills and downed operatives show a skull and fade to grey. When a floor ends, the battle stays on screen about 2.5 seconds under the banner before moving on.
+- A compact layout after Slice & Dice is mocked up in [mockups-compact-layout.html](mockups-compact-layout.html): heroes as slim bars on the left, enemies on the right, your dice in the middle tray, buttons along the bottom.
 - On a phone, your operative is always the top card in the squad, with teammates below. A sideways (landscape) layout is mocked up in [mockups-mobile-landscape.html](mockups-mobile-landscape.html): squad on the left, enemies on the right.
 
 ## Saving, audio, dev tools

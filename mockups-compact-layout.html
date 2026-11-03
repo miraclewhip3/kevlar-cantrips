@@ -1,0 +1,2285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compact Layout Mockup</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e131d'/><path d='M16 4 L27 8 V16 C27 22 22 26.5 16 28.5 C10 26.5 5 22 5 16 V8 Z' fill='%23243049' stroke='%23f0b23c' stroke-width='2'/><rect x='10.5' y='10.5' width='11' height='11' rx='2.5' fill='%23e4e8f0'/><circle cx='13.5' cy='13.5' r='1.4' fill='%230e131d'/><circle cx='18.5' cy='18.5' r='1.4' fill='%230e131d'/><path d='M22 4 L19 10 H23 L20 16' stroke='%23c77dff' stroke-width='1.8' fill='none' stroke-linecap='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0e131d; --panel:#161e2c; --panel2:#1f2a3d; --line:#2e3b54; --fg:#e4e8f0; --muted:#8e9ab3;
+  --hud:#f0b23c; --hud-dim:#6e5420; --arcane:#c77dff; --arcane-dim:#4b2f6b;
+  --ally:#5aa9ff; --foe:#ff6b5b; --ok:#5fd28a;
+  --dmg:#ff8a73; --ward:#7fb2ff; --heal:#7be39a; --pierce:#ffd166; --arc:#9be7ff; --chg:#d4a8ff; --stun:#ffb3e6; --sight:#7fe0d0; --blk:#68748c;
+  --display:"Chakra Petch","Trebuchet MS",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.4;min-height:100vh}
+h1,h2,h3,h4{font-family:var(--display);margin:0;line-height:1.15;letter-spacing:.02em}
+h2{font-size:1.45rem;color:var(--hud)}
+h3{font-size:1.1rem}
+h4{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+.wrap{max-width:1120px;margin:0 auto;padding:10px 16px 40px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+.btn{font:700 .9rem var(--display);letter-spacing:.04em;background:var(--hud);color:#231702;border:0;border-radius:4px;padding:.45rem .95rem;cursor:pointer;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:var(--panel2);color:var(--fg);border:1px solid var(--line)}
+.btn.sm{font-size:.78rem;padding:.25rem .6rem}
+.btn:disabled{opacity:.4;cursor:default;filter:none}
+.icon-btn{background:var(--panel2);border:1px solid var(--line);color:var(--fg);border-radius:4px;width:2.1rem;height:2.1rem;font-size:1rem;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--hud);outline-offset:2px}
+input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:.4rem .6rem}
+.tag{display:inline-block;font:600 .68rem var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--panel2);color:var(--muted)}
+.chip{font:600 .78rem var(--mono);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:3px 9px;white-space:nowrap}
+.chip.hud{color:var(--hud);border-color:var(--hud-dim)}
+.chip.arc{color:var(--arcane);border-color:var(--arcane-dim);cursor:help}
+.banner{background:#2a2412;border:1px solid var(--hud-dim);color:#ffe7b3;padding:.35rem .8rem;border-radius:4px;font-size:.9rem}
+.err{color:var(--foe)}
+
+/* faces + dice */
+.f{display:inline-flex;align-items:center;justify-content:center;gap:1px;min-width:1.9rem;height:1.6rem;padding:0 4px;border-radius:4px;background:#0b1018;border:1px solid var(--line);font:700 .78rem var(--mono);cursor:help}
+.f-D{color:var(--dmg)}.f-W{color:var(--ward)}.f-H{color:var(--heal)}.f-R{color:var(--pierce)}.f-A{color:var(--arc)}.f-C{color:var(--chg)}.f-S{color:var(--stun)}.f-E{color:var(--sight)}.f-B{color:var(--blk)}.f-U{color:var(--hud)}.f-X{color:var(--dmg)}
+.faces{display:flex;gap:3px;flex-wrap:wrap}
+.facepick .f{cursor:pointer}.facepick .f:hover{outline:2px solid var(--hud)}
+.facepick .f.no{opacity:.35;cursor:not-allowed;outline:none}
+.die{width:3.7rem;height:3.7rem;border-radius:9px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);color:#1b2230;display:flex;align-items:center;justify-content:center;gap:2px;font:800 1.2rem var(--mono);border:2px solid #9aa5b8;box-shadow:0 3px 0 #5d6779;position:relative;user-select:none;flex:none;transition:transform .12s}
+.die.f-D{color:#c4361f}.die.f-W{color:#2862c4}.die.f-H{color:#1f8f44}.die.f-R{color:#a86f00}.die.f-A{color:#0a7ea0}.die.f-C{color:#7440c9}.die.f-S{color:#b0287a}.die.f-E{color:#0f7c8c}.die.f-B{color:#8892a3}
+.die.mine{cursor:pointer}
+.die.kept{border-color:var(--hud);box-shadow:0 0 0 3px var(--hud),0 3px 0 #5d6779;transform:translateY(-2px)}
+/* locked dice: a padlock badge and a gold frame, so it's obvious which dice a reroll will skip */
+.die .lock{position:absolute;top:-10px;left:-10px;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--hud);color:#231702;display:flex;align-items:center;justify-content:center;font-size:.85rem;box-shadow:0 1px 3px #0008}
+.die.mine.unlocked{outline:2px dashed rgba(240,178,60,.55);outline-offset:3px}
+.lockhint{font:700 .68rem var(--mono);letter-spacing:.06em;text-align:center;min-height:.9rem}
+.lockhint.on{color:var(--hud)}.lockhint.off{color:var(--muted)}
+.die.sel{box-shadow:0 0 0 4px #fff,0 3px 0 #5d6779;transform:scale(1.06)}
+.die.used{opacity:.55}
+.die.empty{background:#1b2436;border-color:var(--line);box-shadow:none;color:var(--muted);font-size:.9rem}
+.die.roll{animation:roll .42s ease-out}
+@keyframes roll{0%{transform:rotate(-25deg) scale(.75)}60%{transform:rotate(10deg) scale(1.06)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.die.roll{animation:none}}
+.die .gears{position:absolute;top:-8px;right:-8px;display:flex;gap:2px}
+.die .gear{width:1.35rem;height:1.35rem;border-radius:50%;background:var(--panel2);border:1px solid #7fd3e6;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.die em.kws{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 .72rem var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:2px;line-height:1}
+.foe .die em.kws{color:var(--arcane)}
+.f{position:relative;height:2.3rem;min-width:2.5rem;align-items:flex-start;justify-content:flex-start;padding:3px 0 0 5px}
+.f .ico{font-size:1.15rem;margin:0}
+.f .kwg{position:absolute;bottom:1px;left:0;right:0;text-align:center;font:700 .7rem/1 var(--mono);font-style:normal;color:var(--arcane);letter-spacing:1px}
+.psnb{font:700 .7rem var(--mono);color:#9be37b}
+.log tr.sys td{color:var(--hud);font:600 .72rem var(--mono);letter-spacing:.08em;padding-top:8px}
+
+/* top bar */
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0 10px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.topbar .title{font-family:var(--display);font-size:1.15rem;color:var(--hud);display:flex;align-items:center;gap:8px}
+.topbar .sp{flex:1}
+
+/* enemies */
+.enemyrow{display:flex;gap:12px;flex-wrap:wrap}
+.foe{background:var(--panel);border:1px solid #4a2b30;border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:7px;align-items:center;width:10rem;position:relative}
+.foe.boss{width:13rem;border-color:#7a2b2b;background:#1d1519}
+.foe.dead{opacity:.3;filter:grayscale(1)}
+.foe .nm{font:600 .9rem var(--display);text-align:center;line-height:1.1}
+.foe .ic{font-size:1.3rem}
+.foe .ints{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.foe .int{display:flex;flex-direction:column;align-items:center;gap:2px}
+.foe .die{width:2.9rem;height:2.9rem;font-size:.95rem;background:linear-gradient(160deg,#3a2226,#2a181b);border-color:#6b3a3f;box-shadow:0 2px 0 #1b0f11;color:var(--dmg)}
+.foe .die.f-W{color:var(--ward)}.foe .die.f-H{color:var(--heal)}.foe .die.f-U{color:var(--hud)}.foe .die.f-B{color:var(--blk);font-size:1.4rem}
+.foe .die.stun{opacity:.35}
+.foe .to{font:500 .7rem var(--mono);color:var(--muted)}
+.foe .inc{font:600 .72rem var(--mono);color:var(--hud);min-height:1rem;text-align:center}
+.hp{width:100%;height:.95rem;background:#0b1018;border:1px solid var(--line);border-radius:3px;position:relative;overflow:hidden}
+.hp i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#b8432f,#ff6b5b);transition:width .3s}
+.hp.ally i{background:linear-gradient(90deg,#2f7bb8,#5aa9ff)}
+.hp span{position:relative;display:block;text-align:center;font:600 .66rem/.85rem var(--mono)}
+.wardb{font:700 .7rem var(--mono);color:var(--ward)}
+.stunb{font:700 .7rem var(--mono);color:var(--stun)}
+.tg-ok{border-color:var(--hud)!important;box-shadow:0 0 0 2px var(--hud-dim);cursor:crosshair}
+.tg-ok:hover{background:#221d10}
+
+/* squad */
+.ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.op{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.op.me{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
+.op.down{opacity:.55}
+.op .ctrlwrap{display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:1px dashed var(--line)}
+.op .ctrl{gap:8px;min-height:2.2rem}
+.op .ctrlwrap .hint{font-size:.85rem;min-height:0}
+.op .hh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.op .hh b{font-family:var(--display);font-size:1.05rem}
+.op .sub{font-size:.8rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.op .dice{display:flex;gap:12px;flex-wrap:nowrap;min-height:5.2rem}
+.op .dcol{display:flex;flex-direction:column;align-items:center;gap:4px;width:5rem}
+.op .tg{font:500 .68rem var(--mono);color:var(--muted);text-align:center;line-height:1.2;min-height:.85rem}
+.dname{font:600 .7rem var(--mono);color:var(--muted);background:none;border:0;border-bottom:1px dashed var(--line);cursor:pointer;padding:0;text-align:center;line-height:1.2}
+.dname:hover{color:var(--fg);border-color:var(--hud)}
+/* unfolded die: top, a row of four, bottom */
+.net{display:grid;grid-template-columns:repeat(4,var(--s,3rem));grid-auto-rows:var(--s,3rem);gap:5px}
+.net .nf{border-radius:8px;background:linear-gradient(160deg,#eef1f6,#c9d0dc);border:2px solid var(--ok);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 calc(var(--s,3rem) * .32) var(--mono);color:#1b2230;position:relative;cursor:help}
+.die{--s:3.7rem}.foe .die{--s:2.9rem}.f{--s:2.1rem}
+.ico{font-size:calc(var(--s,3rem) * .64);line-height:1;margin-right:calc(var(--s,3rem) * .14);font-style:normal}
+.ico svg{width:1em;height:1em;display:block}
+.portrait{display:block;flex:none;border-radius:10px}
+.tower{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
+.pips{position:absolute;right:calc(var(--s,3rem) * .08);bottom:calc(var(--s,3rem) * .14);display:flex;gap:calc(var(--s,3rem) * .05);align-items:flex-end;font-style:normal}
+.pips .ticks{display:flex;flex-direction:column-reverse;gap:calc(var(--s,3rem) * .05)}
+.pips b{display:block;width:calc(var(--s,3rem) * .13);height:calc(var(--s,3rem) * .08);background:currentColor;border-radius:1px}
+.pips b.p5{height:calc(var(--s,3rem) * .52)}
+.f .pips{bottom:3px;right:3px}
+.f .pips b{min-width:2px;min-height:2px}
+.net .nf.f-D{color:#c4361f}.net .nf.f-W{color:#2862c4}.net .nf.f-H{color:#1f8f44}.net .nf.f-R{color:#a86f00}.net .nf.f-A{color:#0a7ea0}.net .nf.f-C{color:#7440c9}.net .nf.f-S{color:#b0287a}.net .nf.f-E{color:#0f7c8c}.net .nf.f-B{color:#8892a3}
+.net .nf .kwg{position:absolute;bottom:3px;left:0;right:0;text-align:center;font:700 calc(var(--s,3rem) * .25) var(--mono);font-style:normal;color:#6a2ea3;letter-spacing:1px;line-height:1}
+.net .p0{grid-area:1/2}.net .p1{grid-area:2/1}.net .p2{grid-area:2/2}.net .p3{grid-area:2/3}.net .p4{grid-area:2/4}.net .p5{grid-area:3/2}
+.netwrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.upnet{align-items:stretch}
+.uparrow{align-self:center;font:700 2.2rem/1 var(--display);color:var(--hud)}
+.upor{align-self:center;font:700 .9rem var(--display);color:var(--muted);text-transform:uppercase}
+.mydie.chosen{border-color:var(--hud);box-shadow:0 0 0 1px var(--hud)}
+@media (max-width:640px){.upnet{flex-direction:column;align-items:center}.uparrow{transform:rotate(90deg)}}
+.op .badges{display:flex;gap:4px;flex-wrap:wrap;min-height:1.2rem}
+.bdg{font:700 .7rem var(--mono);padding:1px 6px;border-radius:3px;background:#0b1018;border:1px solid var(--line)}
+.bdg.D{color:var(--dmg);border-color:#6b3329}.bdg.W{color:var(--ward)}.bdg.H{color:var(--heal)}
+.status{font:700 .7rem var(--mono);letter-spacing:.08em}
+.status.ready{color:var(--ok)}.status.roll,.status.aim{color:var(--hud)}.status.down,.status.gone{color:var(--foe)}
+.sigbtn{font:700 .78rem var(--display);background:#2d2350;color:#e2d4ff;border:1px solid #5a4796;border-radius:4px;padding:.3rem .6rem;cursor:pointer;align-self:flex-start}
+.sigbtn.on{background:var(--arcane);color:#160d2c}
+.sigbtn:disabled{opacity:.4;cursor:default}
+.sigtxt{font-size:.78rem;color:#e6cfff}
+.kwref{color:#e2c6ff;border-bottom:1px dotted var(--arcane);cursor:help}
+.hp .inc{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(255,107,91,.95) 0 4px,rgba(255,107,91,.45) 4px 8px)}
+.hp .inc.psn{background:repeating-linear-gradient(135deg,rgba(155,227,123,.95) 0 4px,rgba(155,227,123,.4) 4px 8px)}
+.hp .inc.prev{background:repeating-linear-gradient(135deg,rgba(255,209,102,.98) 0 4px,rgba(255,209,102,.5) 4px 8px)}
+.hp .mark{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;opacity:.85}
+.enrb{font:700 .68rem var(--mono);color:#ffb86b}
+.die.boosted .pips{color:#ffd166}
+.spark{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--hud);pointer-events:none;z-index:60;animation:sparkup 1.6s ease-out forwards}
+@keyframes sparkup{to{transform:translate(var(--x),var(--y));opacity:0}}
+@media (prefers-reduced-motion:reduce){.spark{animation:none}}
+.sigcell{display:inline-flex;flex-direction:column;gap:2px}
+.sigwhy{font-size:.72rem;color:var(--muted)}
+.center{margin:12px 0;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
+.phase{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.phase span{font:600 .74rem var(--mono);padding:3px 9px;border-radius:3px;background:var(--panel2);color:var(--muted)}
+.phase span.on{background:var(--hud);color:#231702}
+.hint{font-size:.9rem;color:var(--muted);max-width:46rem;min-height:1.3rem}
+.log{max-width:820px;margin:12px auto 0}
+.log table{width:100%;border-collapse:collapse;font-size:.82rem}
+.log td,.log th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left}
+.log th{font-family:var(--display);color:var(--muted)}
+.float{position:fixed;pointer-events:none;font:800 1.35rem var(--mono);z-index:50;animation:floatup 1.1s ease-out forwards;text-shadow:0 2px 3px #000}
+@keyframes floatup{0%{opacity:0;transform:translateY(6px)}15%{opacity:1}100%{opacity:0;transform:translateY(-38px)}}
+@keyframes an-hit{0%{transform:none;box-shadow:0 0 0 3px rgba(255,107,91,.9)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}100%{transform:none;box-shadow:0 0 0 0 rgba(255,107,91,0)}}
+@keyframes an-heal{0%{box-shadow:0 0 0 0 rgba(123,227,154,.9)}50%{box-shadow:0 0 18px 4px rgba(123,227,154,.7)}100%{box-shadow:0 0 0 0 rgba(123,227,154,0)}}
+@keyframes an-ward{0%{box-shadow:0 0 0 0 rgba(127,178,255,.9)}50%{box-shadow:0 0 18px 4px rgba(127,178,255,.75)}100%{box-shadow:0 0 0 0 rgba(127,178,255,0)}}
+@keyframes an-stun{0%{transform:none;filter:brightness(2.2)}30%{transform:rotate(-3deg)}60%{transform:rotate(3deg)}100%{transform:none;filter:none}}
+@keyframes an-kill{0%{transform:scale(1);opacity:1}20%{transform:scale(1.08) rotate(-2deg);filter:brightness(2.4)}50%{transform:scale(1.02) rotate(2deg);filter:brightness(1.4) saturate(0)}100%{transform:scale(.9) translateY(8px);opacity:.3;filter:grayscale(1)}}
+@keyframes an-lunge{0%{transform:none}35%{transform:translateY(14px) scale(1.05)}100%{transform:none}}
+@keyframes an-charge{0%{box-shadow:0 0 0 0 rgba(199,125,255,.9)}50%{box-shadow:0 0 16px 4px rgba(199,125,255,.7)}100%{box-shadow:0 0 0 0 rgba(199,125,255,0)}}
+.an-hit{animation:an-hit .45s ease-out}.an-heal{animation:an-heal .7s ease-out}.an-ward{animation:an-ward .7s ease-out}.an-stun{animation:an-stun .5s ease-out}.an-kill{animation:an-kill .9s ease-out forwards}.an-lunge{animation:an-lunge .35s ease-out}.an-charge{animation:an-charge .6s ease-out}
+.die.used{transition:opacity .25s,transform .25s}
+#app.holding{pointer-events:none}
+#app.holding .ctrlwrap,#app.holding .sigwhy{visibility:hidden}
+.foe.atk-src{border-color:var(--foe);box-shadow:0 0 0 2px rgba(255,107,91,.55)}
+.foe .die.atk-on{border-color:#ffd166;box-shadow:0 0 0 3px #ffd166,0 0 12px 2px rgba(255,209,102,.6);transform:scale(1.1)}
+.op.atk-me{box-shadow:0 0 0 2px #ffd166}
+.fxpop{position:fixed;pointer-events:none;z-index:52;transform:translate(-50%,-50%);line-height:1}
+.fx-slash{width:90px;height:6px;border-radius:3px;background:linear-gradient(90deg,transparent,#fff 40%,var(--dmg) 70%,transparent);animation:fxslash .35s ease-out forwards}
+@keyframes fxslash{0%{opacity:0;transform:translate(-50%,-50%) rotate(-35deg) scaleX(.2)}40%{opacity:1;transform:translate(-50%,-50%) rotate(-35deg) scaleX(1.1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(-35deg) scaleX(1.3)}}
+.fx-shield{font-size:2.6rem;filter:drop-shadow(0 0 10px rgba(127,178,255,.9));animation:fxshield .7s ease-out forwards}
+@keyframes fxshield{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}35%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+.fx-skull{font-size:2.8rem;animation:fxskull 1s ease-out forwards}
+@keyframes fxskull{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
+@keyframes an-atk{0%{transform:none}30%{transform:translate(10px,-8px) scale(1.04)}100%{transform:none}}
+@keyframes an-down{0%{transform:none;filter:none}25%{transform:translateY(-4px) rotate(-2deg);filter:brightness(1.8)}100%{transform:translateY(4px) rotate(1deg);filter:grayscale(1) brightness(.7)}}
+.an-atk{animation:an-atk .3s ease-out}.an-down{animation:an-down .8s ease-out forwards}
+#banner{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:55;pointer-events:none;font:700 2rem var(--display);letter-spacing:.06em;color:var(--hud);text-shadow:0 3px 12px #000;background:rgba(14,19,29,.85);border:1px solid var(--hud-dim);border-radius:8px;padding:.5rem 1.4rem;opacity:0}
+#banner.show{animation:bannerin 2.6s ease-out forwards}
+#banner small{display:block;font:500 .9rem var(--body);color:var(--muted);letter-spacing:0;text-align:center}
+@keyframes bannerin{0%{opacity:0;transform:translate(-50%,-40%) scale(.9)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-56%)}}
+@media (prefers-reduced-motion:reduce){.an-hit,.an-stun,.an-lunge,.an-kill,.an-atk,.an-down{animation:none}.fxpop{display:none}#banner.show{animation-duration:.01s}}
+
+/* tiles (lobby, upgrades) */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:7px}
+.tile.taken{opacity:.45}
+.tile.picked{border-color:var(--arcane);box-shadow:0 0 0 1px var(--arcane-dim)}
+.tile .hh{display:flex;gap:8px;align-items:center}
+.tile .hh .ic{font-size:1.4rem}
+.ctile .hh b{font-size:1.25rem}
+.ctiles{grid-template-columns:repeat(auto-fill,minmax(22rem,1fr))}
+.tile .hh b{font-family:var(--display);font-size:1.08rem;flex:1}
+.tile .desc{font-size:.85rem;color:var(--muted);flex:1}
+.tile .btn{align-self:flex-start}
+.dl{display:flex;flex-direction:column;gap:3px}
+.dl .dn{color:var(--muted);font:600 .7rem var(--mono)}
+.slots{display:flex;gap:8px;flex-wrap:wrap}
+.slot{background:var(--panel);border:1px dashed var(--line);border-radius:5px;padding:7px 10px;font-size:.85rem;min-width:11rem}
+.slot.full{border-style:solid}
+.mydie{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px}
+
+/* menu */
+.menu{max-width:660px;margin:26px auto;display:flex;flex-direction:column;gap:16px}
+.logo{display:flex;justify-content:center}
+.menu .box{display:flex;flex-direction:column;gap:10px}
+.code{font:700 2.6rem var(--mono);letter-spacing:.3em;color:var(--hud);text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(4,6,10,.78);z-index:40;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:30px 16px}
+.overlay .box{max-width:780px;width:100%;display:flex;flex-direction:column;gap:10px}
+.overlay table{border-collapse:collapse;font-size:.86rem}
+.overlay td,.overlay th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px}
+#tip .net{margin:6px 0;white-space:normal}
+#tip:has(.net){max-width:none}
+#tip{white-space:pre-line;position:fixed;z-index:60;background:#070b11;border:1px solid var(--hud-dim);color:var(--fg);font-size:.82rem;padding:6px 9px;border-radius:4px;max-width:18rem;pointer-events:none;display:none}
+.dev{border:1px dashed #7a5;border-radius:4px;padding:3px 7px;font-size:.78rem}
+@media (max-width:640px){
+  html{font-size:16px}
+  .wrap{padding:6px 10px 28px}
+  .topbar{gap:6px}.topbar .title{font-size:0;gap:0}.topbar .chip{font-size:.72rem;padding:2px 6px}
+  .icon-btn{width:2.3rem;height:2.3rem}
+  .enemyrow{gap:8px}
+  .foe{width:calc(50% - 4px);padding:8px}.foe.boss{width:100%}
+  .foe .portrait{width:40px;height:40px}
+  .foe .die{width:2.6rem;height:2.6rem}
+  .ops{grid-template-columns:1fr}
+  .op.me{order:-1}
+  .op .dice{justify-content:space-between;gap:6px}
+  .op .dcol{width:31%}
+  .die{width:4.2rem;height:4.2rem}
+  .op .ctrl .btn{flex:1;padding:.7rem .5rem;font-size:1rem}
+  .sigbtn{padding:.5rem .7rem;font-size:.9rem}
+  .tiles,.ctiles{grid-template-columns:1fr}
+  .net{--s:2.6rem}
+  .overlay{padding:12px 8px}
+  .log table{font-size:.78rem}
+}
+details.logd summary{cursor:pointer;font:600 .9rem var(--display);color:var(--muted);padding:2px 0}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<div id="tip"></div>
+<div id="banner"></div>
+<div id="overlay" class="overlay hidden"></div>
+
+<script>
+'use strict';
+// ================= DATA =================
+// A die's faces are stored in net order [top, left, middle, right, rightmost, bottom].
+// Power by position: left strongest, then middle; top, right and bottom about equal; rightmost weakest.
+// A face code is a primary (D damage, W ward, H heal, C charge, B blank) + number + optional keywords: 'D2:cleave'.
+const POS_TOP = 0, POS_LEFT = 1, POS_MID = 2, POS_RIGHT = 3, POS_RM = 4, POS_BOT = 5;
+const F = (L, M, T, R, B, RM) => [T, L, M, R, RM, B];   // dice are written in design-doc order: left, middle, top, right, bottom, rightmost
+const CLASSES = {
+  breach:{ name:'Breach Mage', icon:'💥', hp:9, role:'Piercing burst', blurb:'Door-kicker in ceramic plate. Hex rounds that punch straight through enemy wards.', sig:'doorkick', dice:[
+    { name:'Scattershot',      faces:F('D2:cleave','D2','D1','D1','W1','B'),        plus:[{ label:'+', faces:F('D3:cleave','D2:cleave','D2','D1','W1','D1') }, { label:'Slug Choke', faces:F('D4:pierce','D3:pierce','D2','D2','W1','B') }] },
+    { name:'Breaching Charge', faces:F('D3:engage','D2:pierce','D1','D1','C1','B'), plus:[{ label:'+', faces:F('D4:engage','D3:pierce','D2','D1','C1','D1') }, { label:'Thermite Charge', faces:F('D2:poison','D2:poison','D2','D1:pierce','C1','D1') }] },
+    { name:'Kevlar Ward',      faces:F('W3','D2:steel','W1','W1','C1','B'),         plus:[{ label:'+', faces:F('W4','D3:steel','W2','W1','C1','W1') }, { label:'Reactive Plating', faces:F('D2:steel','D2:steel','W2','W2','W1:regen','C1') }] } ] },
+  storm:{ name:'Storm Witch', icon:'⚡', hp:8, role:'Chain damage', blurb:'Ex-Navy weather witch. Lightning that jumps from target to target.', sig:'thunder', dice:[
+    { name:'Arc Lash',  faces:F('D2:chain','D2:chain','D1','D1','C1','B'),          plus:[{ label:'+', faces:F('D3:chain','D2:chain','D2:chain','D1','C1','D1') }, { label:'Overcharge', faces:F('D3:charged','D2:charged','D2','D1','C2','C1') }] },
+    { name:'Downdraft', faces:F('W2:share','W2','W1','C1','W1','B'),                plus:[{ label:'+', faces:F('W3:share','W2:share','W2','C1','W1','W1') }, { label:'Eye of the Storm', faces:F('W3:cleanse','W2:regen','W1','C1','H1','C1') }] },
+    { name:'Squall',    faces:F('C2:cantrip','C2','D1','C1','D1','B'),              plus:[{ label:'+', faces:F('C3:cantrip','C2:cantrip','D2','C1','D1:chain','C1') }, { label:'Static Build-up', faces:F('D2:charged','C2:cantrip','C1','D1:charged','C1','D1') }] } ] },
+  precog:{ name:'Precog', icon:'👁', hp:8, role:'Combo and setup', blurb:'Sees the next five seconds. Sets up hits for next turn and copies what just worked.', sig:'toldyou', dice:[
+    { name:'Foresight',    faces:F('D3:future','W2:future','D1','W1','C1','B'),     plus:[{ label:'+', faces:F('D4:future','W3:future','D2','W1','C1','D1') }, { label:'Precognition', faces:F('D2:copycat','D2:future','W2:future','C1','C1:cantrip','D1') }] },
+    { name:'Second Guess', faces:F('D2:copycat','C2','W1','D1','C1','B'),           plus:[{ label:'+', faces:F('D3:copycat','C2:cantrip','W2','D1:echo','C1','D1') }, { label:'Double Take', faces:F('D2:echo','D2:echo','D2:copycat','W1','C1','C1') }] },
+    { name:'Sidearm',      faces:F('D3:patient','D2:windup','D1:echo','D1','W1','B'), plus:[{ label:'+', faces:F('D4:patient','D3:windup','D2:echo','D1','W1','D1') }, { label:'Called Shot', faces:F('D3:focus','D3:patient,windup','D2:focus','D1','W1','D1:echo') }] } ] },
+  riot:{ name:'Riot Cleric', icon:'🛡️', hp:10, role:'Wards, heals, taunt', blurb:'Shield-first riot chaplain. Wards the squad, patches wounds and pulls enemy fire onto herself.', sig:'riotline', dice:[
+    { name:'Riot Ward', faces:F('W3','W2:share','W1','W1','H1','B'),                plus:[{ label:'+', faces:F('W4','W2:share','W2:share','W1','H1','W1') }, { label:'Bastion', faces:F('W2:share','W2:share','D2:steel','W1','H1:regen','W1') }] },
+    { name:'Flashbang', faces:F('D2:cleave','D2','W1','D1','C1','B'),               plus:[{ label:'+', faces:F('D3:cleave','D2:cleave','W2','D1','C1','D1') }, { label:'Tear Gas', faces:F('D2:poison','D2:cleave','W2','D1:poison','C1','D1') }] },
+    { name:'Censure',   faces:F('D3:steel','H2','H1','D1','C1','B'),                plus:[{ label:'+', faces:F('D4:steel','H3','H2:cleanse','D1','C1','H1') }, { label:'Absolution', faces:F('H3:share','H2:regen','H2','D1:steel','C1','H1') }] } ] },
+};
+const SIGS = {
+  doorkick:{ name:'Door Kick',   cost:1, text:'1 Pierce damage to every enemy.' },
+  thunder: { name:'Thunderhead', cost:3, text:'2 damage to every enemy, +1 for each ✦ you still have after paying.' },
+  toldyou: { name:'Told You So', cost:3, text:'Stun the enemy with the biggest intent.' },
+  riotline:{ name:'Riot Line',   cost:2, text:'🛡3 on you, and every enemy attack this turn hits you instead.' },
+  // abilities granted by items
+  zap:      { name:'Zap',        cost:3, text:'2 damage to the lowest-HP enemy.' },
+  flare:    { name:'Flare',      cost:3, text:'3 damage to the enemy with the most HP.' },
+  triage:   { name:'Triage',     cost:3, text:'Heal the most hurt operative 3.' },
+  stunburst:{ name:'Stun Burst', cost:4, text:'Stun a random enemy.' },
+};
+// Pick 1 of 3 after floor 5: each upgrades that class's signature.
+const SIG_UPS = {
+  doorkick:{ ram:{ name:'Battering Ram', text:'2 Pierce to every enemy instead of 1.' }, cleared:{ name:'Cleared Room', text:'Also strips all ward from every enemy.' }, follow:{ name:'Follow Through', text:'Your next ⚔ this turn gains Pierce and +2.' } },
+  riotline:{ wall:{ name:'Shield Wall', text:'Also 🛡1 on every teammate.' }, retrib:{ name:'Retribution', text:'Each attack that hits you this turn deals 1 back.' }, hold:{ name:'Hold the Line', text:'🛡5 instead of 🛡3.' } },
+  toldyou: { sawit:{ name:'Saw It Coming', text:'Costs 2✦.' }, called:{ name:'Called It', text:"Also deals damage equal to the stunned enemy's biggest attack." }, dejavu:{ name:'Déjà Vu', text:'Also lets you use your last used die again this turn.' } },
+  thunder: { supercell:{ name:'Supercell', text:'Costs 2✦.' }, conduit:{ name:'Conduit', text:'Your ⚔ faces gain Chain this turn.' }, eye:{ name:'Eye of the Storm', text:'Also 🛡2 on every operative.' } },
+};
+const FACE = {
+  D:{ icon:'⚔', name:'Damage',    num:true,  text:n=>`Deal ${n} damage to one enemy.` },
+  W:{ icon:'🛡', name:'Ward',      num:true,  text:n=>`Give any operative ${n} ward until enemies act.` },
+  H:{ icon:'✚', name:'Heal',      num:true,  text:n=>`Heal any standing operative ${n}.` },
+  C:{ icon:'✦', name:'Charge',    num:true,  text:n=>`Add ${n} charge for abilities (max 4; lasts the floor).` },
+  B:{ icon:'✕', name:'Blank',     num:false, text:()=>'Does nothing.' },
+  // enemy-only intents
+  U:{ icon:'📎', name:'Summon',    num:false, text:()=>'Summons an Intern Familiar.' },
+  X:{ icon:'💥', name:'Shockwave', num:true,  text:n=>`${n} damage to every operative.` },
+  K:{ icon:'⛓', name:'Curse',     num:false, text:()=>'Next turn, the target\'s highest face becomes blank.' },
+  P:{ icon:'📈', name:'Empower',   num:true,  text:n=>`An ally's attacks get +${n} for the rest of the floor.` },
+};
+// Keywords, after Slice & Dice. 'g' is the small symbol shown when an item adds the keyword.
+const KW = {
+  pierce:    { g:'⟂', name:'Pierce',      text:'Ignores the target\'s ward.' },
+  chain:     { g:'⌁', name:'Chain',       text:'Also deals 1 to each enemy next to the target.' },
+  cleave:    { g:'↔', name:'Cleave',      text:'Also hits the enemies on both sides of the target with the whole face: Pierce, Poison and Stun apply to each one too.' },
+  poison:    { g:'☠', name:'Poison',      text:'Adds poison equal to its number. A poisoned target takes damage equal to its poison at the end of every turn this floor; more poison stacks on top. Works on stunned enemies too.' },
+  stun:      { g:'✺', name:'Stun',        text:'Cancels every intent of the target this turn.' },
+  engage:    { g:'⊕', name:'Engage',      text:'Double if the target is at full HP.' },
+  cruel:     { g:'✂', name:'Cruel',       text:'Double if the target is at half HP or less.' },
+  pristine:  { g:'✧', name:'Pristine',    text:'Double if you are at full HP.' },
+  deathwish: { g:'✝', name:'Deathwish',   text:'Double if you are at 3 HP or less.' },
+  bloodlust: { g:'♨', name:'Bloodlust',   text:'+1 for each damaged enemy.' },
+  rampage:   { g:'↻', name:'Rampage',     text:'If it kills, this die rerolls and can be used again (once a turn).' },
+  pain:      { g:'✶', name:'Pain',        text:'You take 1 damage when you use it.' },
+  steel:     { g:'▣', name:'Steel',       text:'+1 for each point of ward you have.' },
+  charged:   { g:'ϟ', name:'Charged',     text:'+1 for each ✦ charge you have.' },
+  growth:    { g:'↑', name:'Growth',      text:'This face gets +1 every time it is used, for the rest of the floor.' },
+  echo:      { g:'≈', name:'Echo',        text:'Its number becomes the number of the last die you used this turn.' },
+  copycat:   { g:'⧉', name:'Copycat',     text:'Also gets the keywords of the last face you used this turn.' },
+  duel:      { g:'⚇', name:'Duel',        text:'Double against an enemy that is targeting you.' },
+  focus:     { g:'◎', name:'Focus',       text:'+2 if your last die hit the same enemy.' },
+  patient:   { g:'⧗', name:'Patient',     text:'Double if this die was not used last turn (never on turn 1 of a floor).' },
+  windup:    { g:'⟳', name:'Wind-up',     text:'Use it to wind up: the die locks on this face and sits out next turn. The turn after, it comes back with triple its number. Sitting out also sets off Patient.' },
+  exert:     { g:'⇯', name:'Exert',       text:'+2, but this die is blank next turn.' },
+  singleuse: { g:'①', name:'Single-use',  text:'After you use it, this face is blank for the rest of the floor.' },
+  sticky:    { g:'⚓', name:'Sticky',      text:'Once rolled, this face can\'t be rerolled.' },
+  future:    { g:'⏭', name:'Future',      text:'Lands at the start of your next turn, with +1.' },
+  cantrip:   { g:'!', name:'Cantrip',     text:'Fires on a random target the moment it lands while rolling. You can still use the die afterward.' },
+  selfshield:{ g:'◈', name:'Self-shield', text:'Also gives you ward equal to its number.' },
+  selfheal:  { g:'♥', name:'Self-heal',   text:'Also heals you by half its number (at least 1).' },
+  share:     { g:'⇄', name:'Share',       text:'The ward or heal also goes to the lowest-HP teammate.' },
+  cleanse:   { g:'❋', name:'Cleanse',     text:'Removes poison and curses from the target.' },
+  regen:     { g:'✿', name:'Regen',       text:'The target heals 1 at the start of each turn this floor (stacks).' },
+};
+const ENEMY_KW = {
+  spread: 'Also hits the operatives next to the target.',
+  poison: 'Adds poison equal to the hit: the operative takes that much at the end of every turn this floor (stacks).',
+  growth: 'This attack gets +1 every time it is used.',
+  charged:'+1 for each turn this enemy has been alive.',
+  all:    'Affects every ally.',
+};
+const NUMERIC = t => FACE[t].num;
+const DMG = t => t === 'D';
+// Items: each goes on one die (3 per die) and they apply in slot order, top to bottom (rearrange them between floors).
+// fx(f, fi, base) edits the face at net index fi; base is the die's own face codes.
+const lowestWard = base => { let best = -1; base.forEach((c, i) => { const f = parse(c); if (f.t === 'W' && (best < 0 || f.n < parse(base[best]).n)) best = i; }); return best; };
+const addKw = (f, k) => { if (!f.kw.includes(k)) f.kw.push(k); };
+const ITEMS = {
+  // after floor 1 · Reception (tier 1)
+  ducttape: { floor:1, name:'Duct Tape',      icon:'🩹', text:'The rightmost blank becomes 🛡1.', pre:true, fx:(f, fi) => { if (fi === POS_RM && f.t === 'B') { f.t = 'W'; f.n = 1; } } },
+  battery:  { floor:1, name:'Spare Battery',  icon:'🔋', text:'The rightmost blank becomes ✦1.', pre:true, fx:(f, fi) => { if (fi === POS_RM && f.t === 'B') { f.t = 'C'; f.n = 1; } } },
+  laser:    { floor:1, name:'Laser Sight',    icon:'🔴', text:'The left face +1.', fx:(f, fi) => { if (fi === POS_LEFT && NUMERIC(f.t)) f.n++; } },
+  grip:     { floor:1, name:'Grip Tape',      icon:'🧤', text:'The middle face +1.', fx:(f, fi) => { if (fi === POS_MID && NUMERIC(f.t)) f.n++; } },
+  dressing: { floor:1, name:'Field Dressing', icon:'💉', text:'The bottom face becomes ✚1.', pre:true, fx:(f, fi) => { if (fi === POS_BOT) { f.t = 'H'; f.n = 1; f.kw = []; f.base = []; } } },
+  kpatch:   { floor:1, name:'Kevlar Patch',   icon:'🧷', text:'The lowest 🛡 face +1.', fx:(f, fi, base) => { if (fi === lowestWard(base) && f.t === 'W') f.n++; } },
+  keychain: { floor:1, name:'Lucky Keychain', icon:'🔑', text:'The top face gains Cantrip.', fx:(f, fi) => { if (fi === POS_TOP && f.t !== 'B') addKw(f, 'cantrip'); } },
+  // after floor 3 · Open-Plan Office (tier 1.5)
+  serrated: { floor:3, name:'Serrated Edge',  icon:'🪚', text:'The left face gains Cruel.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'cruel'); } },
+  salvo:    { floor:3, name:'Opening Salvo',  icon:'🎺', text:'The left face gains Engage.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'engage'); } },
+  stapler:  { floor:3, name:'Stapler Rounds', icon:'📌', text:'The middle face gains Pierce.', fx:(f, fi) => { if (fi === POS_MID && f.t === 'D') addKw(f, 'pierce'); } },
+  toxin:    { floor:3, name:'Toxin Vial',     icon:'🧪', text:'The middle face gains Poison.', fx:(f, fi) => { if (fi === POS_MID && f.t === 'D') addKw(f, 'poison'); } },
+  polish:   { floor:3, name:'Mirror Polish',  icon:'🪞', text:'The left face gains Pristine.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'pristine'); } },
+  medgel:   { floor:3, name:'Med-Gel Cartridge', icon:'🧴', text:'All ✚ faces +1.', fx:f => { if (f.t === 'H') f.n++; } },
+  sparkcard:{ floor:3, name:'Spark Spellcard', icon:'💳', text:'Grants Zap (3✦): 2 damage to the lowest-HP enemy.', ability:'zap' },
+  // after floor 4 · Server Farm (tier 2)
+  fork:     { floor:4, name:'Tuning Fork',     icon:'🎚️', text:'All ⚔ faces +1.', fx:f => { if (f.t === 'D') f.n++; } },
+  broadhead:{ floor:4, name:'Broadhead Rounds', icon:'🪓', text:'The left and middle ⚔ faces gain Cleave.', fx:(f, fi) => { if ((fi === POS_LEFT || fi === POS_MID) && f.t === 'D') addKw(f, 'cleave'); } },
+  capacitor:{ floor:4, name:'Capacitor',       icon:'🔌', text:'The left face gains Charged.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'charged'); } },
+  coil:     { floor:4, name:'Grounding Coil',  icon:'🧲', text:'Chain faces hit 2 enemies on each side.', coil:true, fx:() => {} },
+  leech:    { floor:4, name:'Leech Coil',      icon:'🩸', text:'The left face gains Self-heal.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'selfheal'); } },
+  hourglass:{ floor:4, name:'Hourglass',       icon:'⏳', text:'The left face gains Patient.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'patient'); } },
+  mainspring:{ floor:4, name:'Mainspring',     icon:'🕰️', text:'The left face gains Wind-up.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'windup'); } },
+  flarerune:{ floor:4, name:'Flare Rune',      icon:'🎇', text:'Grants Flare (3✦): 3 damage to the enemy with the most HP.', ability:'flare' },
+  // after floor 6 · Executive Gym (tier 2.5)
+  plate:    { floor:6, name:'Ceramic Plate',   icon:'🧱', text:'All 🛡 faces +1.', fx:f => { if (f.t === 'W') f.n++; } },
+  echoch:   { floor:6, name:'Echo Chamber',    icon:'🔁', text:'Blanks become ⚔2 Echo.', pre:true, fx:f => { if (f.t === 'B') { f.t = 'D'; f.n = 2; addKw(f, 'echo'); } } },
+  mirror:   { floor:6, name:'Mirror Shard',    icon:'🔷', text:'The rightmost face becomes a copy of the middle face.', pre:true, fx:(f, fi, base) => { if (fi === POS_RM) { const m = parse(base[POS_MID]); f.t = m.t; f.n = m.n; f.kw = m.kw.slice(); f.base = []; } } },
+  lining:   { floor:6, name:'Kevlar Lining',   icon:'🦺', text:'All ⚔ faces gain Self-shield.', fx:f => { if (f.t === 'D') addKw(f, 'selfshield'); } },
+  bonsai:   { floor:6, name:'Bonsai Chip',     icon:'🌱', text:'The left and middle faces gain Growth.', fx:(f, fi) => { if ((fi === POS_LEFT || fi === POS_MID) && NUMERIC(f.t)) addKw(f, 'growth'); } },
+  rampager: { floor:6, name:'Rampage Rounds',  icon:'🐗', text:'The left ⚔ face gains Rampage.', fx:(f, fi) => { if (fi === POS_LEFT && f.t === 'D') addKw(f, 'rampage'); } },
+  sigil:    { floor:6, name:'Triage Sigil',    icon:'⚕️', text:'Grants Triage (3✦): heal the most hurt operative 3.', ability:'triage' },
+  // after floor 7 · R&D Ritual Lab (tier 3)
+  glass:    { floor:7, name:'Glass Rune',      icon:'🔮', text:'⚔ numbers double; any that reach 6 or more gain Pain.', post:true, fx:f => { if (f.t === 'D') { f.n *= 2; if (f.n >= 6) addKw(f, 'pain'); } } },
+  overclock:{ floor:7, name:'Overclock Chip',  icon:'⚙️', text:'All faces +1; they gain Exert.', fx:f => { if (NUMERIC(f.t)) { f.n++; addKw(f, 'exert'); } } },
+  spellwire:{ floor:7, name:'Spellwire',       icon:'🧵', text:'The left face gains Cantrip.', fx:(f, fi) => { if (fi === POS_LEFT && f.t !== 'B') addKw(f, 'cantrip'); } },
+  bloodsig: { floor:7, name:'Bloodlust Sigil', icon:'🩸', text:'All ⚔ faces gain Bloodlust.', fx:f => { if (f.t === 'D') addKw(f, 'bloodlust'); } },
+  duelist:  { floor:7, name:'Duelist\'s Badge', icon:'🎖️', text:'All ⚔ faces gain Duel.', fx:f => { if (f.t === 'D') addKw(f, 'duel'); } },
+  lens:     { floor:7, name:'Focus Lens',      icon:'🔍', text:'All ⚔ faces gain Focus.', fx:f => { if (f.t === 'D') addKw(f, 'focus'); } },
+  weave:    { floor:7, name:'Regen Weave',     icon:'🕸️', text:'All 🛡 faces gain Regen.', fx:f => { if (f.t === 'W') addKw(f, 'regen'); } },
+  // after floor 9 · Glass Atrium (tier 4, strongest)
+  flashpin: { floor:9, name:'Flashbang Pin',   icon:'📍', text:'The middle ⚔ face gains Stun.', fx:(f, fi) => { if (fi === POS_MID && f.t === 'D') addKw(f, 'stun'); } },
+  ntaser:   { floor:9, name:'Neural Taser',    icon:'⚡', text:'Grants Stun Burst (4✦): stun a random enemy.', ability:'stunburst' },
+  twinbarrel:{ floor:9, name:'Twin-Barrel Mod', icon:'🔫', text:'The left face gains Copycat and +2.', fx:(f, fi) => { if (fi === POS_LEFT && NUMERIC(f.t)) { f.n += 2; addKw(f, 'copycat'); } } },
+  phoenix:  { floor:9, name:'Phoenix Sigil',   icon:'🔥', text:'The left face gains Deathwish and +1.', fx:(f, fi) => { if (fi === POS_LEFT && NUMERIC(f.t)) { f.n++; addKw(f, 'deathwish'); } } },
+  singularity:{ floor:9, name:'Singularity Core', icon:'🕳️', text:'The left face becomes ⚔8 Single-use.', pre:true, fx:(f, fi) => { if (fi === POS_LEFT) { f.t = 'D'; f.n = 8; f.kw = ['singleuse']; f.base = []; } } },
+  amplifier:{ floor:9, name:'Arcane Amplifier', icon:'📡', text:'All faces +1.', fx:f => { if (NUMERIC(f.t)) f.n++; } },
+  sharelink:{ floor:9, name:'Share Link',      icon:'🔗', text:'All 🛡 and ✚ faces gain Share.', fx:f => { if (f.t === 'W' || f.t === 'H') addKw(f, 'share'); } },
+};
+const ENEMIES = {
+  guard:    { name:'Hexsec Guard',      hp:4,  ints:['D1','D2','D1','D2','D2','D1'] },
+  ldrone:   { name:'Lobby Drone',       hp:3,  ints:['W2','W2','D1','W2','D1','D1'] },
+  mgolem:   { name:'Mailroom Golem',    hp:6,  ints:['D2:growth','D2:growth','D2:growth','D2:growth','D2:growth','D2:growth'] },
+  imp:      { name:'Paper Imp',         hp:2,  ints:['D1:poison','D1:poison','D1','D1:poison','D1:poison','D1'] },
+  manager:  { name:'Middle Manager',    hp:5,  ints:['D2','P1','D2','P1','D2','D2'] },
+  ghoul:    { name:'Cubicle Ghoul',     hp:4,  ints:['D1:spread','D1:spread','D2','D1:spread','D1:spread','D1'] },
+  wraith:   { name:'Server Wraith',     hp:5,  ints:['D2:charged','D2:charged','D1:charged','D2:charged','D2:charged','D1:charged'] },
+  fdrone:   { name:'Firewall Drone',    hp:6,  ints:['W3:all','W3:all','D1','W3:all','D1','D1'] },
+  ggolem:   { name:'Gym Golem',         hp:8,  ints:['D3','D3','D2','D3','D3','D2'], enrage:true },
+  necro:    { name:'Riot Necro',        hp:6,  ints:['H3','H3','D2','D2','H3','D2'] },
+  acolyte:  { name:'Ritual Acolyte',    hp:5,  ints:['K','D2','K','D2','D2','K'] },
+  construct:{ name:'Hex Construct',     hp:9,  ints:['D2:spread,growth','D2:spread,growth','D2:spread,growth','D2:spread,growth','D2:spread,growth','D2:spread,growth'] },
+  specter:  { name:'Paralegal Specter', hp:6,  ints:['D1:poison','K','D1:poison','K','D1:poison','D1:poison'] },
+  lgolem:   { name:'Litigation Golem',  hp:12, ints:['D4','D4','D3','D4','D4','D3'], selfWard:2 },
+  sniper:   { name:'Sniper Seer',       hp:6,  ints:['D5','D4','D5','B','D5','D4'], sniper:true },
+  glassel:  { name:'Glass Elemental',   hp:7,  ints:['D3:spread','D3:spread','D2:spread','D3:spread','D3:spread','D2:spread'], shatter:2 },
+  intern:   { name:'Intern Familiar',   hp:2,  ints:['D1','D1','D1','D2','D1','D1'] },
+  vex:      { name:'Regional Manager Vex', hp:13, boss:true, phases:[
+    { at:1,  ints:['D3','W3','U','D3','W3','U'] },
+    { at:.5, enrage:true, ints:['D2:spread','D3','U','D2:spread','D3','D2:spread'] } ] },
+  grieve:   { name:'Halcyon Grieve, CEO', hp:24, boss:true, phases:[
+    { at:1,    ints:['D4','W4','D4','W4','D4','D5'] },
+    { at:.667, ints:['D4','K:all','W4','D4','K:all','D5'] },
+    { at:.334, ints:['X2','D4:growth','K:all','X2','D5:growth','X2'] } ] },
+};
+const FLOORS = [
+  { name:'Reception',            news:['guard','ldrone'] },
+  { name:'Mailroom',             news:['mgolem','imp'] },
+  { name:'Open-Plan Office',     news:['manager','ghoul'] },
+  { name:'Server Farm',          news:['wraith','fdrone'] },
+  { name:'Regional Manager Vex', news:[], boss:'vex' },
+  { name:'Executive Gym',        news:['ggolem','necro'] },
+  { name:'R&D Ritual Lab',       news:['acolyte','construct'] },
+  { name:'Legal Department',     news:['specter','lgolem'] },
+  { name:'Glass Atrium',         news:['sniper','glassel'] },
+  { name:'Halcyon Grieve, CEO',  news:[], boss:'grieve' },
+];
+// A floor's pool: its two new enemies twice as likely as anything met on earlier floors.
+const floorPool = f => { const pool = []; FLOORS.slice(0, f).forEach((F2, i) => F2.news.forEach(t => { pool.push(t); if (i === f - 1) pool.push(t); })); return pool.length ? pool : ['guard']; };
+const UPGRADE_FLOORS = [2, 5, 8];   // die upgrade after these floors; floor item offers after the rest
+const RULES = { floors:10, rerolls:2, maxPlayers:4, gearPerDie:3, hpPerUpgrade:2, abilityFloor:5 };
+const CHARGE_MAX = 4;   // charge never goes above this
+// Enemy HP by squad size, tuned with bot runs so 1-4 operatives reach a similar floor on average.
+const HP_MULT = [0.9, 1.5, 2.4, 3.2];
+const SQUAD_DMG = [0, 0, 0, 0];
+const TUNE = { hpPerFloor:.11, bossHp:1, atkByFloor:[0,0,0,0,0,0,0,1,1,1] };   // set with the bots in tests/bots.js
+const enemyCount = (n, floor) => Math.min(6, n + 1 + (floor >= 7 && n > 1 ? 1 : 0));
+const PREFIX = 'cheezy-kc-';
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+const DEV = new URLSearchParams(location.search).has('dev');
+
+// ================= ENGINE =================
+// Host-authoritative state machine: act(st, playerIndex, action). Dice apply the moment they are used.
+function rnd(st) { let t = (st.seed = (st.seed + 0x6D2B79F5) | 0); t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+const ri = (st, n) => Math.floor(rnd(st) * n);
+const pick = (st, a) => a[ri(st, a.length)];
+function shuffle(st, a) { for (let i = a.length - 1; i > 0; i--) { const j = ri(st, i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function parse(c) { const [head, kws] = c.split(':'); const kw = kws ? kws.split(',') : []; return { t: head[0], n: +head.slice(1) || 0, kw, base: kw.slice() }; }
+// Every built-in face + keyword pairing has its own icon, so a die reads at a glance.
+// Small indicator symbols only appear for keywords added by items.
+const COMBO = {
+  'D:cleave':  { icon:'🪓', name:'Scatter Round' },
+  'D:engage':  { icon:'💢', name:'Opening Round' },
+  'D:pierce':  { icon:'➹', name:'Armor-Piercing Slug' },
+  'D:chain':   { icon:'⚡', name:'Chain Lightning' },
+  'D:charged': { icon:'🌩️', name:'Charged Round' },
+  'D:steel':   { icon:'🔨', name:'Riot Baton' },
+  'D:poison':  { icon:'☣', name:'Toxic Round' },
+  'D:future':  { icon:'⏭', name:'Delayed Round' },
+  'D:copycat': { icon:'⧉', name:'Copy Round' },
+  'D:echo':    { icon:'🔁', name:'Echo Round' },
+  'D:patient': { icon:'🎯', name:'Aimed Round' },
+  'D:focus':   { icon:'🔍', name:'Focused Round' },
+  'W:share':   { icon:'⇄', name:'Shared Ward' },
+  'W:cleanse': { icon:'❋', name:'Cleansing Ward' },
+  'W:regen':   { icon:'✿', name:'Living Ward' },
+  'W:future':  { icon:'⏳', name:'Delayed Ward' },
+  'H:share':   { icon:'⇄', name:'Shared Heal' },
+  'H:regen':   { icon:'✿', name:'Regrowth' },
+  'H:cleanse': { icon:'❋', name:'Purifying Heal' },
+  'C:cantrip': { icon:'🌟', name:'Spark Charge' },
+};
+function comboOf(f) { return f.base && f.base.length ? COMBO[f.t + ':' + f.base.slice().sort().join(',')] || null : null; }
+// Keywords drawn as indicators: everything not covered by the face's own combo icon.
+function shownKw(f) { const c = comboOf(f); return c ? f.kw.filter(k => !f.base.includes(k)) : f.kw; }
+const faceIcon = f => { const c = comboOf(f); return c ? c.icon : FACE[f.t].icon; };   // text glyph (logs, tooltips)
+const artKey = f => { const c = comboOf(f); return c ? f.t + ':' + f.base.slice().sort().join(',') : f.t; };
+const iconHtml = f => `<i class="ico">${svgIcon(artKey(f))}</i>`;
+const living = st => st.players.map((p, i) => i).filter(i => !st.players[i].gone && !st.players[i].down);
+const foesAlive = st => st.enemies.map((e, i) => i).filter(i => st.enemies[i].hp > 0);
+const maxHp = (st, p) => CLASSES[st.players[p].cls].hp + (st.players[p].bonusHp || 0);
+const floorDef = st => FLOORS[st.floor - 1];
+const dieDef = (P, di) => CLASSES[P.cls].dice[di];
+const facesOf = (P, di) => P.dice[di].plus != null ? dieDef(P, di).plus[P.dice[di].plus].faces : dieDef(P, di).faces;
+const dieName = (P, di) => { const d = P.dice[di], D = dieDef(P, di); return d.plus == null ? D.name : d.plus === 0 ? D.name + '+' : D.plus[d.plus].label; };
+const BLANK = () => ({ t:'B', n:0, kw:[], base:[] });
+
+function newRun(mode, seed) {
+  return { v:3, mode, seed: seed | 0, phase:'lobby', floor:0, players:[], enemies:[], taunt:null, future:[], turn:0, log:[], result:null, rollN:0, resolveN:0, msg:'' };
+}
+function addPlayer(st, name, token) {
+  st.players.push({ name, token: token || null, cls:null, hp:0, dice:[], charge:0, ward:0, poison:0, regen:0, curse:false, down:false, gone:false, away:false, step:'wait', roll:[], rerolls:0, lastN:null, lastKw:[], lastTarget:null, usedLast:[], offers:[], picked:true, ready:false, bonusHp:0 });
+  return st.players.length - 1;
+}
+function removePlayer(st, i) { st.players.splice(i, 1); }
+function setupOperative(st, p) {
+  const P = st.players[p];
+  P.dice = CLASSES[P.cls].dice.map(() => ({ plus:null, gear:[], grow:[0,0,0,0,0,0], spent:[false,false,false,false,false,false], exertNext:false }));
+  P.bonusHp = 0; P.ready = false; P.sigUp = null; P.hp = CLASSES[P.cls].hp; P.down = false; P.charge = 0;
+}
+
+// The face as it plays right now: item face changes, then pips and keywords, then doubling; plus Growth.
+function effFace(st, p, di, fi) {
+  if (fi < 0) return BLANK();
+  const P = st.players[p], die = P.dice[di];
+  if (die.spent && die.spent[fi]) return BLANK();
+  const base = facesOf(P, di), f = parse(base[fi]);
+  die.gear.map(g => ITEMS[g]).filter(g => g.fx).forEach(g => g.fx(f, fi, base));   // items apply top to bottom, in slot order
+  if (NUMERIC(f.t)) f.n += die.grow[fi] || 0;
+  if (f.t === 'D' && P.follow) { f.n += 2; f.kw.push('pierce'); }
+  if (f.t === 'D' && P.conduit) f.kw.push('chain');
+  f.kw = [...new Set(f.kw)];
+  return f;
+}
+const abilitiesOf = P => { const a = []; P.dice.forEach(d => d.gear.forEach(g => { if (ITEMS[g].ability) a.push(ITEMS[g].ability); })); return [...new Set(a)]; };
+const hasUp = (P, id) => P.sigUp === id;
+const sigCost = (st, p, s) => { const P = st.players[p]; return hasUp(P, 'sawit') && s === 'toldyou' || hasUp(P, 'supercell') && s === 'thunder' ? 2 : SIGS[s].cost; };
+function sigText(P, s) { const ups = SIG_UPS[s], u = ups && P.sigUp && ups[P.sigUp]; return SIGS[s].text + (u ? ` ${u.name}: ${u.text}` : ''); }
+
+function scaleFor(st) {
+  const n = Math.max(1, st.players.filter(p => !p.gone).length);
+  return { n, hp: HP_MULT[n - 1] * (1 + TUNE.hpPerFloor * (st.floor - 1)) };
+}
+function makeEnemy(st, type) {
+  const E = ENEMIES[type], s = scaleFor(st);
+  const hp = E.boss ? Math.round(E.hp * s.n * TUNE.bossHp) : Math.max(1, Math.round(E.hp * s.hp));
+  return { type, hp, mx: hp, ward: 0, poison: 0, ints: [], stun: false, acts: E.boss ? 1 + Math.floor(s.n / 2) : 1, buff: 0, grow: 0, age: 0 };   // bosses: 1, 2, 2, 3 actions
+}
+function startFloor(st) {
+  st.phase = 'battle'; st.turn = 0; st.log = []; st.msg = ''; st.future = [];
+  const F2 = floorDef(st), s = scaleFor(st), pool = floorPool(Math.min(st.floor, 9));
+  st.enemies = [];
+  if (F2.boss) { st.enemies.push(makeEnemy(st, F2.boss)); for (let i = 1; i < s.n; i++) st.enemies.push(makeEnemy(st, pick(st, pool))); }
+  else { const count = enemyCount(s.n, st.floor); for (let i = 0; i < count; i++) st.enemies.push(makeEnemy(st, pick(st, pool))); }
+  st.players.forEach(P => { P.charge = 0; P.poison = 0; P.regen = 0; P.curse = false; P.dice.forEach(d => { d.grow = [0,0,0,0,0,0]; d.spent = [false,false,false,false,false,false]; d.exertNext = false; d.wind = null; }); P.usedLast = []; });
+  startTurn(st);
+}
+
+const bossPhase = e => { const E = ENEMIES[e.type]; if (!E.phases) return null; const r = e.hp / e.mx; let ph = E.phases[0]; E.phases.forEach(p => { if (r <= p.at) ph = p; }); return ph; };
+const enraged = e => { const E = ENEMIES[e.type], ph = bossPhase(e); return (E.enrage || (ph && ph.enrage)) && e.hp * 2 < e.mx; };
+function intentValue(st, e, f) {   // what an enemy's number really is right now
+  let n = f.n;
+  if (!NUMERIC(f.t) || f.t === 'P') return n;
+  n += SQUAD_DMG[scaleFor(st).n - 1];
+  if (f.t === 'D' || f.t === 'X') { n += e.buff + (TUNE.atkByFloor[st.floor - 1] || 0); if (f.kw.includes('growth')) n += e.grow; if (f.kw.includes('charged')) n += e.age; if (enraged(e)) n += 2; }
+  return n;
+}
+function rollIntent(st, ei) {
+  const e = st.enemies[ei], E = ENEMIES[e.type], lv = living(st), ph = bossPhase(e);
+  const code = pick(st, ph ? ph.ints : E.ints), f = parse(code);
+  let tg = null;
+  if (f.t === 'D' || f.t === 'K') tg = f.kw.includes('all') ? null : E.sniper ? lv.reduce((b, i) => b == null || st.players[i].hp < st.players[b].hp ? i : b, null) : (lv.length ? pick(st, lv) : null);
+  else if (f.t === 'W' || f.t === 'P') { const al = foesAlive(st).filter(i => f.t === 'W' || i !== ei); tg = al.length ? pick(st, al) : ei; }
+  else if (f.t === 'H') { const al = foesAlive(st); tg = al.reduce((b, i) => b == null || (st.enemies[i].mx - st.enemies[i].hp) > (st.enemies[b].mx - st.enemies[b].hp) ? i : b, null); }
+  return { c: code, tg };
+}
+function rollIntents(st, ei) {
+  const e = st.enemies[ei];
+  e.ints = []; for (let k = 0; k < e.acts; k++) e.ints.push(rollIntent(st, ei));
+}
+
+function startTurn(st) {
+  st.turn++; st.taunt = null; st.retrib = null;
+  st.log.push({ side:'sys', src:`Turn ${st.turn}`, tgt:'', res:'' });
+  st.enemies.forEach((e, i) => { e.stun = false; if (e.hp > 0) { e.age++; rollIntents(st, i); } else e.ints = []; });
+  st.players.forEach((P, p) => {
+    if (P.gone || P.down) { P.step = P.gone ? 'gone' : 'down'; P.roll = []; return; }
+    if (P.regen) healPlayer(st, p, P.regen, `${P.name} · Regen`);
+    P.step = P.away ? 'ready' : 'roll'; P.lastN = null; P.lastKw = []; P.lastTarget = null; P.cast = []; P.follow = false; P.conduit = false; P.lastDie = null;
+    P.ward = 0; P.rerolls = RULES.rerolls;
+    P.roll = P.dice.map(() => ({ fi: 0, k: false, used: false, r: 0, ramped: false }));
+    P.roll.forEach((d, di) => { const w = P.dice[di].wind;
+      if (w) {   // sits out one turn, then comes back on the same face at triple
+        d.fi = w.fi; d.k = true; d.r = ++st.rollN;
+        if (w.wait > 0) { w.wait--; d.used = true; d.winding = true; } else { d.released = true; P.dice[di].wind = null; }
+      } else if (P.dice[di].exertNext) { P.dice[di].exertNext = false; d.fi = -1; d.k = true; d.r = ++st.rollN; } else rollDie(st, p, di); });
+    if (P.curse && P.roll.length) {   // cursed: the highest rolled face is blank this turn
+      let bi = -1, bn = -1; P.roll.forEach((d, di) => { if (d.winding || d.released) return; const f = effFace(st, p, di, d.fi); if (NUMERIC(f.t) && f.n > bn) { bn = f.n; bi = di; } });
+      if (bi >= 0) { P.roll[bi].fi = -1; P.roll[bi].k = true; L(st, 'foe', 'Curse', P.name, `${dieName(P, bi)} is blank this turn`); }
+      P.curse = false;
+    }
+  });
+  // Future faces land now, with +1
+  const fut = st.future; st.future = [];
+  fut.forEach(x => { const P = st.players[x.p]; if (!P || P.gone || P.down) return; let tg = x.tg; if (!validTarget(st, x.f.t, tg)) tg = pickRandomTarget(st, x.p, x.f.t); if (tg) resolveFace(st, x.p, x.di, x.f, tg, `${P.name} · ${x.name} ${FACE[x.f.t].icon}${x.f.n} (future)`); });
+  trimLog(st);
+  if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; }
+  else if (!foesAlive(st).length) floorCleared(st);
+}
+function rollDie(st, p, di) {
+  const d = st.players[p].roll[di];
+  if (!d) return;   // a Pain cantrip can down you mid-roll
+  d.fi = ri(st, 6); d.r = ++st.rollN;
+  const f = effFace(st, p, di, d.fi);
+  if (f.kw.includes('cantrip') && f.t !== 'B') applyFace(st, p, di, f, null, true);
+  if (f.kw.includes('sticky')) d.k = true;
+}
+const trimLog = st => { if (st.log.length > 40) st.log.splice(0, st.log.length - 40); };
+
+// Effects ------------------------------------------------------------------
+const pn = (st, i) => st.players[i].name;
+function en(st, i) { const t = st.enemies[i].type, same = st.enemies.map((x, j) => j).filter(j => st.enemies[j].type === t); return ENEMIES[t].name + (same.length > 1 ? ' ' + 'ABCDEFG'[same.indexOf(i)] : ''); }
+const L = (st, side, src, tgt, res) => { st.logN = (st.logN || 0) + 1; st.log.push({ side, src, tgt, res, n: st.logN }); };
+
+function hitEnemy(st, p, i, n, pierce, src) {
+  const e = st.enemies[i]; if (!e || e.hp <= 0) return false;
+  const b = pierce ? 0 : Math.min(e.ward, n); e.ward -= b;
+  const before = e.hp; e.hp = Math.max(0, e.hp - (n - b));
+  L(st, 'ally', src, en(st, i), `${b ? b + ' blocked · ' : ''}${before} → ${e.hp}${e.hp === 0 ? ' ✖' : ''}`);
+  if (e.hp === 0 && ENEMIES[e.type].shatter) living(st).forEach(pi => hurtPlayer(st, pi, ENEMIES[e.type].shatter, `${en(st, i)} shatters`, true));
+  return e.hp === 0;
+}
+function hurtPlayer(st, pi, v, src, wardable) {
+  const T = st.players[pi]; if (!T || T.gone || T.down) return;
+  const b = wardable ? Math.min(T.ward, v) : 0; T.ward -= b;
+  const before = T.hp; T.hp = Math.max(0, T.hp - (v - b));
+  L(st, src.startsWith(T.name) ? 'ally' : 'foe', src, T.name, `${b ? b + ' blocked · ' : ''}${before} → ${T.hp}${T.hp === 0 ? ' (down)' : ''}`);
+  if (T.hp === 0) { T.down = true; T.roll = []; T.step = 'down'; }
+}
+function healPlayer(st, pi, v, src) {
+  const T = st.players[pi]; if (!T || T.gone || T.down) return;
+  if (T.hp >= maxHp(st, pi)) { L(st, 'ally', src, T.name, 'Already at full HP'); return; }
+  const before = T.hp; T.hp = Math.min(maxHp(st, pi), T.hp + v); L(st, 'ally', src, T.name, `${before} → ${T.hp}`);
+}
+const lowestMate = (st, p) => { const m = living(st).filter(i => i !== p); return m.length ? m.reduce((b, i) => st.players[i].hp / maxHp(st, i) < st.players[b].hp / maxHp(st, b) ? i : b) : null; };
+function pickRandomTarget(st, p, t) {
+  const al = foesAlive(st), lv = living(st);
+  if (t === 'D') return al.length ? { k:'e', i: pick(st, al) } : null;
+  if (t === 'H') {   // heal the most hurt ally; never someone at full HP if anyone is hurt
+    const hurt = lv.filter(i => st.players[i].hp < maxHp(st, i));
+    if (!hurt.length) return lv.length ? { k:'p', i: lv.includes(p) ? p : lv[0] } : null;
+    const most = Math.max(...hurt.map(i => maxHp(st, i) - st.players[i].hp));
+    return { k:'p', i: pick(st, hurt.filter(i => maxHp(st, i) - st.players[i].hp === most)) };
+  }
+  if (t === 'W') return lv.length ? { k:'p', i: lv.reduce((b, i) => incomingTo(st, i) - st.players[i].ward > incomingTo(st, b) - st.players[b].ward ? i : b, lv[0]) } : null;
+  return null;
+}
+// The final number a face resolves for, given its keywords and target.
+function faceValue(st, p, di, f, tg) {
+  const P = st.players[p];
+  let v = f.n;
+  if (f.kw.includes('echo') && P.lastN != null) v = P.lastN;
+  if (f.kw.includes('steel')) v += P.ward;
+  if (f.kw.includes('charged')) v += P.charge;
+  if (f.kw.includes('exert')) v += 2;
+  if (f.kw.includes('bloodlust')) v += foesAlive(st).filter(i => st.enemies[i].hp < st.enemies[i].mx).length;
+  if (f.kw.includes('focus') && tg && tg.k === 'e' && P.lastTarget === tg.i) v += 2;
+  let mult = 1;
+  if (tg) {
+    const T = tg.k === 'e' ? st.enemies[tg.i] : st.players[tg.i];
+    const hp = T.hp, mx = tg.k === 'e' ? T.mx : maxHp(st, tg.i);
+    if (f.kw.includes('engage') && hp === mx) mult *= 2;
+    if (f.kw.includes('cruel') && hp * 2 <= mx) mult *= 2;
+    if (f.kw.includes('duel') && tg.k === 'e' && !T.stun && T.ints.some(it => parse(it.c).t === 'D' && it.tg === p)) mult *= 2;
+  }
+  if (f.kw.includes('pristine') && P.hp === maxHp(st, p)) mult *= 2;
+  if (f.kw.includes('deathwish') && P.hp <= 3) mult *= 2;
+  if (f.kw.includes('patient') && st.turn > 1 && !P.usedLast[di]) mult *= 2;
+  if (P.roll[di] && P.roll[di].released) mult *= 3;
+  return v * mult;
+}
+// Apply a face's effect at value v (already computed) to its target.
+function resolveFace(st, p, di, f, tg, src, v) {
+  const P = st.players[p];
+  if (v == null) v = f.n;
+  let killed = false;
+  if (f.t === 'D') {
+    const al = foesAlive(st), pos = al.indexOf(tg.i), pierce = f.kw.includes('pierce');
+    // Cleave hits the neighbors with the whole face: Pierce, Poison and Stun apply to each, and
+    // target-based keywords (Engage, Cruel, Duel) are checked per target.
+    const hits = [{ i: tg.i, v, s: src }];
+    if (f.kw.includes('cleave') && pos >= 0) [al[pos - 1], al[pos + 1]].forEach(j => { if (j != null) hits.push({ i: j, v: P.dice[di] ? faceValue(st, p, di, f, { k:'e', i: j }) : v, s: src + ' (cleave)' }); });
+    hits.forEach(h => {
+      if (hitEnemy(st, p, h.i, h.v, pierce, h.s)) killed = true;
+      const T = st.enemies[h.i];
+      if (f.kw.includes('poison') && T.hp > 0) { T.poison += Math.max(1, h.v); L(st, 'ally', h.s, en(st, h.i), `Poison +${Math.max(1, h.v)} (now ${T.poison})`); }
+      if (f.kw.includes('stun') && T.hp > 0) { T.stun = true; L(st, 'ally', h.s, en(st, h.i), 'Stunned'); }
+    });
+    if (f.kw.includes('chain') && pos >= 0) {
+      const reach = P.dice[di] && P.dice[di].gear.includes('coil') ? 2 : 1;
+      for (let k = 1; k <= reach; k++) [al[pos - k], al[pos + k]].forEach(j => { if (j != null) hitEnemy(st, p, j, 1, false, src + ' (chain)'); });
+    }
+    P.lastTarget = tg.i;
+  } else if (f.t === 'W' || f.t === 'H') {
+    const give = (i, s2) => { if (f.t === 'W') { st.players[i].ward += v; L(st, 'ally', s2, pn(st, i), `+${v} ward`); } else healPlayer(st, i, v, s2);
+      const T = st.players[i];
+      if (f.kw.includes('cleanse') && (T.poison || T.curse)) { T.poison = 0; T.curse = false; L(st, 'ally', s2, pn(st, i), 'Cleansed'); }
+      if (f.kw.includes('regen')) { T.regen++; L(st, 'ally', s2, pn(st, i), `Regen ${T.regen}`); } };
+    give(tg.i, src);
+    if (f.kw.includes('share')) { const m = lowestMate(st, tg.i === p ? p : tg.i); if (m != null && m !== tg.i) give(m, src + ' (share)'); }
+  } else if (f.t === 'C') { const before = P.charge; P.charge = Math.min(CHARGE_MAX, P.charge + v); L(st, 'ally', src, P.name, `+${P.charge - before} ✦ (max ${CHARGE_MAX})`); }
+  if (NUMERIC(f.t) && f.t !== 'C') {
+    const half = Math.max(1, Math.floor(v / 2));
+    if (f.kw.includes('selfshield')) { P.ward += v; L(st, 'ally', src, P.name, `+${v} ward (self)`); }
+    if (f.kw.includes('selfheal')) healPlayer(st, p, half, src + ' (self-heal)');
+  }
+  if (f.kw.includes('pain')) hurtPlayer(st, p, 1, `${P.name} · Pain`, false);
+  return killed;
+}
+function applyFace(st, p, di, f0, tg, cantrip) {
+  const P = st.players[p];
+  let f = f0;
+  if (f.kw.includes('copycat') && P.lastKw.length) f = { ...f, kw: [...new Set([...f.kw, ...P.lastKw])] };
+  if (cantrip) tg = pickRandomTarget(st, p, f.t);
+  if (!tg && !['C', 'B'].includes(f.t)) return;
+  const name = dieName(P, di);
+  if (f.kw.includes('future') && !cantrip) {   // lands next turn instead, with +1
+    st.future.push({ p, di, name, f: { ...f, n: f.n * (P.roll[di] && P.roll[di].released ? 3 : 1) + 1, kw: f.kw.filter(k => k !== 'future') }, tg });
+    L(st, 'ally', `${P.name} · ${name} ${FACE[f.t].icon}${f.n}`, f.t === 'D' ? en(st, tg.i) : pn(st, tg.i), 'Lands next turn (+1)');
+  } else {
+    const v = NUMERIC(f.t) ? faceValue(st, p, di, f, tg) : 0;
+    const src = `${P.name} · ${name} ${faceIcon(f)}${NUMERIC(f.t) ? v : ''}${cantrip ? ' (cantrip)' : ''}`;
+    const killed = resolveFace(st, p, di, f, tg, src, v);
+    if (!cantrip && killed && f.kw.includes('rampage') && P.roll[di] && !P.roll[di].ramped) {
+      const d = P.roll[di]; d.ramped = true; d.used = false; d.released = false; d.fi = ri(st, 6); d.r = ++st.rollN;
+      L(st, 'ally', `${P.name} · Rampage`, name, 'Rerolled and ready again');
+    }
+  }
+  if (!cantrip) {
+    if (NUMERIC(f.t)) P.lastN = f.n;
+    P.lastKw = f.kw.filter(k => k !== 'copycat' && k !== 'windup');
+    const fi = P.roll[di] ? P.roll[di].fi : -1;
+    if (f.kw.includes('growth') && fi >= 0) P.dice[di].grow[fi]++;
+    if (f.kw.includes('singleuse') && fi >= 0) P.dice[di].spent[fi] = true;
+    if (f.kw.includes('exert')) P.dice[di].exertNext = true;
+  }
+}
+function castAbility(st, p, s) {
+  const P = st.players[p], src = `${P.name} ✦ ${SIGS[s].name}`;
+  const al = foesAlive(st);
+  if (s === 'doorkick') {
+    if (hasUp(P, 'cleared')) al.forEach(i => { st.enemies[i].ward = 0; });
+    al.forEach(i => hitEnemy(st, p, i, hasUp(P, 'ram') ? 2 : 1, true, src));
+    if (hasUp(P, 'follow')) { P.follow = true; L(st, 'ally', src, P.name, 'Next ⚔ gains Pierce and +2'); }
+  }
+  if (s === 'thunder') {
+    al.forEach(i => hitEnemy(st, p, i, 2 + P.charge, false, src));
+    if (hasUp(P, 'conduit')) { P.conduit = true; L(st, 'ally', src, P.name, '⚔ faces gain Chain this turn'); }
+    if (hasUp(P, 'eye')) { living(st).forEach(i => { st.players[i].ward += 2; }); L(st, 'ally', src, 'Squad', '+2 ward each'); }
+  }
+  if (s === 'toldyou') {
+    const c = al.filter(i => !st.enemies[i].stun).sort((a, b) => intentSize(st, st.enemies[b]) - intentSize(st, st.enemies[a]));
+    if (c.length) {
+      const e = st.enemies[c[0]], big = Math.max(0, ...e.ints.map(it => { const f = parse(it.c); return f.t === 'D' || f.t === 'X' ? intentValue(st, e, f) : 0; }));
+      e.stun = true; L(st, 'ally', src, en(st, c[0]), 'Stunned');
+      if (hasUp(P, 'called') && big) hitEnemy(st, p, c[0], big, false, src);
+    }
+    const last = P.lastDie != null ? P.roll[P.lastDie] : null;
+    if (hasUp(P, 'dejavu') && last && last.used && !last.winding) { last.used = false; L(st, 'ally', src, P.name, `${dieName(P, P.lastDie)} is ready again`); }
+  }
+  if (s === 'riotline') {
+    const w = hasUp(P, 'hold') ? 5 : 3;
+    st.taunt = p; P.ward += w; L(st, 'ally', src, P.name, `+${w} ward; enemies target ${P.name}`);
+    if (hasUp(P, 'wall')) { living(st).filter(i => i !== p).forEach(i => { st.players[i].ward += 1; }); L(st, 'ally', src, 'Squad', '+1 ward for teammates'); }
+    if (hasUp(P, 'retrib')) st.retrib = p;
+  }
+  if (s === 'zap' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp < st.enemies[b].hp ? i : b), 2, false, src);
+  if (s === 'flare' && al.length) hitEnemy(st, p, al.reduce((b, i) => st.enemies[i].hp > st.enemies[b].hp ? i : b), 3, false, src);
+  if (s === 'triage') { const lv = living(st); if (lv.length) healPlayer(st, lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b), 3, src); }
+  if (s === 'stunburst') { const c = al.filter(i => !st.enemies[i].stun); if (c.length) { const i = pick(st, c); st.enemies[i].stun = true; L(st, 'ally', src, en(st, i), 'Stunned'); } }
+}
+const intentSize = (st, e) => e.ints.reduce((s, it) => { const f = parse(it.c), n = intentValue(st, e, f); return s + (f.t === 'D' ? n * (f.kw.includes('spread') ? 2 : 1) : f.t === 'X' ? n * 3 : f.t === 'U' || f.t === 'K' ? 2 : n * 0.5); }, 0);
+// What will land on an operative when enemies act: attacks (ward blocks them) and poison (it doesn't).
+// Poison from this turn's attacks ticks in the same enemy phase, so it counts too.
+function incomingParts(st, p) {
+  let hit = 0, psn = st.players[p].poison || 0;
+  const lv = living(st), taunt = st.taunt != null && st.players[st.taunt] && !st.players[st.taunt].down ? st.taunt : null;
+  st.enemies.forEach(e => { if (e.hp <= 0 || e.stun) return; e.ints.forEach(it => {
+    const f = parse(it.c), v = intentValue(st, e, f);
+    if (f.t === 'X') hit += v;
+    if (f.t !== 'D') return;
+    const tg = taunt != null ? taunt : it.tg, pos = lv.indexOf(tg);
+    if (tg === p || (f.kw.includes('spread') && pos >= 0 && (lv[pos - 1] === p || lv[pos + 1] === p))) { hit += v; if (f.kw.includes('poison')) psn += Math.max(1, v); }
+  }); });
+  return { hit, psn };
+}
+const incomingTo = (st, p) => incomingParts(st, p).hit;
+// The enemy intent dice that will hit operative p (taunt, spread and everyone-attacks included), as "enemy:intent" keys.
+function attackersOf(st, p) {
+  const out = [], lv = living(st), taunt = st.taunt != null && st.players[st.taunt] && !st.players[st.taunt].down ? st.taunt : null;
+  st.enemies.forEach((e, i) => { if (e.hp <= 0 || e.stun) return; e.ints.forEach((it, k) => {
+    const f = parse(it.c);
+    if (f.t === 'X' || ((f.t === 'D' || f.t === 'K') && f.kw.includes('all'))) return out.push(i + ':' + k);
+    if (f.t !== 'D' && f.t !== 'K') return;
+    const tg = taunt != null && f.t === 'D' ? taunt : it.tg, pos = lv.indexOf(tg);
+    if (tg === p || (f.kw.includes('spread') && pos >= 0 && (lv[pos - 1] === p || lv[pos + 1] === p))) out.push(i + ':' + k);
+  }); });
+  return out;
+}
+// Saves: a teammate's bar said they'd go down, and this action took that away.
+const isDoomed = (st, q) => { const T = st.players[q], inc = incomingParts(st, q); return Math.max(0, inc.hit - T.ward) + inc.psn >= T.hp; };
+const doomedMates = (st, p) => living(st).filter(q => q !== p && isDoomed(st, q));
+function noteSaves(st, p, doomed) { doomed.forEach(q => { if (!st.players[q].down && !isDoomed(st, q)) L(st, 'ally', st.players[p].name, pn(st, q), 'Saved from going down'); }); }
+// What a damage face would do if aimed at enemy tgi, per enemy hit: { i: { dmg, psn, stun } }.
+function previewHits(st, p, di, f0, tgi) {
+  const P = st.players[p], out = {}, al = foesAlive(st), pos = al.indexOf(tgi);
+  const f = f0.kw.includes('copycat') && P.lastKw.length ? { ...f0, kw: [...new Set([...f0.kw, ...P.lastKw])] } : f0;
+  const add = (i, v, pierce, full) => {
+    const e = st.enemies[i], o = out[i] || (out[i] = { dmg: 0, psn: 0, stun: false });
+    o.dmg += Math.max(0, v - (pierce ? 0 : e.ward));
+    if (full && f.kw.includes('poison')) o.psn += Math.max(1, v);
+    if (full && f.kw.includes('stun')) o.stun = true;
+  };
+  const val = i => f.kw.includes('future') ? f.n + 1 : faceValue(st, p, di, f, { k:'e', i });
+  const pierce = f.kw.includes('pierce');
+  add(tgi, val(tgi), pierce, true);
+  if (f.kw.includes('cleave') && pos >= 0) [al[pos - 1], al[pos + 1]].forEach(j => { if (j != null) add(j, val(j), pierce, true); });
+  if (f.kw.includes('chain') && pos >= 0) { const reach = P.dice[di].gear.includes('coil') ? 2 : 1; for (let k = 1; k <= reach; k++) [al[pos - k], al[pos + k]].forEach(j => { if (j != null) add(j, 1, false, false); }); }
+  return out;
+}
+function validTarget(st, t, tg) {
+  if (!tg) return false;
+  if (t === 'D') return tg.k === 'e' && st.enemies[tg.i] && st.enemies[tg.i].hp > 0;
+  if (t === 'W' || t === 'H') { const P = st.players[tg.i]; return tg.k === 'p' && P && !P.gone && !P.down; }
+  return false;
+}
+const needsTarget = t => !['C', 'B'].includes(t);
+const windsUp = (P, di, f) => f.kw.includes('windup') && !(P.roll[di] && P.roll[di].released);
+// Back to rolling is allowed while rerolls remain and nothing has been used yet this turn.
+const canUndo = P => P.step === 'use' && P.rerolls > 0 && !P.roll.some(d => d.used) && !(P.cast || []).length;
+function abilityUsable(st, p, s) {
+  if (s === 'riotline' || s === 'triage') return true;
+  return foesAlive(st).length > 0;
+}
+// After anything that can end the fight or down someone.
+function checkState(st) {
+  if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; return true; }
+  if (!foesAlive(st).length) { floorCleared(st); return true; }
+  if (living(st).every(i => st.players[i].step === 'ready')) { enemyPhase(st); return true; }
+  return false;
+}
+
+function act(st, p, a) {
+  const P = st.players[p]; if (!P) return 'Unknown player';
+  switch (a.t) {
+    case 'class': {
+      if (st.phase !== 'lobby') return 'The run already started';
+      if (!CLASSES[a.cls]) return 'bad';
+      if (st.players.some((x, i) => i !== p && x.cls === a.cls)) return 'Another operative already took that class';
+      P.cls = a.cls; return null;
+    }
+    case 'start': {
+      if (st.phase !== 'lobby' || p !== 0) return 'Only the host can start';
+      if (st.players.some(x => !x.cls)) return 'Everyone needs a class first';
+      st.players.forEach((x, i) => setupOperative(st, i));
+      st.floor = 1; startFloor(st); return null;
+    }
+    case 'keep': case 'reroll': case 'done': case 'undo': case 'use': case 'cast': case 'ready': case 'unready': {
+      if (st.phase !== 'battle') return 'Not in a fight';
+      if (P.down || P.gone) return 'You are down';
+      if (a.t === 'keep') {
+        if (P.step !== 'roll' || !P.roll[a.i]) return 'bad';
+        const f = effFace(st, p, a.i, P.roll[a.i].fi);
+        if (f.kw.includes('sticky') && P.roll[a.i].k) return 'That face is Sticky';
+        if (P.roll[a.i].winding || P.roll[a.i].released) return 'That die is wound up';
+        P.roll[a.i].k = !P.roll[a.i].k;
+        if (P.roll.every(d => d.k)) P.step = 'use';   // all kept: same as Done rolling (Undo goes back)
+        return null;
+      }
+      if (a.t === 'undo') { if (!canUndo(P)) return 'Nothing to undo'; P.step = 'roll'; return null; }
+      if (a.t === 'reroll') {
+        if (P.step !== 'roll' || P.rerolls <= 0) return 'No rerolls left';
+        P.rerolls--;
+        P.roll.forEach((d, di) => { if (!d.k) rollDie(st, p, di); });
+        trimLog(st);
+        if (P.rerolls === 0 || P.roll.every(d => d.k)) P.step = 'use';
+        checkState(st); return null;
+      }
+      if (a.t === 'done') { if (P.step !== 'roll') return 'bad'; P.step = 'use'; return null; }
+      if (a.t === 'unready') { if (P.step !== 'ready') return 'bad'; P.step = 'use'; return null; }
+      if (P.step !== 'use') return P.step === 'roll' ? 'Finish rolling first' : 'You are already ready';
+      if (a.t === 'use') {
+        const d = P.roll[a.i]; if (!d || d.used) return 'That die is already used';
+        const f = effFace(st, p, a.i, d.fi);
+        if (f.t === 'B') return 'Blank';
+        if (windsUp(P, a.i, f)) {
+          d.used = true; P.dice[a.i].wind = { fi: d.fi, wait: 1 };
+          L(st, 'ally', `${P.name} · ${dieName(P, a.i)} ${FACE[f.t].icon}${f.n}`, P.name, 'Winding up: back in 2 turns at triple');
+          trimLog(st); checkState(st); return null;
+        }
+        if (needsTarget(f.t) && !validTarget(st, f.t, a.tg)) return 'Invalid target';
+        d.used = true;
+        const doomed = doomedMates(st, p);
+        applyFace(st, p, a.i, f, needsTarget(f.t) ? a.tg : null, false);
+        if (f.t === 'D') P.follow = false;
+        P.lastDie = a.i;
+        noteSaves(st, p, doomed);
+        trimLog(st); checkState(st); return null;
+      }
+      if (a.t === 'cast') {
+        const own = CLASSES[P.cls].sig === a.s, gear = abilitiesOf(P).includes(a.s);
+        if (!own && !gear) return 'bad';
+        if ((P.cast || []).includes(a.s)) return 'Already used this turn';
+        if (P.charge < sigCost(st, p, a.s)) return 'Not enough charge';
+        if (!abilityUsable(st, p, a.s)) return 'Nothing to use it on';
+        const doomed = doomedMates(st, p);
+        P.charge -= sigCost(st, p, a.s); P.cast = [...(P.cast || []), a.s];
+        castAbility(st, p, a.s); noteSaves(st, p, doomed); trimLog(st); checkState(st); return null;
+      }
+      if (a.t === 'ready') { P.step = 'ready'; checkState(st); return null; }
+      return 'bad';
+    }
+    case 'move': {   // between floors: move an item to another die, swap two items, or reorder a die's items
+      if (st.phase !== 'upgrade') return 'Items can only be moved between floors';
+      const from = P.dice[a.d], to = P.dice[a.to]; if (!from || !to || !from.gear[a.g]) return 'bad';
+      if (a.d === a.to) { const j = a.pos; if (!(j >= 0 && j < from.gear.length)) return 'bad'; const [it] = from.gear.splice(a.g, 1); from.gear.splice(j, 0, it); return null; }
+      if (a.swap != null) { if (!to.gear[a.swap]) return 'bad'; const x = from.gear[a.g]; from.gear[a.g] = to.gear[a.swap]; to.gear[a.swap] = x; return null; }
+      if (to.gear.length >= RULES.gearPerDie) return 'That die is full';
+      to.gear.push(from.gear.splice(a.g, 1)[0]); return null;
+    }
+    case 'take': {
+      if (st.phase !== 'upgrade' || P.picked) return 'Not picking now';
+      const o = P.offers[a.i]; if (!o) return 'bad';
+      if (o.k === 'plus') {
+        const d = P.dice[o.d]; if (!d || d.plus != null || !(a.v === 0 || a.v === 1)) return 'Pick one of the two upgrades';
+        d.plus = a.v; P.bonusHp = (P.bonusHp || 0) + RULES.hpPerUpgrade; P.hp += RULES.hpPerUpgrade;
+        if (needsSigUp(st, P)) return null;   // floor 5: the ability upgrade comes next
+      } else if (o.k === 'item') {
+        const d = P.dice[a.d]; if (!d) return 'Pick a die';
+        if (d.gear.length >= RULES.gearPerDie) { if (!(a.r >= 0 && a.r < d.gear.length)) return 'Pick an item to replace'; d.gear.splice(a.r, 1); }
+        d.gear.push(o.id); P.took = a.i;
+      }
+      P.picked = true;
+      return null;
+    }
+    case 'sigup': {
+      if (st.phase !== 'upgrade' || !needsSigUp(st, P)) return 'Not picking an ability upgrade';
+      const o = P.offers[0]; if (o && o.k === 'plus' && P.dice[o.d].plus == null) return 'Pick your die upgrade first';
+      if (!SIG_UPS[CLASSES[P.cls].sig][a.id]) return 'bad';
+      P.sigUp = a.id; P.picked = true;
+      return null;
+    }
+    case 'cont': {   // ready for the next floor, once your pick is in
+      if (st.phase !== 'upgrade') return 'Not between floors';
+      if (!P.picked) return 'Pick your upgrade first';
+      P.ready = a.on !== false;
+      nextFloorIfReady(st);
+      return null;
+    }
+    case 'restart': {
+      if (st.phase !== 'over' || p !== 0) return 'Only the host can restart';
+      st.phase = 'lobby'; st.floor = 0; st.result = null; st.enemies = []; st.log = [];
+      st.players = st.players.filter(x => !x.gone);
+      return null;
+    }
+  }
+  return 'Unknown action';
+}
+
+function enemyPhase(st) {
+  st.players.forEach(P => P.cast = []);
+  st.enemies.forEach(e => { e.ward = 0; });
+  // empower and wards first, so they land before attacks
+  st.enemies.forEach((e, i) => {
+    if (e.hp <= 0) return;
+    if (ENEMIES[e.type].selfWard) e.ward += ENEMIES[e.type].selfWard;
+    if (e.stun) return;
+    e.ints.forEach(it => {
+      const f = parse(it.c);
+      if (f.t === 'P') { const T = st.enemies[it.tg] && st.enemies[it.tg].hp > 0 ? st.enemies[it.tg] : e; T.buff += f.n; L(st, 'foe', `${en(st, i)} 📈${f.n}`, en(st, st.enemies.indexOf(T)), `+${f.n} to attacks`); }
+      if (f.t === 'W') {
+        const n = intentValue(st, e, f), targets = f.kw.includes('all') ? foesAlive(st) : [st.enemies[it.tg] && st.enemies[it.tg].hp > 0 ? it.tg : i];
+        targets.forEach(j => { st.enemies[j].ward += n; });
+        L(st, 'foe', `${en(st, i)} 🛡${n}`, f.kw.includes('all') ? 'All allies' : en(st, targets[0]), `+${n} ward`);
+      }
+    });
+  });
+  st.enemies.forEach((e, i) => {
+    if (e.hp <= 0) return;
+    if (e.stun) { L(st, 'foe', en(st, i), '—', 'Stunned, does nothing'); return; }
+    e.ints.forEach(it => {
+      const f = parse(it.c), n = intentValue(st, e, f);
+      if (f.t === 'D') {
+        let tg = st.taunt != null && !st.players[st.taunt].down ? st.taunt : it.tg;
+        if (tg == null || st.players[tg].gone || st.players[tg].down) { const lv = living(st); tg = lv.length ? pick(st, lv) : null; }
+        if (tg == null) return;
+        const hit = [tg];
+        if (f.kw.includes('spread')) { const lv = living(st), pos = lv.indexOf(tg); [lv[pos - 1], lv[pos + 1]].forEach(j => { if (j != null) hit.push(j); }); }
+        hit.forEach((pi, k) => {
+          hurtPlayer(st, pi, n, `${en(st, i)} ⚔${n}${k ? ' (spread)' : ''}`, true);
+          if (st.retrib === pi && e.hp > 0) hitEnemy(st, pi, i, 1, true, `${st.players[pi].name} · Retribution`);
+          if (f.kw.includes('poison') && !st.players[pi].down) { st.players[pi].poison += Math.max(1, n); L(st, 'foe', en(st, i), pn(st, pi), `Poison +${Math.max(1, n)} (now ${st.players[pi].poison})`); }
+        });
+        if (f.kw.includes('growth')) e.grow++;
+      } else if (f.t === 'X') { living(st).forEach(pi => hurtPlayer(st, pi, n, `${en(st, i)} 💥${n}`, true)); if (f.kw.includes('growth')) e.grow++; }
+      else if (f.t === 'H') { const tg = st.enemies[it.tg] && st.enemies[it.tg].hp > 0 ? it.tg : i, T = st.enemies[tg], before = T.hp; T.hp = Math.min(T.mx, T.hp + n); L(st, 'foe', `${en(st, i)} ✚${n}`, en(st, tg), `${before} → ${T.hp}`); }
+      else if (f.t === 'U') { if (foesAlive(st).length < 7) { st.enemies.push(makeEnemy(st, 'intern')); L(st, 'foe', `${en(st, i)} 📎`, 'Intern Familiar', 'Summoned'); } }
+      else if (f.t === 'K') {
+        const targets = f.kw.includes('all') ? living(st) : [it.tg != null && !st.players[it.tg].down ? it.tg : null].filter(x => x != null);
+        targets.forEach(pi => { st.players[pi].curse = true; L(st, 'foe', `${en(st, i)} ⛓`, pn(st, pi), 'Cursed: highest face blank next turn'); });
+      }
+    });
+  });
+  st.enemies.forEach((e, i) => { if (e.hp > 0 && e.poison) { const before = e.hp; e.hp = Math.max(0, e.hp - e.poison); L(st, 'ally', 'Poison', en(st, i), `${before} → ${e.hp}${e.hp === 0 ? ' ✖' : ''}`); } });
+  st.players.forEach((P, p) => { if (!P.gone && !P.down && P.poison) hurtPlayer(st, p, P.poison, 'Poison', false); });
+  st.players.forEach(P => { P.ward = 0; P.usedLast = P.roll.map(d => d.used && !d.winding); });
+  st.resolveN++;
+  if (!living(st).length) { st.phase = 'over'; st.result = 'lost'; return; }
+  if (!foesAlive(st).length) { floorCleared(st); return; }
+  startTurn(st);
+}
+
+// An item fits if it changes at least one of the operative's faces (abilities always fit).
+function gearFits(P, g) {
+  const G = ITEMS[g]; if (G.ability) return true;
+  if (G.coil) return P.dice.some((d, di) => facesOf(P, di).some(c => parse(c).kw.includes('chain')));
+  return P.dice.some((d, di) => { const base = facesOf(P, di); return base.some((c, fi) => { const f = parse(c), before = JSON.stringify(f); G.fx(f, fi, base); return JSON.stringify(f) !== before; }); });
+}
+const needsSigUp = (st, P) => st.floor === RULES.abilityFloor && !P.sigUp;
+function nextFloorIfReady(st) { if (st.players.every(x => x.gone || (x.picked && x.ready))) { st.floor++; startFloor(st); } }
+function floorCleared(st) {
+  st.resolveN++;
+  if (st.floor >= RULES.floors) { st.phase = 'over'; st.result = 'won'; return; }
+  st.phase = 'upgrade';
+  st.players.forEach((P, p) => {
+    if (P.gone) { P.picked = true; return; }
+    const mx = maxHp(st, p);
+    if (P.down) { P.down = false; P.hp = Math.ceil(mx / 2); }
+    else P.hp = Math.min(mx, P.hp + Math.ceil((mx - P.hp) / 2));
+    P.picked = false; P.ready = false; P.step = 'wait'; P.roll = []; P.ward = 0; P.cast = []; P.poison = 0; P.curse = false; P.regen = 0;
+    const free = P.dice.map((d, i) => i).filter(i => P.dice[i].plus == null);
+    if (UPGRADE_FLOORS.includes(st.floor) && free.length) P.offers = [{ k:'plus', d: pick(st, free) }];   // the die is random; you pick which upgrade
+    else {
+      const pool = Object.keys(ITEMS).filter(id => ITEMS[id].floor === st.floor);
+      const fits = shuffle(st, pool.filter(id => gearFits(P, id))), rest = shuffle(st, pool.filter(id => !gearFits(P, id)));
+      P.offers = [...fits, ...rest].slice(0, 3).map(id => ({ k:'item', id }));
+    }
+    if (P.away) {   // an absent operative takes the first offer so the squad isn't held up
+      const o = P.offers[0];
+      if (o.k === 'plus') { P.dice[o.d].plus = 0; P.bonusHp = (P.bonusHp || 0) + RULES.hpPerUpgrade; P.hp += RULES.hpPerUpgrade; }
+      else { const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0); if (P.dice[d].gear.length < RULES.gearPerDie) P.dice[d].gear.push(o.id); }
+      if (needsSigUp(st, P)) P.sigUp = Object.keys(SIG_UPS[CLASSES[P.cls].sig])[0];
+      P.picked = true; P.ready = true;
+    }
+  });
+  nextFloorIfReady(st);
+}
+
+// ================= TEST BOT (dev harness and auto-play) =================
+function botNext(st, p) {
+  const P = st.players[p]; if (!P) return null;
+  if (st.phase === 'upgrade' && P.picked && !P.ready && !P.gone) return { t:'cont' };
+  if (st.phase === 'upgrade' && !P.picked) {
+    const o = P.offers[0];
+    if (o.k === 'plus' && P.dice[o.d].plus != null) { const ids = Object.keys(SIG_UPS[CLASSES[P.cls].sig]); return { t:'sigup', id: ids[(p + st.rollN) % ids.length] }; }
+    if (o.k === 'plus') return { t:'take', i: 0, v: (p + st.floor) % 2 };
+    const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0);
+    return { t:'take', i: 0, d, r: P.dice[d].gear.length >= RULES.gearPerDie ? 0 : undefined };
+  }
+  if (st.phase !== 'battle' || P.down || P.gone) return null;
+  if (P.step === 'roll') {
+    const want = P.roll.map((d, di) => { const f = effFace(st, p, di, d.fi); return f.t !== 'B' && f.n >= 2; });
+    const tog = P.roll.findIndex((d, i) => d.k !== want[i] && !(d.k && effFace(st, p, i, d.fi).kw.includes('sticky')));
+    if (tog >= 0) return { t:'keep', i: tog };
+    if (P.rerolls > 0 && want.includes(false)) return { t:'reroll' };
+    return { t:'done' };
+  }
+  if (P.step === 'use') {
+    const al = foesAlive(st), lv = living(st);
+    const order = ['W', 'D', 'H', 'C'];
+    let best = null;
+    P.roll.forEach((d, di) => { if (d.used) return; const f = effFace(st, p, di, d.fi); if (f.t === 'B') return; const r = order.indexOf(f.t) + (f.kw.includes('stun') ? -2 : 0); if (best == null || r < best.r) best = { di, f, r }; });
+    if (best) {
+      const t = best.f.t; let tg = null;
+      if (t === 'D') tg = { k:'e', i: best.f.kw.includes('stun') ? al.reduce((b, i) => intentSize(st, st.enemies[i]) > intentSize(st, st.enemies[b]) ? i : b, al[0]) : al.reduce((b, i) => st.enemies[i].hp < st.enemies[b].hp ? i : b, al[0]) };
+      else if (t === 'W') tg = { k:'p', i: lv.reduce((b, i) => incomingTo(st, i) - st.players[i].ward > incomingTo(st, b) - st.players[b].ward ? i : b, p) };
+      else if (t === 'H') tg = { k:'p', i: lv.reduce((b, i) => (maxHp(st, i) - st.players[i].hp) > (maxHp(st, b) - st.players[b].hp) ? i : b, p) };
+      return { t:'use', i: best.di, tg };
+    }
+    for (const s of [CLASSES[P.cls].sig, ...abilitiesOf(P)]) if (!(P.cast || []).includes(s) && P.charge >= sigCost(st, p, s) && abilityUsable(st, p, s)) return { t:'cast', s };
+    return { t:'ready' };
+  }
+  return null;
+}
+
+// ================= ART =================
+// Hand-drawn vector art. Die-face icons use currentColor so each face keeps its type color;
+// portraits use the game palette (navy kevlar, hazard amber, arcane violet, tactical teal).
+const BANG = '<path d="M21 1.5v5.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="21" cy="10" r="1.4" fill="currentColor"/>';
+const BULLET = (x, y, s, r) => `<g transform="translate(${x} ${y}) rotate(${r || 0}) scale(${s})"><path d="M-3 7V-1Q-3 -6 0 -8Q3 -6 3 -1V7Z" fill="currentColor"/><rect x="-3.6" y="7.5" width="7.2" height="2.6" rx=".6" fill="currentColor" opacity=".75"/></g>`;
+const SLUG = (x, y, s, r) => `<g transform="translate(${x} ${y}) rotate(${r || 0}) scale(${s})"><path d="M-1.8 7V-3L0 -9L1.8 -3V7Z" fill="currentColor"/><rect x="-2.6" y="7.5" width="5.2" height="2.4" rx=".5" fill="currentColor" opacity=".75"/></g>`;
+const BOLT = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M1 -10L-7 1h6l-2 9l9 -12h-6z" fill="currentColor"/></g>`;
+// Full heart in the top-right corner = "target at full HP" (Engage).
+const HEART = '<path d="M18 12.5l-4-3.8a2.3 2.3 0 0 1 4-2.6a2.3 2.3 0 0 1 4 2.6z" fill="currentColor"/><path d="M15.2 7.2l1.2 1.2" stroke="#fff" stroke-width="1" opacity=".7"/>';
+const SHIELD = '<path d="M12 2L20 5V11C20 16 16.5 20 12 22C7.5 20 4 16 4 11V5Z" fill="currentColor"/>';
+const ART = {
+  // base faces
+  D: BULLET(12, 11.5, 1.2),                                              // Hex Round
+  R: SLUG(12, 11.5, 1.15) + '<path d="M5 20l2-3M19 20l-2-3M4 15l2-1M20 15l-2-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>',   // armor-piercing round
+  A: BOLT(12, 12, 1),
+  W: SHIELD + '<path d="M12 6l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#fff" opacity=".55"/>',
+  H: '<rect x="3" y="5" width="18" height="15" rx="3" fill="currentColor"/><path d="M12 8v9M7.5 12.5h9" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M9 5V3.5h6V5" stroke="currentColor" stroke-width="2" fill="none"/>',
+  S: '<path d="M12 1l2 7 7-3-5 6 7 3-8 1 2 7-5-5-5 5 2-7-8-1 7-3-5-6 7 3z" fill="currentColor"/><circle cx="12" cy="12" r="2.6" fill="#fff" opacity=".7"/>',
+  E: '<path d="M2 12C5 6 19 6 22 12C19 18 5 18 2 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/><circle cx="13.2" cy="10.8" r="1.1" fill="#fff"/>',
+  C: '<path d="M12 2L19 12L12 22L5 12Z" fill="currentColor"/><path d="M12 6v12M8.5 12h7" stroke="#fff" stroke-width="1.4" opacity=".6"/>',
+  B: '<path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>',
+  U: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7a5 5 0 1 1-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>',
+  X: '<circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".6"/>',
+  // built-in pairings: each has its own symbol
+  'D:cleave':  BULLET(12, 13, .7) + BULLET(6.5, 14, .62, -28) + BULLET(17.5, 14, .62, 28),                     // Scatter Round
+  'D:engage':  BULLET(8.5, 13, .95) + HEART,   // Opening Round: double vs a full-HP target
+  'D:cruel':   '<path d="M3 21L14 10L21 3L18.5 12L9 21Z" fill="currentColor"/><path d="M14 10l1.4 1.4M12 12l1.4 1.4M10 14l1.4 1.4" stroke="#fff" stroke-width="1.2" opacity=".7"/><path d="M3 21l3-3" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',   // Serrated Edge
+  'D:steel':   '<path d="M5 20L16 9" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/><path d="M14 5l5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M17 3l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',   // Riot Baton
+  'D:patient': '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/>',   // Aimed Round
+  'D:echo':    '<g opacity=".45">' + BULLET(8.5, 12, .85) + '</g>' + BULLET(15, 12, .85),                         // Echo Round
+  'R:engage':  SLUG(8.5, 13, .95) + HEART,     // Breaching Slug: double vs a full-HP target
+  'R:cleave':  SLUG(12, 13, .75) + SLUG(6.5, 14, .65, -28) + SLUG(17.5, 14, .65, 28),                            // Flechette Spread
+  'A:charged': BOLT(10, 12, .9) + '<rect x="16" y="9" width="6" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="18" y="7.5" width="2" height="1.6" fill="currentColor"/><rect x="17.5" y="13" width="3" height="4.5" fill="currentColor"/>',   // Charged Arc
+  'A:cantrip': BOLT(10.5, 12.5, .9) + BANG,                                                                       // Static Arc
+  'A:cleave':  BOLT(7.5, 11, .7) + BOLT(16.5, 13, .7) + '<path d="M9 13l6-2" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 1.5"/>',   // Chain Lightning
+  'W:selfshield': SHIELD + '<circle cx="12" cy="9.5" r="2.4" fill="#fff" opacity=".75"/><path d="M8 17c.8-2.6 2.2-3.8 4-3.8s3.2 1.2 4 3.8" fill="#fff" opacity=".75"/>',   // Body Ward
+  'W:steel':   '<rect x="5" y="2" width="14" height="20" rx="3" fill="currentColor"/><rect x="7.5" y="6" width="9" height="2.6" rx="1" fill="#fff" opacity=".7"/><path d="M12 11v8" stroke="#fff" stroke-width="1.6" opacity=".5"/>',   // Riot Shield
+  'W:pristine': SHIELD + '<path d="M12 6.5l1 3.5 3.5 1-3.5 1-1 3.5-1-3.5-3.5-1 3.5-1z" fill="#fff" opacity=".8"/>',   // Pristine Ward
+  'S:cantrip': '<g transform="translate(-1.5 1) scale(.92)"><path d="M12 1l2 7 7-3-5 6 7 3-8 1 2 7-5-5-5 5 2-7-8-1 7-3-5-6 7 3z" fill="currentColor"/></g>' + BANG,   // Snap Flash
+  'E:cantrip': '<g transform="translate(-1.5 1) scale(.9)"><path d="M2 12C5 6 19 6 22 12C19 18 5 18 2 12Z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.6" fill="currentColor"/></g>' + BANG,   // Flash Vision
+  'C:cantrip': '<g transform="translate(-1.5 1) scale(.9)"><path d="M12 2L19 12L12 22L5 12Z" fill="currentColor"/></g>' + BANG,   // Spark Rune
+};
+const svgIcon = key => `<svg viewBox="0 0 24 24" aria-hidden="true">${ART[key] || ART.B}</svg>`;
+
+// Portraits (48×48). Shared bits: skin, kevlar navy, amber trim, arcane violet glow.
+const PORTRAIT = {
+  breach: '<rect width="48" height="48" rx="10" fill="#1f2a3d"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2c3a55"/><path d="M14 40h20v8H14z" fill="#3a4b6e"/><rect x="18" y="38" width="12" height="4" rx="1" fill="#f0b23c"/><circle cx="24" cy="24" r="9" fill="#d9a77c"/><path d="M13 22c0-8 5-12 11-12s11 4 11 12v2H13z" fill="#26324a"/><rect x="14" y="21" width="20" height="5" rx="2.5" fill="#ff8a3c"/><path d="M35 15l6-6M37 19l7-2" stroke="#ff8a3c" stroke-width="2" stroke-linecap="round"/>',
+  storm: '<rect width="48" height="48" rx="10" fill="#1a2740"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#22385c"/><circle cx="24" cy="26" r="8.5" fill="#e0b48c"/><path d="M10 22L24 1l14 21z" fill="#18243a"/><rect x="9" y="20" width="30" height="4" rx="2" fill="#2c4470"/><path d="M15 26a9 9 0 0 0 4 6" stroke="#9be7ff" stroke-width="2" fill="none"/><circle cx="19" cy="32.5" r="1.4" fill="#9be7ff"/><path d="M40 28l-5 7h4l-2 6 6-8h-4z" fill="#9be7ff"/>',
+  precog: '<rect width="48" height="48" rx="10" fill="#211a35"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a2b5c"/><path d="M10 34C10 16 16 8 24 8s14 8 14 26z" fill="#4b2f6b"/><ellipse cx="24" cy="27" rx="8" ry="9" fill="#120d20"/><circle cx="20.5" cy="27" r="1.8" fill="#7fe0d0"/><circle cx="27.5" cy="27" r="1.8" fill="#7fe0d0"/><path d="M19 18.5C21 16 27 16 29 18.5C27 21 21 21 19 18.5Z" fill="#7fe0d0"/><circle cx="24" cy="18.5" r="1.2" fill="#120d20"/>',
+  riot: '<rect width="48" height="48" rx="10" fill="#1f2a3d"/><ellipse cx="24" cy="7" rx="10" ry="2.6" fill="none" stroke="#f0b23c" stroke-width="2"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2c3a55"/><circle cx="24" cy="25" r="9" fill="#c9926a"/><path d="M13 25c0-9 5-14 11-14s11 5 11 14v1H13z" fill="#3b4a66"/><path d="M14 23h20v8c0 2-2 3-4 3H18c-2 0-4-1-4-3z" fill="#7fb2ff" opacity=".45"/><path d="M32 30h10v12c0 3-2 5-5 6-3-1-5-3-5-6z" fill="#5aa9ff"/><path d="M37 33v10" stroke="#fff" stroke-width="1.6" opacity=".6"/>',
+};
+const ENEMY_ART = {
+  guard: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a2a40"/><circle cx="24" cy="26" r="9" fill="#c9a07a"/><path d="M12 21c2-7 7-10 12-10s10 3 12 10z" fill="#232b3d"/><rect x="11" y="19" width="26" height="4" rx="2" fill="#151b28"/><path d="M24 12l3 2v3l-3 2-3-2v-3z" fill="#f0b23c"/><rect x="17" y="25" width="14" height="3.4" rx="1.7" fill="#151b28"/>',
+  drone: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M10 14h10M28 14h10M10 34h10M28 34h10" stroke="#8e9ab3" stroke-width="3" stroke-linecap="round"/><path d="M15 14l6 6M33 14l-6 6M15 34l6-6M33 34l-6-6" stroke="#5a6680" stroke-width="2.4"/><rect x="17" y="18" width="14" height="12" rx="4" fill="#3d4a63"/><path d="M24 20l4 1.5v3c0 2-2 3.4-4 4-2-.6-4-2-4-4v-3z" fill="#7fb2ff"/>',
+  necro: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#2d3a2a"/><path d="M13 24c0-8 5-13 11-13s11 5 11 13c0 5-3 9-11 9s-11-4-11-9z" fill="#4a5a44"/><circle cx="19" cy="22" r="3.6" fill="#9be37b"/><circle cx="29" cy="22" r="3.6" fill="#9be37b"/><circle cx="19" cy="22" r="1.6" fill="#1b2318"/><circle cx="29" cy="22" r="1.6" fill="#1b2318"/><rect x="20" y="28" width="8" height="7" rx="2" fill="#2a3326"/><path d="M21 31h6M21 33h6" stroke="#5a6a52" stroke-width="1"/>',
+  sniper: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#352336"/><path d="M11 34C11 17 17 9 24 9s13 8 13 25z" fill="#4a2e3a"/><ellipse cx="24" cy="26" rx="7.5" ry="8.5" fill="#160d12"/><circle cx="27" cy="25" r="4.4" fill="none" stroke="#ff6b5b" stroke-width="2"/><circle cx="27" cy="25" r="1.6" fill="#ff6b5b"/><path d="M31 25h9" stroke="#3d2a33" stroke-width="3"/>',
+  heavy: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><path d="M3 48c1-12 9-18 21-18s20 6 21 18z" fill="#4a5568"/><path d="M6 36h12M30 36h12" stroke="#2d3748" stroke-width="5" stroke-linecap="round"/><path d="M13 26c0-10 5-16 11-16s11 6 11 16v4H13z" fill="#5f6b80"/><rect x="16" y="20" width="16" height="5" rx="2" fill="#ff6b5b"/><path d="M18 30h12" stroke="#2d3748" stroke-width="2"/>',
+  intern: '<rect width="48" height="48" rx="10" fill="#2a1a1e"/><ellipse cx="25" cy="31" rx="12" ry="9" fill="#8a7a72"/><circle cx="15" cy="24" r="7" fill="#9a8a80"/><circle cx="12" cy="17" r="3.4" fill="#c9a3a0"/><circle cx="18" cy="17" r="3.4" fill="#c9a3a0"/><circle cx="13" cy="24" r="1.3" fill="#111"/><path d="M37 32c6 0 7 6 3 8" stroke="#c9a3a0" stroke-width="2" fill="none"/><path d="M16 30l4 8" stroke="#5aa9ff" stroke-width="1.6"/><rect x="18" y="37" width="6" height="5" rx="1" fill="#e4e8f0"/>',
+  vex: '<rect width="48" height="48" rx="10" fill="#2a1418"/><path d="M6 48c2-11 9-15 18-15s16 4 18 15z" fill="#1d1d2b"/><path d="M21 33l3 12 3-12z" fill="#ff6b5b"/><path d="M18 33l6 6 6-6" fill="#e4e8f0"/><circle cx="24" cy="23" r="9" fill="#cfd4dc"/><path d="M15 21c0-7 4-11 9-11s9 4 9 11l-4-4-5 3-5-3z" fill="#111622"/><circle cx="20.5" cy="23" r="1.4" fill="#ff3b3b"/><circle cx="27.5" cy="23" r="1.4" fill="#ff3b3b"/><path d="M21 28h6M22 28v2M26 28v2" stroke="#7a1a1a" stroke-width="1.2"/>',
+  grieve: '<rect width="48" height="48" rx="10" fill="#2a1418"/><path d="M6 48c2-11 9-15 18-15s16 4 18 15z" fill="#141826"/><path d="M21 33l3 12 3-12z" fill="#c77dff"/><path d="M14 12l3-6 4 4 3-6 3 6 4-4 3 6z" fill="#f0b23c"/><path d="M15 23c0-7 4-11 9-11s9 4 9 11c0 4-2 7-4 8v3H19v-3c-2-1-4-4-4-8z" fill="#e8e2d0"/><ellipse cx="20" cy="23" rx="2.4" ry="3" fill="#1a1426"/><ellipse cx="28" cy="23" rx="2.4" ry="3" fill="#1a1426"/><circle cx="20" cy="23" r="1" fill="#c77dff"/><circle cx="28" cy="23" r="1" fill="#c77dff"/><path d="M21 31v2M24 31v2M27 31v2" stroke="#1a1426" stroke-width="1.2"/>',
+};
+// First-draft pairings: one symbol per built-in primary + keyword combination.
+const CLOCK = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><circle r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M0 -3V0l2 1.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>`;
+const CROSS = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-2.5 -8h5v5.5h5.5v5h-5.5v5.5h-5v-5.5h-5.5v-5h5.5z" fill="currentColor"/></g>`;
+const MINI_SHIELD = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 -9L7 -6.5V-1C7 3.5 4 7 0 8.8C-4 7 -7 3.5 -7 -1V-6.5Z" fill="currentColor"/></g>`;
+const DROP = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 -6C2 -3 4 -1 4 1.5A4 4 0 0 1 -4 1.5C-4 -1 -2 -3 0 -6Z" fill="#fff" opacity=".85"/></g>`;
+const LEAF = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-4 4C-4 -2 0 -5 5 -5C5 0 2 4 -4 4ZM-4 4L1 -1" fill="#fff" stroke="#fff" stroke-width=".8" opacity=".85"/></g>`;
+Object.assign(ART, {
+  'D:pierce':  ART.R,
+  'D:chain':   ART.A,
+  'D:charged': BULLET(9, 12, .95) + '<rect x="15" y="8" width="6" height="11" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="17" y="6.5" width="2" height="1.6" fill="currentColor"/><rect x="16.5" y="12.5" width="3" height="5" fill="currentColor"/>',
+  'D:poison':  BULLET(9, 12.5, .95) + '<path d="M18 5c1.6 2.4 3 4 3 5.8a3 3 0 0 1-6 0c0-1.8 1.4-3.4 3-5.8z" fill="currentColor"/><path d="M18 18v3M16 20.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  'D:future':  BULLET(8.5, 13, .9) + CLOCK(17.5, 7.5, .9),
+  'D:copycat': '<g opacity=".5">' + BULLET(14.5, 10.5, .8) + '</g>' + BULLET(9.5, 13.5, .8),
+  'D:focus':   BULLET(12, 12, .85) + '<path d="M3 7V3h4M21 7V3h-4M3 17v4h4M21 17v4h-4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  'W:share':   MINI_SHIELD(8, 12, 1) + MINI_SHIELD(16.5, 12.5, .85),
+  'W:cleanse': SHIELD + DROP(12, 12.5, 1),
+  'W:regen':   SHIELD + LEAF(12, 12, 1),
+  'W:future':  MINI_SHIELD(9, 13, .95) + CLOCK(17.5, 7, .9),
+  'H:share':   CROSS(8, 12, .85) + CROSS(17, 13, .7),
+  'H:regen':   CROSS(10, 13, .9) + LEAF(18, 6.5, .75).replace(/#fff/g, 'currentColor'),
+  'H:cleanse': CROSS(10, 12.5, .95) + '<path d="M19 3c1.4 2 2.6 3.4 2.6 5a2.6 2.6 0 0 1-5.2 0c0-1.6 1.2-3 2.6-5z" fill="currentColor"/>',
+  K: '<path d="M7 4a4 4 0 0 1 0 8M17 4a4 4 0 0 0 0 8M7 12a4 4 0 0 0 0 8M17 12a4 4 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M7 12h10" stroke="currentColor" stroke-width="2.2"/>',
+  P: '<path d="M3 19l6-6 4 3 7-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>',
+});
+// New enemy portraits (48×48), same palette as the rest.
+const BG = '<rect width="48" height="48" rx="10" fill="#2a1a1e"/>';
+Object.assign(ENEMY_ART, {
+  ldrone: ENEMY_ART.drone,
+  lgolem: ENEMY_ART.heavy,
+  mgolem: BG + '<rect x="10" y="14" width="28" height="28" rx="4" fill="#9a7a52"/><path d="M10 22h28M24 14v28" stroke="#6e5434" stroke-width="2"/><rect x="15" y="17" width="5" height="3" fill="#ff6b5b"/><rect x="28" y="17" width="5" height="3" fill="#ff6b5b"/><path d="M18 34h12" stroke="#4a3822" stroke-width="2"/><path d="M14 8l4 6M34 8l-4 6" stroke="#9a7a52" stroke-width="3" stroke-linecap="round"/>',
+  imp: BG + '<path d="M12 40L24 8l12 32z" fill="#e8e2d0"/><path d="M16 30h16M18 24h12M20 18h8" stroke="#b8b0a0" stroke-width="1.2"/><circle cx="21" cy="26" r="1.8" fill="#ff6b5b"/><circle cx="27" cy="26" r="1.8" fill="#ff6b5b"/><path d="M21 33l3-2 3 2" stroke="#7a1a1a" stroke-width="1.4" fill="none"/><path d="M14 14l-4-4M34 14l4-4" stroke="#e8e2d0" stroke-width="2" stroke-linecap="round"/>',
+  manager: BG + '<path d="M6 48c2-11 9-15 18-15s16 4 18 15z" fill="#3a4258"/><path d="M21 33l3 10 3-10z" fill="#f0b23c"/><path d="M18 33l6 5 6-5" fill="#e4e8f0"/><circle cx="24" cy="23" r="9" fill="#c9a07a"/><path d="M15 20c1-6 5-9 9-9s8 3 9 9z" fill="#5a4636"/><rect x="17" y="21" width="6" height="4" rx="1" fill="none" stroke="#151b28" stroke-width="1.4"/><rect x="25" y="21" width="6" height="4" rx="1" fill="none" stroke="#151b28" stroke-width="1.4"/><path d="M21 29h6" stroke="#7a3a2a" stroke-width="1.4"/>',
+  ghoul: BG + '<path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a3f4a"/><path d="M14 26c0-9 4-14 10-14s10 5 10 14c0 5-4 8-10 8s-10-3-10-8z" fill="#8fa38a"/><ellipse cx="20" cy="24" rx="2.6" ry="3.2" fill="#1b2318"/><ellipse cx="28" cy="24" rx="2.6" ry="3.2" fill="#1b2318"/><path d="M19 31h10" stroke="#1b2318" stroke-width="1.6"/><path d="M21 34v4M27 34v4" stroke="#e4e8f0" stroke-width="1.6"/><rect x="18" y="36" width="12" height="7" rx="1" fill="#5aa9ff" opacity=".6"/>',
+  wraith: BG + '<path d="M12 44V22c0-8 5-13 12-13s12 5 12 13v22l-4-4-4 4-4-4-4 4-4-4z" fill="#1f3a4a"/><path d="M12 30h24" stroke="#9be7ff" stroke-width="1" opacity=".5"/><circle cx="20" cy="22" r="2.4" fill="#9be7ff"/><circle cx="28" cy="22" r="2.4" fill="#9be7ff"/><path d="M17 15h3M28 15h3M17 34h2M25 34h6" stroke="#5fd28a" stroke-width="1.6"/>',
+  fdrone: BG + '<path d="M10 14h10M28 14h10M10 34h10M28 34h10" stroke="#8e9ab3" stroke-width="3" stroke-linecap="round"/><path d="M15 14l6 6M33 14l-6 6M15 34l6-6M33 34l-6-6" stroke="#5a6680" stroke-width="2.4"/><rect x="16" y="17" width="16" height="14" rx="4" fill="#4a3030"/><path d="M24 19l5 2v4c0 2.5-2.4 4.2-5 5-2.6-.8-5-2.5-5-5v-4z" fill="#ff8a3c"/><path d="M22 23h4M24 21v4" stroke="#4a3030" stroke-width="1.4"/>',
+  ggolem: BG + '<path d="M3 48c1-12 9-18 21-18s20 6 21 18z" fill="#8a5a4a"/><circle cx="24" cy="22" r="11" fill="#9a6a58"/><rect x="15" y="19" width="18" height="4" rx="2" fill="#151b28"/><path d="M18 29c2 2 10 2 12 0" stroke="#4a2a22" stroke-width="2" fill="none"/><rect x="2" y="30" width="12" height="5" rx="2" fill="#3d4a63"/><rect x="34" y="30" width="12" height="5" rx="2" fill="#3d4a63"/><path d="M5 27v11M11 27v11M37 27v11M43 27v11" stroke="#5f6b80" stroke-width="3"/>',
+  acolyte: BG + '<path d="M8 48c2-10 8-14 16-14s14 4 16 14z" fill="#3a1f4a"/><path d="M11 36C11 18 17 9 24 9s13 9 13 27z" fill="#4b2f6b"/><ellipse cx="24" cy="27" rx="7.5" ry="8.5" fill="#120d20"/><circle cx="21" cy="26" r="1.5" fill="#c77dff"/><circle cx="27" cy="26" r="1.5" fill="#c77dff"/><path d="M24 12l2 4h-4z" fill="#c77dff"/><circle cx="24" cy="41" r="3" fill="none" stroke="#c77dff" stroke-width="1.4"/>',
+  construct: BG + '<path d="M24 5l15 9v18l-15 10-15-10V14z" fill="#3d4a63"/><path d="M24 5v37M9 14l30 18M39 14L9 32" stroke="#2e3b54" stroke-width="1.4"/><circle cx="24" cy="23" r="6" fill="#c77dff" opacity=".85"/><path d="M24 17v12M18 23h12" stroke="#1a1426" stroke-width="1.4"/>',
+  specter: BG + '<path d="M12 44V22c0-8 5-13 12-13s12 5 12 13v22l-4-4-4 4-4-4-4 4-4-4z" fill="#d8dce6" opacity=".85"/><circle cx="20" cy="22" r="2.6" fill="#1a1426"/><circle cx="28" cy="22" r="2.6" fill="#1a1426"/><rect x="26" y="28" width="12" height="15" rx="1" fill="#e8e2d0"/><path d="M28 32h8M28 35h8M28 38h5" stroke="#8e9ab3" stroke-width="1"/><path d="M30 28l2-3 2 3" fill="#f0b23c"/>',
+  glassel: BG + '<path d="M24 4l11 14-4 22H17l-4-22z" fill="#7fd3e6" opacity=".55"/><path d="M24 4l-4 14 4 22 4-22zM13 18h22" stroke="#e4e8f0" stroke-width="1.2" opacity=".8" fill="none"/><circle cx="20" cy="20" r="1.6" fill="#0b1018"/><circle cx="28" cy="20" r="1.6" fill="#0b1018"/>',
+});
+
+const portrait = (cls, size) => `<svg class="portrait" width="${size}" height="${size}" viewBox="0 0 48 48" aria-hidden="true">${PORTRAIT[cls]}</svg>`;
+const enemyArt = (type, size) => `<svg class="portrait" width="${size}" height="${size}" viewBox="0 0 48 48" aria-hidden="true">${ENEMY_ART[type] || ENEMY_ART.guard}</svg>`;
+// Title art: Halcyon Tower at night, rune-lit crown, city below.
+function towerArt() {
+  let win = '';
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 4; c++) { const lit = (r * 7 + c * 3) % 5 !== 0; win += `<rect x="${143 + c * 9}" y="${44 + r * 10}" width="5" height="5" fill="${lit ? (r === 0 ? '#c77dff' : '#f0b23c') : '#1b2436'}" opacity="${lit ? .85 : 1}"/>`; }
+  return `<svg class="tower" viewBox="0 0 330 170" role="img" aria-label="Halcyon Tower at night">
+    <rect width="330" height="170" rx="10" fill="#0b1018"/>
+    <circle cx="268" cy="34" r="15" fill="#e4e8f0" opacity=".85"/><circle cx="262" cy="30" r="15" fill="#0b1018"/>
+    <path d="M0 170V128h22v-14h18v24h16v-30h20v40h14v-22h16v34z" fill="#141c2b"/>
+    <path d="M330 170V122h-20v-12h-18v30h-14v-24h-20v36h-14v18z" fill="#141c2b"/>
+    <path d="M136 170V40l25-22 25 22v130z" fill="#1f2a3d" stroke="#2e3b54"/>
+    <path d="M161 18V4" stroke="#c77dff" stroke-width="2"/><circle cx="161" cy="22" r="5" fill="#c77dff" opacity=".8"/>
+    <circle cx="161" cy="22" r="11" fill="none" stroke="#c77dff" stroke-width="1" opacity=".5"/>
+    ${win}
+    <path d="M150 170v-14h22v14" fill="#f0b23c" opacity=".25"/>
+    <path d="M60 170l8-8h10l8 8" fill="#5aa9ff" opacity=".3"/>
+  </svg>`;
+}
+
+// ================= AUDIO =================
+let actx = null, master = null, musicGain = null;
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
+// ?mute in the URL silences everything (used for automated testing).
+let muted = store.get('kc-mute') === '1' || new URLSearchParams(location.search).has('mute'), musicOn = store.get('kc-music') !== '0';
+function ac() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; }
+    master = actx.createGain(); master.connect(actx.destination); musicGain = actx.createGain(); musicGain.connect(master); applyVol(); }
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+function applyVol() { if (!master) return; master.gain.value = muted ? 0 : 0.8; musicGain.gain.value = musicOn ? 0.16 : 0; }
+function tone(f, d, type = 'sine', vol = .15, slide = 0, delay = 0, dest) {
+  const a = ac(); if (!a || muted) return;
+  const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f + slide), t + d);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+  o.connect(g).connect(dest || master); o.start(t); o.stop(t + d + .02);
+}
+function noise(d, vol = .2, freq = 1800, delay = 0) {
+  const a = ac(); if (!a || muted) return;
+  const t = a.currentTime + delay, len = Math.floor(a.sampleRate * d), buf = a.createBuffer(1, len, a.sampleRate), ch = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / len);
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  s.buffer = buf; f.type = 'bandpass'; f.frequency.value = freq; g.gain.value = vol;
+  s.connect(f).connect(g).connect(master); s.start(t);
+}
+const sfx = {
+  save() { tone(523, .25, 'triangle', .06); tone(659, .25, 'triangle', .06, 0, .1); tone(784, .4, 'triangle', .06, 0, .2); },
+  roll() { for (let i = 0; i < 4; i++) noise(.04, .22, 2400 + Math.random() * 1500, i * .05 + Math.random() * .02); },
+  click() { tone(700, .05, 'square', .05); },
+  zap() { tone(1200, .12, 'sawtooth', .07, -900); noise(.1, .15, 4000); },
+  hit() { tone(130, .18, 'sawtooth', .13, -70); noise(.08, .2, 700); },
+  ward() { tone(880, .12, 'triangle', .07); tone(1320, .15, 'triangle', .05, 0, .03); },
+  heal() { tone(520, .15, 'sine', .1, 200); tone(780, .2, 'sine', .07, 200, .08); },
+  charge() { [988, 1319, 1760].forEach((f, i) => tone(f, .1, 'sine', .06, 0, i * .05)); },
+  clear() { [392, 523, 659, 784].forEach((f, i) => tone(f, .22, 'square', .07, 0, i * .1)); },
+  win() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, .28, 'triangle', .12, 0, i * .12)); },
+  lose() { [330, 294, 262, 196].forEach((f, i) => tone(f, .32, 'triangle', .12, 0, i * .16)); },
+  join() { tone(600, .1, 'sine', .12); tone(900, .14, 'sine', .1, 0, .1); },
+  shot() { noise(.07, .35, 1200); tone(220, .08, 'square', .06, -120); },                  // hex round
+  pierce() { noise(.05, .3, 3200); tone(900, .1, 'sawtooth', .06, -700); },               // armor-piercing crack
+  stun() { noise(.18, .3, 5000); tone(2400, .25, 'sine', .05, -1800); },                  // flashbang
+  sight() { [660, 990, 1320].forEach((f, i) => tone(f, .18, 'sine', .05, 0, i * .04)); }, // vision shimmer
+  kill() { tone(320, .2, 'square', .08, -240); noise(.15, .2, 900, .03); },
+  enemyHit() { tone(110, .22, 'sawtooth', .12, -50); noise(.1, .25, 500); },
+  down() { tone(260, .5, 'triangle', .12, -180); },
+  summon() { tone(200, .3, 'sine', .08, 300); tone(150, .3, 'sine', .06, 200, .08); },
+  cast() { noise(.25, .15, 1800); [523, 784].forEach((f, i) => tone(f, .2, 'triangle', .08, 0, i * .07)); },
+  turn() { tone(440, .08, 'triangle', .06); tone(660, .1, 'triangle', .05, 0, .07); },
+};
+// Low synth pulse with a minor arpeggio: tactical, a little spooky.
+const PROG = [[110, 131, 165], [98, 123, 147], [87, 110, 131], [98, 117, 147]];
+let musicT = 0, musicBar = 0;
+setInterval(() => {
+  if (!actx || muted || !musicOn) return;
+  if (musicT < actx.currentTime) musicT = actx.currentTime + .05;
+  while (musicT < actx.currentTime + .6) {
+    const ch = PROG[musicBar % PROG.length], off = musicT - actx.currentTime;
+    for (let k = 0; k < 8; k++) tone(ch[[0, 1, 2, 1][k % 4]] * 2, .22, 'square', .05, 0, off + k * .25, musicGain);
+    tone(ch[0] / 2, 1.9, 'triangle', .3, 0, off, musicGain);
+    musicT += 2; musicBar++;
+  }
+}, 300);
+
+// ================= APP STATE =================
+let st = null, me = 0, screen = 'menu';
+const ui = { sel: null, pend: null, err: '', joinCode: '' };
+const net = { peer: null, role: null, code: '', conns: new Map(), host: null, myName: '' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+// Callsigns offered to new players (and by the 🎲 button). Names are unique within a squad.
+const CALLSIGNS = ['Hexbolt', 'Ward Dog', 'Spellcheck', 'Overtime', 'Rune Ranger', 'Static', 'Hot Mic', 'Blitz', 'Sgt. Sigil', 'Grimoire', 'Patch', 'Breaker', 'Nightshift', 'Paperwork', 'Badge 13', 'Copper', 'Glyph', 'Ember', 'Voltage', 'Doorstop', 'Mandate', 'Warrant', 'Lockdown', 'Cantrip Kid', 'Sparkplug'];
+const randomCallsign = (not) => { const pool = CALLSIGNS.filter(n => n !== not); return pool[Math.floor(Math.random() * pool.length)]; };
+const myName = () => { let n = store.get('kc-name'); if (!n) { n = randomCallsign(); store.set('kc-name', n); } return n.slice(0, 14); };
+function uniqueName(st, name, skip) {   // "Static" → "Static 2" when the squad already has a Static
+  const taken = new Set(st.players.filter((x, i) => i !== skip).map(x => x.name.toLowerCase()));
+  if (!taken.has(name.toLowerCase())) return name;
+  for (let k = 2; ; k++) { const n = `${name.slice(0, 11)} ${k}`; if (!taken.has(n.toLowerCase())) return n; }
+}
+
+function dispatch(a) {
+  ac();
+  if (a.t !== 'ready') ui.confirmEnd = false;
+  if (net.role === 'client') { if (net.host && net.host.open) net.host.send({ t:'act', a }); return; }
+  if (!st) return;
+  const err = act(st, me, a);
+  if (err) { ui.err = err; render(); return; }
+  ui.err = '';
+  afterChange();
+}
+function afterChange() {
+  if (st.mode === 'solo') saveSolo();
+  if (net.role === 'host') broadcastState();
+  render();
+}
+
+// ================= SAVE =================
+const SAVE_KEY = 'kc-solo-v1';
+function saveSolo() { if (st && st.mode === 'solo') store.set(SAVE_KEY, JSON.stringify(st)); }
+function exportSave() { const s = store.get(SAVE_KEY); return s ? 'KC1:' + btoa(unescape(encodeURIComponent(s))) : ''; }
+function importSave(txt) {
+  txt = txt.trim(); if (!txt.startsWith('KC1:')) throw new Error('Not a Kevlar & Cantrips save');
+  const s = JSON.parse(decodeURIComponent(escape(atob(txt.slice(4)))));
+  if (!s || s.mode !== 'solo' || !s.players || s.v !== 3) throw new Error('Save looks broken or is from an older version');
+  store.set(SAVE_KEY, JSON.stringify(s));
+}
+
+// ================= NETWORK =================
+// Phones drop the WebRTC link when the browser goes to the background. Each tab keeps a token, so a guest
+// that comes back reclaims its operative; while away its turns are skipped, not lost.
+function randCode() { let c = ''; for (let i = 0; i < 4; i++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]; return c; }
+const myToken = (() => { try { let t = sessionStorage.getItem('kc-token'); if (!t) { t = Math.random().toString(36).slice(2, 12); sessionStorage.setItem('kc-token', t); } return t; } catch { return Math.random().toString(36).slice(2, 12); } })();
+function publicState() { const { seed, ...rest } = st; rest.players = rest.players.map(({ token, ...P }) => P); return rest; }
+function broadcastState() { const s = publicState(); for (const c of net.conns.values()) if (c.conn.open && c.pi != null) c.conn.send({ t:'state', s }); }
+function startHost(tries = 0) {
+  if (!window.Peer) { ui.err = 'Could not load the PeerJS library. Check your internet connection.'; render(); return; }
+  const code = randCode();
+  net.myName = myName(); screen = 'lobby'; ui.err = ''; ui.lobbyMsg = 'Contacting the PeerJS broker…'; render();
+  const peer = new Peer(PREFIX + code, { debug: 1 });
+  net.peer = peer;
+  peer.on('open', () => {
+    if (net.role === 'host') return;   // a broker reconnect fires 'open' again
+    net.role = 'host'; net.code = code; ui.lobbyMsg = '';
+    st = newRun('mp', (Math.random() * 2 ** 31) | 0); addPlayer(st, net.myName, myToken); me = 0; screen = 'game'; afterChange();
+  });
+  peer.on('connection', conn => {
+    conn.on('open', () => net.conns.set(conn.peer, { conn, pi: null }));
+    conn.on('data', d => hostOnData(conn, d));
+    conn.on('close', () => dropGuest(conn.peer));
+  });
+  peer.on('error', e => {
+    if (net.peer !== peer) return;
+    if (e.type === 'unavailable-id' && tries < 5 && net.role !== 'host') { peer.destroy(); startHost(tries + 1); return; }
+    if (net.role === 'host') return;   // after hosting started, broker hiccups don't end the run
+    netError(e);
+  });
+  peer.on('disconnected', () => { if (net.peer === peer && net.role === 'host') setTimeout(() => { try { if (!peer.destroyed) peer.reconnect(); } catch {} }, 1000); });
+}
+function hostOnData(conn, d) {
+  const g = net.conns.get(conn.peer); if (!g || !st) return;
+  if (d.t === 'hello' && g.pi == null) {
+    const back = d.token ? st.players.findIndex(x => x.token === d.token && !x.gone) : -1;
+    if (back > 0) {   // a returning guest reclaims its seat
+      for (const [id, o] of net.conns) if (o.pi === back && id !== conn.peer) { net.conns.delete(id); try { o.conn.close(); } catch {} }
+      const B = st.players[back]; g.pi = back; B.away = false; st.msg = `${B.name} is back.`;
+      if (st.phase === 'battle' && !B.down && B.step === 'ready' && B.roll.some(d => !d.used)) B.step = 'use';   // still this turn: let them use their dice
+      conn.send({ t:'you', pi: back }); sfx.join(); afterChange(); return;
+    }
+    if (st.phase !== 'lobby') { conn.send({ t:'full', msg:'That squad already started its run.' }); setTimeout(() => conn.close(), 300); return; }
+    if (st.players.length >= RULES.maxPlayers) { conn.send({ t:'full', msg:'That squad is full (4 operatives).' }); setTimeout(() => conn.close(), 300); return; }
+    g.pi = addPlayer(st, uniqueName(st, String(d.name || randomCallsign()).trim().slice(0, 14) || randomCallsign()), d.token);
+    conn.send({ t:'you', pi: g.pi }); sfx.join(); afterChange();
+  } else if (d.t === 'act' && g.pi != null) {
+    const err = act(st, g.pi, d.a);
+    if (err) { conn.send({ t:'err', msg: err }); return; }
+    afterChange();
+  } else if (d.t === 'bye' && g.pi != null) { g.leaving = true; }
+}
+function autoPick(st, p) {   // an absent operative takes its first offer so the squad isn't held up
+  const P = st.players[p], o = P.offers[0]; if (!o) return;
+  if (P.picked) { act(st, p, { t:'cont' }); return; }
+  if (o.k === 'plus') { if (P.dice[o.d].plus == null) act(st, p, { t:'take', i: 0, v: 0 }); if (!P.picked) act(st, p, { t:'sigup', id: Object.keys(SIG_UPS[CLASSES[P.cls].sig])[0] }); }
+  else { const d = P.dice.reduce((b, x, i) => x.gear.length < P.dice[b].gear.length ? i : b, 0); act(st, p, { t:'take', i: 0, d, r: P.dice[d].gear.length >= RULES.gearPerDie ? 0 : undefined }); }
+  act(st, p, { t:'cont' });
+}
+function dropGuest(id) {
+  const g = net.conns.get(id); net.conns.delete(id);
+  if (!g || g.pi == null || !st) return;
+  if ([...net.conns.values()].some(o => o.pi === g.pi)) return;   // already reconnected on a new link
+  if (st.phase === 'lobby') {
+    removePlayer(st, g.pi);
+    for (const o of net.conns.values()) if (o.pi != null && o.pi > g.pi) { o.pi--; if (o.conn.open) o.conn.send({ t:'you', pi: o.pi }); }
+  } else if (g.leaving) {
+    const P = st.players[g.pi]; P.gone = true; P.picked = true; P.step = 'gone';
+    if (st.phase === 'battle') checkState(st);
+    if (st.phase === 'upgrade') nextFloorIfReady(st);
+    st.msg = `${P.name} left the run.`;
+  } else {
+    const P = st.players[g.pi]; P.away = true; st.msg = `${P.name} lost connection. Their turns are skipped until they reconnect.`;
+    if (st.phase === 'battle' && !P.down && P.step !== 'ready') { P.step = 'ready'; checkState(st); }
+    if (st.phase === 'upgrade') autoPick(st, g.pi);
+  }
+  afterChange();
+}
+function startJoin(code, reconnect) {
+  code = (code || '').trim().toUpperCase();
+  if (!/^[A-Z]{4}$/.test(code)) { ui.err = 'Enter the 4-letter room code.'; render(); return; }
+  if (!window.Peer) { ui.err = 'Could not load the PeerJS library. Check your internet connection.'; render(); return; }
+  if (!reconnect) { screen = 'lobby'; ui.err = ''; ui.lobbyMsg = 'Contacting the PeerJS broker…'; render(); }
+  if (net.peer) { try { net.peer.destroy(); } catch {} }
+  const peer = new Peer({ debug: 1 });
+  net.peer = peer; net.code = code;
+  peer.on('open', () => {
+    if (!reconnect) { ui.lobbyMsg = `Connecting to squad ${code}…`; render(); }
+    const conn = peer.connect(PREFIX + code, { serialization:'json', reliable:true });
+    net.host = conn;
+    clearTimeout(net.joinTimer);
+    net.joinTimer = setTimeout(() => { if (net.peer === peer && !conn.open) reconnect ? retryJoin() : netError({ type:'timeout', message:'Could not reach the host. Their network (or yours) may block direct connections.' }); }, 15000);
+    conn.on('open', () => { clearTimeout(net.joinTimer); net.role = 'client'; net.tries = 0; ui.reconnecting = false; conn.send({ t:'hello', name: myName(), token: myToken }); if (!reconnect) { ui.lobbyMsg = 'Connected. Joining the squad…'; } render(); });
+    conn.on('data', d => {
+      if (d.t === 'you') { me = d.pi; render(); }
+      else if (d.t === 'state') { const first = !st; st = d.s; screen = 'game'; ui.err = ''; ui.reconnecting = false; if (first) sfx.join(); render(); }
+      else if (d.t === 'full') endSession(d.msg || 'Could not join that squad.');
+      else if (d.t === 'err') { ui.err = d.msg; render(); }
+    });
+    conn.on('close', () => { if (net.peer === peer && !net.leaving) lostHost(); });
+  });
+  peer.on('error', e => { if (net.peer !== peer) return; if (st && net.role === 'client') retryJoin(); else netError(e); });
+}
+function lostHost() {
+  if (!st || net.leaving) return endSession('The host left, so the run ended.');
+  ui.reconnecting = true; render(); retryJoin();
+}
+function retryJoin() {   // keep trying for about 2 minutes; phones often wake slowly
+  clearTimeout(net.retryTimer);
+  net.tries = (net.tries || 0) + 1;
+  if (net.tries > 40) return endSession('Lost the connection to the host.');
+  ui.reconnecting = true; render();
+  net.retryTimer = setTimeout(() => { if (st && !net.leaving) startJoin(net.code, true); }, net.tries === 1 ? 300 : 3000);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (net.role === 'client' && st && (!net.host || !net.host.open)) { net.tries = 0; retryJoin(); }
+  if (net.role === 'host' && net.peer && net.peer.disconnected && !net.peer.destroyed) { try { net.peer.reconnect(); } catch {} }
+});
+function netError(e) {
+  const msgs = { 'peer-unavailable':'Squad not found. Check the code, and make sure the host still has the game open.', 'network':'Could not reach the PeerJS broker. Check your internet connection.', 'browser-incompatible':'This browser does not support WebRTC.', 'server-error':'The PeerJS broker had a problem. Try again in a moment.' };
+  endSession(msgs[e.type] || e.message || String(e.type));
+}
+function teardown() {
+  clearTimeout(net.joinTimer); clearTimeout(net.retryTimer);
+  if (net.role === 'client' && net.host && net.host.open) { try { net.host.send({ t:'bye' }); } catch {} }
+  if (net.peer) { try { net.peer.destroy(); } catch {} }
+  Object.assign(net, { peer:null, role:null, code:'', host:null, tries:0 }); net.conns.clear();
+  ui.reconnecting = false;
+}
+function endSession(msg) { net.leaving = true; teardown(); net.leaving = false; st = null; me = 0; screen = 'menu'; ui.err = msg || ''; ui.sel = ui.pend = null; render(); }
+
+// ================= RENDER HELPERS =================
+const kwTip = kw => kw.map(k => `\n${KW[k].g} ${KW[k].name}: ${KW[k].text}`).join('');
+function faceTip(f) {
+  const F = FACE[f.t], c = comboOf(f);
+  return `${c ? c.name + ' · ' : ''}${F.name}${F.num ? ' ' + f.n : ''}: ${F.text(f.n)}${kwTip(f.kw)}`;
+}
+function faceChip(f, extra = '', attrs = '') {
+  const F = FACE[f.t];
+  return `<span class="f f-${f.t} ${extra}" tabindex="0" data-tip="${esc(faceTip(f))}" ${attrs}>${iconHtml(f)}${F.num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</span>`;
+}
+const kwGlyphs = kw => kw.length ? `<i class="kwg">${kw.map(k => KW[k].g).join('')}</i>` : '';
+const codeHtml = (c, extra, attrs) => faceChip(parse(c), extra, attrs);
+const effHtml = (p, di, fi, extra, attrs) => faceChip(effFace(st, p, di, fi), extra, attrs);
+// A rolled face with its number as it stands right now: Charged, Steel, Patient, wind-up and so on.
+// Target-based keywords (Engage, Cruel, Duel, Focus) show when aiming, on the enemy cards.
+const liveFace = (st, p, di, f) => !NUMERIC(f.t) ? f : { ...f, n: f.kw.includes('future') ? f.n + 1 : faceValue(st, p, di, f, null) };
+const dieInner = f => { const k = f.kw ? shownKw(f) : []; return `${iconHtml(f)}${FACE[f.t].num ? pipBars(f.n) : ''}${k.length ? `<em class="kws">${k.map(x => KW[x].g).join('')}</em>` : ''}`; };
+const gearBadges = gear => gear.length ? `<span class="gears">${gear.map(g => `<span class="gear" data-tip="${esc(ITEMS[g].name + ': ' + ITEMS[g].text)}">${ITEMS[g].icon}</span>`).join('')}</span>` : '';
+const pname = i => esc(st.players[i].name);
+function foeLabel(i, short) {   // "Guard B" when several enemies share a type
+  const e = st.enemies[i], E = ENEMIES[e.type], same = st.enemies.map((x, j) => j).filter(j => st.enemies[j].type === e.type);
+  const base = short ? E.name.split(/[ ,]/).filter(Boolean).slice(-1)[0] : E.name;
+  return esc(same.length > 1 ? `${base} ${'ABCDEFG'[same.indexOf(i)]}` : base);
+}
+function selFace() {
+  if (ui.sel == null || !st || st.phase !== 'battle') return null;
+  const P = st.players[me]; if (!P || P.step !== 'use') return null;
+  const d = P.roll[ui.sel]; if (!d || d.used) return null;
+  return effFace(st, me, ui.sel, d.fi);
+}
+function canTarget(k, i) { const f = selFace(); return !!f && needsTarget(f.t) && validTarget(st, f.t, { k, i }); }
+const renderCache = { roll: {}, rollNext: {}, vals: {}, sig: null };
+
+// ================= SCREENS =================
+function render() {
+  const app = $('app');
+  tipEl.style.display = 'none';   // the element under the cursor is about to be replaced
+  if (screen === 'menu') app.innerHTML = menuHtml();
+  else if (screen === 'lobby') app.innerHTML = connectingHtml();
+  else if (st) {
+    // When a floor ends, keep the battle on screen ~2.6 s so the last kills play out under the banner.
+    if (ui.lastPhase === 'battle' && (st.phase === 'upgrade' || st.phase === 'over')) {
+      const snap = JSON.parse(JSON.stringify(st)); snap.phase = 'battle'; snap.players.forEach(x => { if (!x.down) x.step = 'wait'; });
+      ui.hold = { snap, until: Date.now() + 2600 }; setTimeout(render, 2650);
+    }
+    ui.lastPhase = st.phase;
+    const holding = ui.hold && st.phase !== 'battle' && Date.now() < ui.hold.until;
+    if (!holding) ui.hold = null;
+    let body;
+    if (holding) { const real = st; st = ui.hold.snap; try { body = battleHtml(); } finally { st = real; } }
+    else body = { lobby: lobbyHtml, battle: battleHtml, upgrade: upgradeHtml, over: overHtml }[st.phase]();
+    app.classList.toggle('holding', !!holding);
+    app.innerHTML = topbar() + (ui.reconnecting ? '<div class="banner" style="margin-bottom:8px">Connection lost. Reconnecting to the host…</div>' : '') + (ui.err ? `<div class="banner err" style="margin-bottom:8px">${esc(ui.err)}</div>` : '') + body;
+  }
+  if (ui.markP != null) markAttackers(ui.markP);
+  // Keep the hit preview on the enemy under the cursor through re-renders.
+  if (ui.aimAt) { const k = ui.aimAt.dataset.ti; ui.aimAt = st && st.phase === 'battle' ? document.querySelector(`.foe.tg-ok[data-ti="${k}"]`) : null; if (ui.aimAt) showHitPreview(+k); }
+  postRender();
+}
+function topbar() {
+  const F = st.floor ? floorDef(st) : null;
+  const dev = DEV && net.role !== 'client' && st.phase === 'battle' ? `<span class="dev">Dev: <button class="btn sm ghost" data-dev="win">Clear floor</button> <button class="btn sm ghost" data-dev="charge">+5 ✦</button> <button class="btn sm ghost" data-dev="heal">Heal</button> <button class="btn sm ghost" data-dev="auto">Auto-play</button></span>` : '';
+  return `<div class="topbar">
+    <div class="title">${logoSvg(30)} Kevlar &amp; Cantrips</div>
+    ${F ? `<span class="chip hud">Floor ${st.floor} / ${RULES.floors}</span><span class="chip">${esc(F.name)}</span>` : `<span class="chip">${st.mode === 'solo' ? 'Solo' : 'Squad ' + esc(net.code)}</span>`}
+    ${dev}
+    <span class="sp"></span>
+    <button class="icon-btn" data-ui="help" aria-label="Help" data-tip="How to play">?</button>
+    <button class="icon-btn" data-ui="music" aria-label="Music" data-tip="Music on/off">${musicOn ? '🎵' : '🎶'}</button>
+    <button class="icon-btn" data-ui="mute" aria-label="Mute" data-tip="Sound on/off">${muted ? '🔇' : '🔊'}</button>
+    <button class="btn ghost sm" data-ui="leave">Leave</button>
+  </div>`;
+}
+
+function menuHtml() {
+  const hasSave = !!store.get(SAVE_KEY);
+  return `<div class="menu">
+    ${towerArt()}
+    <div class="logo">${logoBig()}</div>
+    <p class="muted" style="text-align:center;margin:0">Wizards in kevlar breach a cursed corporate tower, one floor at a time. Co-op dice tactics for 1 to 4 friends.</p>
+    ${ui.err ? `<div class="banner err">${esc(ui.err)}</div>` : ''}
+    <div class="box">
+      <h3>Your callsign</h3>
+      <div class="row"><input id="nameIn" maxlength="14" value="${esc(myName())}" style="width:12rem" aria-label="Your name"><button class="icon-btn" data-ui="randname" aria-label="Random callsign" data-tip="Random callsign">🎲</button></div>
+    </div>
+    <div class="box">
+      <h3>Solo</h3>
+      <p class="muted" style="margin:0">One operative, 10 floors. The tower scales to a squad of one.</p>
+      <div class="row">
+        <button class="btn" data-ui="solo">New run</button>
+        ${hasSave ? '<button class="btn ghost" data-ui="continue">Continue run</button>' : ''}
+        <button class="btn ghost sm" data-ui="export" ${hasSave ? '' : 'disabled'}>Export save</button>
+        <button class="btn ghost sm" data-ui="import">Import save</button>
+      </div>
+    </div>
+    <div class="box">
+      <h3>Squad up (2 to 4)</h3>
+      <p class="muted" style="margin:0">One player hosts and shares a 4-letter code. The more operatives, the more enemies.</p>
+      <div class="row">
+        <button class="btn" data-ui="host">Host a squad</button>
+        <input id="codeIn" maxlength="4" placeholder="CODE" style="width:6rem;text-transform:uppercase;font-family:var(--mono)" value="${esc(ui.joinCode)}" aria-label="Room code">
+        <button class="btn ghost" data-ui="join">Join</button>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="btn ghost sm" data-ui="help">How to play</button>
+      <button class="icon-btn" data-ui="music" aria-label="Music">${musicOn ? '🎵' : '🎶'}</button>
+      <button class="icon-btn" data-ui="mute" aria-label="Mute">${muted ? '🔇' : '🔊'}</button>
+    </div>
+  </div>`;
+}
+function connectingHtml() {
+  return `<div class="menu"><div class="logo">${logoBig()}</div><div class="box" style="align-items:center;text-align:center"><p>${esc(ui.lobbyMsg || '')}</p><button class="btn ghost" data-ui="leave">Cancel</button></div></div>`;
+}
+
+function classTile(id, takenBy, mine) {
+  const C = CLASSES[id], S = SIGS[C.sig];
+  return `<div class="tile ctile ${takenBy != null ? 'taken' : ''} ${mine ? 'picked' : ''}">
+    <div class="hh">${portrait(id, 64)}<div class="stack" style="gap:2px;flex:1"><b>${C.name}</b><span class="tag" style="align-self:flex-start">HP ${C.hp} · ${C.role}</span></div></div>
+    <div class="desc" style="color:var(--fg)">${C.blurb}</div>
+    <span class="sigtxt">✦ <b>${S.name}</b> (${S.cost}✦): ${S.text}</span>
+    <div class="row" style="gap:8px">${takenBy != null ? `<span class="tag">Taken by ${esc(st.players[takenBy].name)}</span>` : `<button class="btn sm" data-cls="${id}">${mine ? 'Picked' : 'Pick'}</button>`}<button class="btn sm ghost" data-clsinfo="${id}">Details</button></div>
+  </div>`;
+}
+function showClass(id) {
+  const C = CLASSES[id], S = SIGS[C.sig], o = $('overlay');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between"><div class="row">${portrait(id, 72)}<div><h3>${C.name}</h3><span class="tag">HP ${C.hp} · ${C.role}</span></div></div><button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <p style="margin:0">${C.blurb}</p>
+    <p class="sigtxt" style="margin:0">✦ <b>${S.name}</b> (${S.cost}✦): ${S.text}</p>
+    <p class="muted" style="margin:0;font-size:.85rem">Starting dice. Hover a side to see exactly what it does. Each die can later become one of two + versions.</p>
+    <div class="netwrap">${C.dice.map(d => `<div class="mydie"><b>${esc(d.name)}</b>${netHtml(d.faces.map(parse), '3.4rem')}</div>`).join('')}</div>
+  </div>`;
+  o.classList.remove('hidden');
+}
+function lobbyHtml() {
+  const P = st.players[me];
+  const slots = [0, 1, 2, 3].slice(0, st.mode === 'solo' ? 1 : 4).map(i => {
+    const x = st.players[i];
+    if (!x) return `<div class="slot"><span class="muted">Open slot<br>Share code <b class="mono" style="color:var(--hud)">${esc(net.code)}</b></span></div>`;
+    return `<div class="slot full"><b style="color:var(--ally)">${esc(x.name)}${i === me ? ' (you)' : ''}${i === 0 && st.mode === 'mp' ? ' ★' : ''}</b><br><span class="muted">${x.cls ? CLASSES[x.cls].icon + ' ' + CLASSES[x.cls].name : 'Choosing…'}</span></div>`;
+  }).join('');
+  const tiles = Object.keys(CLASSES).map(id => { const by = st.players.findIndex((x, i) => i !== me && x.cls === id); return classTile(id, by >= 0 ? by : null, P && P.cls === id); }).join('');
+  const ready = st.players.every(x => x.cls), n = st.players.length;
+  return `<div class="stack">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div class="stack" style="gap:6px"><h2>${st.mode === 'solo' ? 'Pick your operative' : 'Squad select'}</h2>
+        ${st.mode === 'mp' ? `<p class="muted" style="margin:0">Room code <span class="code" style="font-size:1.4rem">${esc(net.code)}</span> · ${n} of 4 joined · one of each class</p>` : '<p class="muted" style="margin:0">Pick a class. Click Details to see its dice.</p>'}
+      </div>
+      <div class="row">${me === 0 ? `<button class="btn" data-ui="start" ${ready ? '' : 'disabled'}>Breach floor 1</button>${ready ? '' : '<span class="muted" style="font-size:.85rem">Everyone needs a class.</span>'}` : '<span class="muted">The host starts the run.</span>'}</div>
+    </div>
+    <div class="slots">${slots}</div>
+    <p class="muted" style="font-size:.85rem;margin:0">Squad of ${n}: ${enemyCount(n, 1)} enemies per floor${n > 1 ? ' (+1 on floors 7 to 9)' : ''}, enemy HP ×${HP_MULT[n - 1]}, bosses ×${n} HP and ${n} action${n > 1 ? 's' : ''} a turn.</p>
+    <div class="tiles ctiles">${tiles}</div>
+  </div>`;
+}
+
+function foeCard(i) {
+  const e = st.enemies[i], E = ENEMIES[e.type], dead = e.hp <= 0;
+  const ints = dead ? '' : e.ints.map((it, k) => {
+    const f0 = parse(it.c), f = { t: f0.t, n: intentValue(st, e, f0), kw: [], base: [] };
+    const all = f0.kw.includes('all');
+    const to = (f.t === 'D' || f.t === 'K') ? (all ? '→ everyone' : `→ ${pname(st.taunt != null && f.t === 'D' ? st.taunt : it.tg)}`) : f.t === 'W' ? (all ? '→ all allies' : `→ ${foeLabel(it.tg, true)}`) : (f.t === 'H' || f.t === 'P') ? `→ ${foeLabel(it.tg, true)}` : f.t === 'X' ? '→ everyone' : f.t === 'U' ? 'summon' : '';
+    const tags = f0.kw.filter(k => k !== 'all');
+    const tip = 'Intent: ' + faceTip(f) + (to ? `\nTarget: ${to.replace('→ ', '')}` : '') + tags.map(k => `\n${k[0].toUpperCase() + k.slice(1)}: ${ENEMY_KW[k]}`).join('');
+    return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-foedie="${i}" data-int="${i}:${k}" data-tip="${esc(tip + '\nClick to see every side.')}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div></div>`;
+  }).join('');
+  const ok = canTarget('e', i) ? 'tg-ok' : '';
+  return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
+    ${enemyArt(e.type, E.boss ? 64 : 52)}<span class="nm">${foeLabel(i)}</span>
+    ${foeHp(i)}
+    <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}${enraged(e) && !dead ? '<span class="stunb" data-tip="Enraged: +2 to every attack below half HP.">ENRAGED</span>' : enrageBelow(e) && !dead ? `<span class="enrb" data-tip="At less than half HP it gets +2 to every attack. The tick on its health bar marks the spot.">Enrages below ${enrageBelow(e)}</span>` : ''}${e.buff && !dead ? `<span class="wardb" data-tip="Empowered: attacks +${e.buff} this floor.">📈${e.buff}</span>` : ''}${E.shatter && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Shatters for ${E.shatter} damage to every operative when killed.">shatters</span>` : ''}</div>
+    <div class="ints">${ints}</div>
+  </div>`;
+}
+function opCard(p) {
+  const P = st.players[p], C = CLASSES[P.cls], mx = maxHp(st, p), mine = p === me;
+  const status = P.gone ? 'gone' : P.down ? 'down' : P.step;
+  const statusTxt = P.away ? 'RECONNECTING' : ({ roll:'ROLLING', use:'IN ACTION', ready:'READY', down:'DOWN', gone:'LEFT', wait:'' }[status] || '');
+  const dice = P.dice.map((dd, di) => {
+    const d = P.roll[di];
+    if (!d) return `<div class="dcol"><div class="die empty"></div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button></div>`;
+    const f = effFace(st, p, di, d.fi);
+    const key = p + ':' + di, isRoll = renderCache.roll[key] !== d.r; renderCache.rollNext[key] = d.r;
+    const usable = mine && !d.winding && !(P.step === 'roll' && d.released) && (P.step === 'roll' || (P.step === 'use' && !d.used && f.t !== 'B'));
+    const rolling = P.step === 'roll', locked = rolling && d.k;
+    const live = liveFace(st, p, di, f), boosted = live.n !== f.n;
+    const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', locked ? 'kept' : '', mine && rolling && !d.k ? 'unlocked' : '', mine && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : '', boosted ? 'boosted' : ''].join(' ');
+    const wound = d.winding ? 'sits out, back next turn' : P.dice[di].wind ? 'winding up, back in 2 turns' : d.released ? 'wound up: triple' : '';
+    const state = wound ? `<span class="lockhint on">⟳ ${wound}</span>` : rolling ? (locked ? '<span class="lockhint on">🔒 LOCKED</span>' : mine ? '<span class="lockhint off">tap to lock</span>' : '') : d.used ? 'used' : '';
+    const tip = dieName(P, di) + '\n' + faceTip(live) + (boosted ? `\nWorth ${live.n} right now (${f.n} before modifiers).` : '') + (mine && rolling ? (locked ? '\nLocked: Reroll skips it. Tap to unlock.' : '\nTap to lock it, so Reroll skips it.') : '');
+    return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(tip)}">${dieInner(live)}${locked ? '<span class="lock" aria-label="Locked">🔒</span>' : ''}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
+  }).join('');
+  const abil = [C.sig, ...abilitiesOf(P)];
+  let sig;
+  if (mine && st.phase === 'battle' && !P.down) {
+    sig = `<div class="row" style="gap:6px">${abil.map(s => {
+      const used = (P.cast || []).includes(s), cost = sigCost(st, p, s);
+      const why = used ? 'Used this turn' : P.step === 'roll' ? 'Finish rolling first' : P.step !== 'use' ? 'Your turn is over' : P.charge < cost ? `Needs ${cost} ✦ (you have ${P.charge})` : !abilityUsable(st, p, s) ? 'Nothing to use it on' : '';
+      return `<span class="sigcell"><button class="sigbtn" data-cast="${s}" ${why ? 'disabled' : ''} data-tip="${esc(SIGS[s].name + ' (' + cost + '✦): ' + sigText(P, s) + (why ? '\n' + why : ''))}">✦ ${SIGS[s].name} ${cost}</button>${why ? `<span class="sigwhy">${why}</span>` : ''}</span>`;
+    }).join('')}</div>`;
+  } else sig = `<span class="sigtxt">${abil.map(s => `<span data-tip="${esc(sigText(P, s))}">✦ ${SIGS[s].name} ${sigCost(st, p, s)}</span>`).join(' · ')}</span>`;
+  const equip = (P.poison ? `<span class="psnb" data-tip="Poison: you take this much at the end of every turn this floor.">☠${P.poison}</span>` : '') + (P.regen ? `<span class="psnb" data-tip="Regen: you heal this much at the start of every turn this floor.">✿${P.regen}</span>` : '') + (P.curse ? '<span class="stunb" data-tip="Cursed: your highest face is blank next turn.">CURSED</span>' : '') + (P.away ? '<span class="stunb" data-tip="Disconnected. Their turns are skipped until they reconnect.">AWAY</span>' : '');
+  const ok = canTarget('p', p) ? 'tg-ok' : '';
+  return `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
+    <div class="hh"><span class="row" style="gap:10px;align-items:center">${portrait(P.cls, 52)}<span class="stack" style="gap:1px"><b>${pname(p)}</b><span class="muted" style="font-size:.8rem">${C.name}</span></span></span><span class="status ${status}">${statusTxt}</span></div>
+    <div class="sub"><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
+    ${hpBar(p)}
+    <div class="dice">${dice}</div>
+    ${sig}
+    ${mine && st.phase === 'battle' ? `<div class="ctrlwrap">${ui.hint ? `<div class="hint" style="text-align:left">${ui.hint}</div>` : ''}<div class="row ctrl">${ui.controls || ''}</div></div>` : ''}
+  </div>`;
+}
+// Operative health bar with the damage expected before your next turn striped on top
+// (enemy attacks aimed at you, after your ward, plus poison).
+function hpBar(p) {
+  const P = st.players[p], mx = maxHp(st, p);
+  if (P.down) return '<div class="hp ally"><i style="width:0%"></i><span>Down</span></div>';
+  const inc = st.phase === 'battle' ? incomingParts(st, p) : { hit: 0, psn: 0 };
+  const atk = Math.min(P.hp, Math.max(0, inc.hit - P.ward)), psn = Math.min(P.hp - atk, inc.psn), left = P.hp - atk - psn;
+  const tip = atk || psn ? [`Before your next turn: ${P.hp} → ${left} HP.`, inc.hit ? `Attacks: ${inc.hit}${P.ward ? `, your ward blocks ${Math.min(P.ward, inc.hit)}` : ''}.` : '', inc.psn ? `Poison: ${inc.psn} (ward doesn't stop it).` : ''].filter(Boolean).join('\n') : (inc.hit ? `Your ward blocks all ${inc.hit} incoming.` : 'No damage incoming right now.');
+  return `<div class="hp ally" data-tip="${esc(tip)}"><i style="width:${P.hp / mx * 100}%"></i>${stripes(P.hp, mx, atk, psn)}<span>${P.hp}/${mx}${atk || psn ? ` → ${left || 'DOWN'}` : ''}</span></div>`;
+}
+const stripes = (hp, mx, atk, psn, cls = '') => (atk ? `<b class="inc ${cls}" style="left:${(hp - atk) / mx * 100}%;width:${atk / mx * 100}%"></b>` : '') + (psn ? `<b class="inc psn" style="left:${(hp - atk - psn) / mx * 100}%;width:${psn / mx * 100}%"></b>` : '');
+// Enemy health bar: poison due at the end of the turn is always striped; pv adds what the aimed die would do.
+// Ticks mark the HP where it enrages or changes phase.
+function enrageBelow(e) { const E = ENEMIES[e.type]; return E.enrage || (E.phases && E.phases.some(x => x.enrage)) ? Math.ceil(e.mx / 2) : 0; }
+function foeHp(i, pv) {
+  const e = st.enemies[i], E = ENEMIES[e.type];
+  if (e.hp <= 0) return '<div class="hp"><i style="width:0%"></i><span>Down</span></div>';
+  const marks = [...(enrageBelow(e) ? [enrageBelow(e) / e.mx] : []), ...(E.phases ? E.phases.filter(x => x.at < 1 && !x.enrage).map(x => x.at) : [])];
+  const atk = pv ? Math.min(e.hp, pv.dmg) : 0, psn = Math.min(e.hp - atk, e.poison + (pv ? pv.psn : 0)), left = e.hp - atk - psn;
+  const wake = enrageBelow(e) && !enraged(e) && atk && (e.hp - atk) * 2 < e.mx;
+  const stun = pv && pv.stun;
+  const tip = atk || psn ? [`After this turn: ${e.hp} → ${left} HP.`, atk ? `This die: ${atk}.` : '', psn ? `Poison at the end of the turn: ${psn}.` : '', stun ? 'This die stuns it.' : ''].filter(Boolean).join('\n') : '';
+  return `<div class="hp" ${tip ? `data-tip="${esc(tip)}"` : ''}><i style="width:${e.hp / e.mx * 100}%"></i>${stripes(e.hp, e.mx, atk, psn, 'prev')}${marks.map(m => `<b class="mark" style="left:${m * 100}%"></b>`).join('')}<span>${e.hp}/${e.mx}${atk || psn ? ` → ${left || '✖'}` : ''}${wake ? ' ENRAGES' : ''}${stun ? ' ✺' : ''}</span></div>`;
+}
+function showHitPreview(i) {
+  const f = selFace(); if (!f || f.t !== 'D') return;
+  const pv = previewHits(st, me, ui.sel, f, i);
+  Object.keys(pv).forEach(j => { const el = document.querySelector(`[data-key="e:${j}"] .hp`); if (el) el.outerHTML = foeHp(+j, pv[j]); });
+}
+function markAttackers(p) {
+  document.querySelectorAll('.atk-on,.atk-src,.atk-me').forEach(el => el.classList.remove('atk-on', 'atk-src', 'atk-me'));
+  if (p == null || !st || st.phase !== 'battle' || !st.players[p]) return;
+  const keys = attackersOf(st, p); if (!keys.length) return;
+  document.querySelector(`[data-key="p:${p}"]`)?.classList.add('atk-me');
+  keys.forEach(k => { const d = document.querySelector(`[data-int="${k}"]`); if (d) { d.classList.add('atk-on'); d.closest('.foe')?.classList.add('atk-src'); } });
+}
+function clearHitPreview() { if (!st || !st.enemies) return; st.enemies.forEach((_, j) => { const el = document.querySelector(`[data-key="e:${j}"] .hp`); if (el) el.outerHTML = foeHp(j); }); }
+function logTable(lines, title) {
+  const rows = lines.map(l => l.side === 'sys' ? `<tr class="sys"><td colspan="3">${esc(l.src)}</td></tr>` : `<tr><td style="color:${l.side === 'ally' ? 'var(--ally)' : 'var(--foe)'}">${esc(l.src)}</td><td>${esc(l.tgt)}</td><td>${esc(l.res)}</td></tr>`).join('');
+  return rows ? `${title ? `<h3 style="font-size:1rem;margin-bottom:4px">${title}</h3>` : ''}<table>${rows}</table>` : '';
+}
+function battleHtml() {
+  const P = st.players[me];
+  let hint = '', buttons = '';
+  const waiting = living(st).filter(i => st.players[i].step !== 'ready' && i !== me).map(i => esc(st.players[i].name));
+  if (!P || P.gone) hint = 'You left this run.';
+  else if (P.down) hint = 'You\'re down. Your squad fights on, and you\'re back next floor at 50% HP.';
+  else if (P.step === 'roll') {
+    const unlocked = P.roll.filter(d => !d.k).length;
+    hint = 'Tap a die to 🔒 lock it. Locked dice stay as they are; Reroll only rolls the unlocked ones.';
+    buttons = `<button class="btn" data-ui="reroll" ${P.rerolls > 0 && unlocked ? '' : 'disabled'}>Reroll ${unlocked} unlocked (${P.rerolls} left)</button><button class="btn ghost" data-ui="done">Done rolling</button>`;
+    if (P.roll.some(d => d.k)) hint = '🔒 Locked dice stay. Tap a locked die to unlock it. Lock all three (or press Done rolling) to start using them.';
+  } else if (P.step === 'use') {
+    const f = selFace();
+    hint = f ? (needsTarget(f.t) ? 'Click a highlighted enemy or operative. It happens right away.' : '') : 'Click a die to use it: it hits right away. ✦ dice charge on click. Click a die\'s name to see all its sides.';
+    const left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
+    if (ui.confirmEnd && left) {
+      hint = `You still have ${left} unused ${left > 1 ? 'dice' : 'die'}. End your turn anyway?`;
+      buttons = '<button class="btn ghost" data-ui="keepgoing">Keep playing</button><button class="btn" data-ui="endnow">End turn anyway</button>';
+    } else buttons = `${canUndo(P) ? `<button class="btn ghost" data-ui="undo" data-tip="Back to rolling (${P.rerolls} reroll${P.rerolls > 1 ? 's' : ''} left)">↶ Undo</button>` : ''}<button class="btn ${left ? 'ghost' : ''}" data-ui="ready">End turn</button>`;
+  } else {
+    hint = waiting.length ? `Waiting for ${waiting.join(', ')}…` : 'Enemies are acting…';
+    buttons = '<button class="btn ghost" data-ui="unready">Not ready yet</button>';
+  }
+  ui.controls = buttons; ui.hint = hint;
+  return `
+    <h4>Enemies · intent</h4>
+    <div class="enemyrow" style="margin-top:6px">${st.enemies.map((_, i) => foeCard(i)).join('')}</div>
+    <h4 style="margin-top:14px">Squad</h4>
+    <div class="ops" style="margin-top:6px">${st.players.map((_, p) => opCard(p)).join('')}</div>
+    <div class="center">
+      <div class="phase"><span>Turn ${st.turn}</span><span class="on">Squad rolls &amp; acts</span><span>Enemies act when all are ready</span></div>
+      ${st.msg ? `<div class="banner">${esc(st.msg)}</div>` : ''}
+      ${waiting.length && P && P.step === 'ready' ? `<div class="hint">Waiting for ${waiting.join(', ')}…</div>` : ''}
+    </div>
+    <details class="log box logd" ${ui.logOpen ?? !matchMedia('(max-width:640px)').matches ? 'open' : ''}><summary>Combat log</summary>${logTable(st.log.slice(-16), '') || '<span class="muted">Dice you use show up here as they land.</span>'}</details>`;
+}
+
+function offerDesc(o) {
+  if (o.k === 'plus') return { icon:'⬆', name:'Die upgrade', tag:'A random die becomes +', text:'Pick one of two + versions.' };
+  return { icon: ITEMS[o.id].icon, name: ITEMS[o.id].name, tag: ITEMS[o.id].ability ? 'Item · ability' : 'Item', text: ITEMS[o.id].text };
+}
+// Pips like Slice & Dice: a short tick is 1, a full-height bar is 5.
+function pipBars(n) {
+  if (!n) return '';
+  return `<i class="pips">${'<b class="p5"></b>'.repeat(Math.floor(n / 5))}${n % 5 ? `<span class="ticks">${'<b></b>'.repeat(n % 5)}</span>` : ''}</i>`;
+}
+function netHtml(faces, size) {   // faces: effective face objects, laid out like an unfolded die
+  return `<div class="net" style="--s:${size || '3rem'}">${faces.map((f, i) => `<div class="nf p${i} f-${f.t}" tabindex="0" data-tip="${esc(faceTip(f))}">${iconHtml(f)}${FACE[f.t].num ? pipBars(f.n) : ''}${kwGlyphs(shownKw(f))}</div>`).join('')}</div>`;
+}
+const effFaces = (p, di) => [0, 1, 2, 3, 4, 5].map(fi => effFace(st, p, di, fi));
+// Wrap keyword names in item text so hovering (or tapping) them explains the keyword.
+const KW_RX = new RegExp('\\b(' + Object.values(KW).map(k => k.name).sort((a, b) => b.length - a.length).join('|') + ')\\b', 'g');
+const kwLink = text => esc(text).replace(KW_RX, m => { const k = Object.values(KW).find(x => x.name === m); return `<span class="kwref" tabindex="0" data-tip="${esc(k.g + ' ' + k.name + ': ' + k.text)}">${m}</span>`; });
+const gearLine = d => d.gear.length ? `<div class="muted" style="font-size:.8rem">${d.gear.map(g => `<div data-tip="${esc(ITEMS[g].text)}">${ITEMS[g].icon} <b style="color:var(--fg)">${ITEMS[g].name}</b>: ${kwLink(ITEMS[g].text)}</div>`).join('')}</div>` : '';
+function dieBlock(p, di, extra, movable) {
+  const P = st.players[p], d = P.dice[di], sel = ui.moveSel;
+  let gear = gearLine(d);
+  if (movable) {   // between floors: reorder items on a die, or move/swap them to another die
+    gear = `<div class="stack" style="gap:4px;font-size:.8rem">${d.gear.map((g, gi) => {
+      const picked = sel && sel.d === di && sel.g === gi;
+      const ctrl = sel && sel.d !== di ? (d.gear.length >= RULES.gearPerDie ? `<button class="btn sm ghost" data-mv="swap" data-to="${di}" data-swap="${gi}">Swap here</button>` : '') :
+        `${gi > 0 ? `<button class="btn sm ghost" data-mv="up" data-d="${di}" data-g="${gi}" data-tip="Move up (items apply top to bottom)">↑</button>` : ''}<button class="btn sm ${picked ? '' : 'ghost'}" data-mv="pick" data-d="${di}" data-g="${gi}">${picked ? 'Cancel' : 'Move'}</button>`;
+      return `<div class="row" style="gap:6px"><span data-tip="${esc(ITEMS[g].text)}" style="flex:1;min-width:0">${ITEMS[g].icon} <b style="color:var(--fg)">${ITEMS[g].name}</b>: ${kwLink(ITEMS[g].text)}</span>${ctrl}</div>`;
+    }).join('')}${sel && sel.d !== di && d.gear.length < RULES.gearPerDie ? `<button class="btn sm" data-mv="here" data-to="${di}">Move here (${d.gear.length}/${RULES.gearPerDie})</button>` : ''}${!d.gear.length && !(sel && sel.d !== di) ? '<span class="muted">No items yet</span>' : ''}</div>`;
+  }
+  return `<div class="mydie"><button class="dname" style="font-size:.9rem;align-self:flex-start" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button>
+    ${netHtml(effFaces(p, di), '2.9rem')}${gear}${extra || ''}</div>`;
+}
+function abilitiesHtml(p) {
+  const P = st.players[p], own = CLASSES[P.cls].sig;
+  const rows = [own, ...abilitiesOf(P)].map(s => `<div>✦ <b style="color:#e6cfff">${SIGS[s].name}</b> (${sigCost(st, p, s)}✦): ${sigText(P, s)}${s === own ? ' <span class="tag">signature</span>' : ' <span class="tag">from gear</span>'}</div>`).join('');
+  return `<div style="font-size:.85rem" class="stack"><b>Charge abilities</b>${rows}<span class="muted">✦ comes from ✦ faces and resets each floor.</span></div>`;
+}
+function showEnemyDie(i) {   // every intent this enemy can roll, as an unfolded die (each boss phase gets its own)
+  const e = st.enemies[i], E = ENEMIES[e.type], o = $('overlay');
+  const sets = E.phases ? E.phases.map((ph, k) => ({ label: k === 0 ? 'Opening phase' : `Below ${Math.round(ph.at * 100)}% HP${ph.enrage ? ' (enraged)' : ''}`, ints: ph.ints })) : [{ label: 'Every side', ints: E.ints }];
+  const faceOf = c => { const f0 = parse(c); return { t: f0.t, n: intentValue(st, e, f0), kw: [], base: [] }; };
+  const kwNotes = [...new Set(sets.flatMap(x => x.ints).flatMap(c => parse(c).kw).filter(k => k !== 'all'))].map(k => `<div><b>${k[0].toUpperCase() + k.slice(1)}</b>: ${ENEMY_KW[k]}</div>`).join('');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between"><div class="row">${enemyArt(e.type, 56)}<h3>${foeLabel(i)}</h3></div><button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <p class="muted" style="margin:0">Each turn it rolls one of these sides${e.acts > 1 ? ` (${e.acts} times)` : ''}. Numbers include its current bonuses. HP ${e.hp}/${e.mx}.</p>
+    <div class="netwrap">${sets.map(x => `<div class="mydie"><b>${esc(x.label)}</b>${netHtml(x.ints.map(faceOf), '3.2rem')}</div>`).join('')}</div>
+    ${kwNotes ? `<div class="stack" style="gap:4px;font-size:.85rem">${kwNotes}</div>` : ''}
+    ${E.selfWard ? `<div class="muted" style="font-size:.85rem">Gains 🛡${E.selfWard} every turn.</div>` : ''}${E.shatter ? `<div class="muted" style="font-size:.85rem">Shatters for ${E.shatter} damage to every operative when killed.</div>` : ''}${enrageBelow(e) ? `<div class="muted" style="font-size:.85rem">Enrage: +2 to every attack below ${enrageBelow(e)} HP.</div>` : ''}
+  </div>`;
+  o.classList.remove('hidden');
+}
+function showDie(p, di) {
+  const P = st.players[p], d = P.dice[di], o = $('overlay');
+  const plus = d.plus != null ? `<span class="tag">+ ${esc(dieDef(P, di).plus[d.plus].label)}</span>` : '';
+  const abil = d.gear.filter(g => ITEMS[g].ability).map(g => `<div>✦ <b>${SIGS[ITEMS[g].ability].name}</b> (${SIGS[ITEMS[g].ability].cost}✦): ${SIGS[ITEMS[g].ability].text}</div>`).join('');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between"><h3>${esc(dieName(P, di))} ${plus}</h3><button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <p class="muted" style="margin:0">${p === me ? 'Your' : esc(P.name) + "'s"} ${CLASSES[P.cls].name} die. Hover a side to see exactly what it does.</p>
+    <div class="netwrap">${netHtml(effFaces(p, di), '4.6rem')}
+      <div class="stack" style="min-width:14rem;flex:1">${d.gear.length ? `<b>Equipped gear</b>${gearLine(d)}` : ''}${abil}</div></div>
+  </div>`;
+  o.classList.remove('hidden');
+}
+// A die upgrade's faces with the gear already on that die, so the choice matches what you'd get.
+function plusFaces(P, di, v) {
+  const gear = P.dice[di].gear.map(g => ITEMS[g]).filter(g => g.fx);
+  return v.faces.map((c, fi) => { const f = parse(c); gear.forEach(g => g.fx(f, fi, v.faces)); f.kw = [...new Set(f.kw)]; return f; });
+}
+function upgradeHtml() {
+  const P = st.players[me];
+  const status = st.players.map((x, i) => `<span class="chip ${x.picked ? '' : 'hud'}">${pname(i)} ${x.gone ? '· left' : x.ready ? '✓ ready' : x.picked ? '· picked' : '· choosing'}</span>`).join(' ');
+  const next = FLOORS[st.floor];
+  let body = '';
+  const pickKey = st.floor + ':' + st.resolveN;
+  if (ui.pickKey !== pickKey) { ui.pickKey = pickKey; ui.plusSel = null; ui.sigSel = null; }
+  if (P && !P.gone) {
+    const o = P.offers[0];
+    if (o.k === 'plus') {
+      const di = o.d, D = dieDef(P, di), vName = v => v.label === '+' ? D.name + '+' : v.label;
+      if (P.picked) {
+        const v = D.plus[P.dice[di].plus], u = P.sigUp && st.floor === RULES.abilityFloor ? SIG_UPS[CLASSES[P.cls].sig][P.sigUp] : null;
+        body = `<p style="margin:0">✓ <b>${esc(D.name)}</b> upgraded to <b>${esc(vName(v))}</b>, and you gained ${RULES.hpPerUpgrade} max HP.${u ? ` ${SIGS[CLASSES[P.cls].sig].name} gained <b>${u.name}</b>.` : ''}</p>`;
+      } else {
+        const sig = CLASSES[P.cls].sig;
+        body = `<p class="muted" style="margin:0">Upgrade floor. The tower picked your <b style="color:var(--fg)">${esc(D.name)}</b> die. Choose how it upgrades (gear on it stays). You also gain ${RULES.hpPerUpgrade} max HP.</p>
+      <div class="netwrap upnet"><div class="mydie"><b>Now</b>${netHtml(effFaces(me, di), '2.9rem')}</div><span class="uparrow" aria-label="upgrades into">➜</span>
+      ${D.plus.map((v, k) => `${k ? '<span class="upor">or</span>' : ''}<div class="mydie ${ui.plusSel === k ? 'chosen' : ''}"><b>${esc(vName(v))}</b>${netHtml(plusFaces(P, di, v), '2.9rem')}<button class="btn sm ${ui.plusSel != null && ui.plusSel !== k ? 'ghost' : ''}" data-plusv="${k}">${ui.plusSel === k ? 'Chosen ✓' : `Choose ${esc(vName(v))}`}</button></div>`).join('')}</div>`;
+        if (needsSigUp(st, P)) body += `<p class="muted" style="margin:0"><b style="color:var(--fg)">Also upgrade your ability.</b> ${SIGS[sig].name} (${sigCost(st, me, sig)}✦): ${SIGS[sig].text} Your choice lasts the rest of the run.</p>
+      <div class="tiles">${Object.entries(SIG_UPS[sig]).map(([id, u]) => `<div class="tile ${ui.sigSel === id ? 'picked' : ''}"><div class="hh"><span class="ic">✦</span><b>${u.name}</b></div><div class="desc">${kwLink(u.text)}</div><button class="btn sm ${ui.sigSel && ui.sigSel !== id ? 'ghost' : ''}" data-sigup="${id}">${ui.sigSel === id ? 'Chosen ✓' : `Choose ${u.name}`}</button></div>`).join('')}</div>`;
+      }
+    } else {
+      const tiles = P.offers.map((x, i) => { const d = offerDesc(x), took = P.picked && P.took === i; return `<div class="tile ${ui.pend === i || took ? 'picked' : ''}"><div class="hh"><span class="ic">${d.icon}</span><b>${d.name}</b></div><span class="tag" style="align-self:flex-start">${d.tag}</span><div class="desc">${kwLink(d.text)}</div>${P.picked ? (took ? '<span class="tag" style="align-self:flex-start">Installed ✓</span>' : '') : '<button class="btn sm" data-offer="' + i + '">Choose</button>'}</div>`; }).join('');
+      let chooser = '';
+      if (!P.picked && ui.pend != null) {
+        const x = P.offers[ui.pend];
+        chooser = `<div class="box stack"><h3>Which die gets the ${ITEMS[x.id].icon} ${ITEMS[x.id].name}?</h3><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, d.gear.length < RULES.gearPerDie ? `<button class="btn sm" data-gear="${di}">Install here</button>` : `<div class="row" style="gap:6px">${d.gear.map((g, r) => `<button class="btn sm ghost" data-gear="${di}" data-r="${r}">Replace ${ITEMS[g].icon} ${ITEMS[g].name}</button>`).join('')}</div>`)).join('')}</div><div><button class="btn ghost sm" data-ui="unpend">Cancel</button></div></div>`;
+      }
+      body = `<p class="muted" style="margin:0">${P.picked ? 'Your item is installed.' : 'Pick 1 of your 3 offers.'}</p><div class="tiles">${tiles}</div>${chooser}`;
+    }
+    const waitingOn = st.players.filter(x => !x.gone && !x.ready && x !== P).map(x => esc(x.name));
+    const can = P.picked || (o.k === 'plus' && ui.plusSel != null && (!needsSigUp(st, P) || ui.sigSel));
+    if (ui.pend == null) body += P.ready ? `<div class="row"><span class="muted">Ready.${waitingOn.length ? ` Waiting for ${waitingOn.join(', ')}…` : ''}</span><button class="btn ghost sm" data-ui="uncont">Not ready yet</button></div>`
+      : `<div class="row"><button class="btn" data-ui="cont" ${can ? '' : 'disabled'}>Ready for floor ${st.floor + 1}</button><span class="muted">${can ? 'Move items below if you like, then press Ready.' : 'Make your choice above first.'}</span></div>`;
+  } else body = '<p class="muted">You left this run.</p>';
+  const mine = P && !P.gone && ui.pend == null ? `<div class="box stack"><h3>Your loadout · ${CLASSES[P.cls].icon} ${CLASSES[P.cls].name}</h3><p class="muted" style="margin:0;font-size:.85rem">Move items between dice or reorder them before the next floor. Items apply top to bottom.</p><div class="tiles">${P.dice.map((d, di) => dieBlock(me, di, '', true)).join('')}</div>
+    <div class="muted" style="font-size:.85rem">HP ${P.hp}/${maxHp(st, me)} · up to ${RULES.gearPerDie} items per die</div>${abilitiesHtml(me)}</div>` : '';
+  const nextUp = UPGRADE_FLOORS.includes(st.floor + 1) ? ' After it: a die upgrade.' : '';
+  return `<div class="stack">
+    <div class="row" style="justify-content:space-between"><div><h2>Floor ${st.floor} cleared</h2><p class="muted" style="margin:4px 0 0">Everyone healed half their missing HP; downed operatives are back at 50%. Next: floor ${st.floor + 1}, ${esc(next.name)}.${nextUp}</p></div><div class="row">${status}</div></div>
+    ${body}
+    ${mine}
+  </div>`;
+}
+function overHtml() {
+  const won = st.result === 'won';
+  const btn = me === 0 ? '<button class="btn" data-ui="restart">New run with this squad</button>' : '<span class="muted">The host can start a new run.</span>';
+  return `<div class="stack" style="align-items:center;text-align:center;margin-top:16px">
+    ${logoBig()}
+    <h2>${won ? 'Tower cleared. Halcyon Grieve is out of office, permanently.' : `Squad down on floor ${st.floor}`}</h2>
+    <p class="muted" style="margin:0">${won ? 'All 10 floors breached.' : esc(floorDef(st).name) + ' held. Regroup and breach again.'}</p>
+    <div class="row" style="justify-content:center">${btn}<button class="btn ghost" data-ui="leave">Menu</button></div>
+    <div class="log box" style="width:100%">${logTable(st.log.slice(-12), 'Last moments')}</div>
+  </div>`;
+}
+
+// Turn new combat-log lines into staggered sounds and card animations, so a turn reads as a sequence.
+function eventTarget(name) {
+  const p = st.players.findIndex(P => P.name === name);
+  if (p >= 0) return document.querySelector(`[data-key="p:${p}"]`);
+  const e = st.enemies.findIndex((x, i) => en(st, i) === name);
+  return e >= 0 ? document.querySelector(`[data-key="e:${e}"]`) : null;
+}
+function sparks(card) {   // a teammate was just saved: sparks fly off their health bar
+  const bar = card && card.querySelector('.hp'); if (!bar) return;
+  const r = bar.getBoundingClientRect();
+  for (let n = 0; n < 9; n++) {
+    const s = document.createElement('i'); s.className = 'spark';
+    s.style.left = (r.left + r.width * (.15 + n * .08)) + 'px'; s.style.top = (r.top + r.height / 2) + 'px';
+    s.style.setProperty('--x', (n - 4) * 7 + 'px'); s.style.setProperty('--y', -(16 + (n % 3) * 12) + 'px');
+    document.body.appendChild(s); setTimeout(() => s.remove(), 1600);
+  }
+}
+function fxPop(el, cls, glyph) {
+  if (!el) return; const r = el.getBoundingClientRect(), f = document.createElement('div');
+  f.className = 'fxpop ' + cls; f.textContent = glyph || ''; f.style.left = (r.left + r.width / 2) + 'px'; f.style.top = (r.top + r.height / 2) + 'px';
+  document.body.appendChild(f); setTimeout(() => f.remove(), 1100);
+}
+const fxHit = el => { animate(el, 'an-hit'); fxPop(el, 'fx-slash'); };
+const fxWard = el => { animate(el, 'an-ward'); fxPop(el, 'fx-shield', '🛡'); };
+function animate(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+function replayEvents(fromN) {
+  const fresh = st.log.filter(l => l.n > fromN && l.side !== 'sys').slice(-10);
+  fresh.forEach((l, k) => setTimeout(() => {
+    if (!st) return;
+    const s = l.src + ' ' + l.res, el = eventTarget(l.tgt);
+    if (l.side === 'foe') {
+      const atk = st.enemies.findIndex((x, i) => l.src.startsWith(en(st, i)));
+      if (atk >= 0) animate(document.querySelector(`[data-key="e:${atk}"]`), 'an-lunge');
+      if (/Summoned/.test(l.res)) sfx.summon();
+      else if (/ward/.test(l.res)) { sfx.ward(); fxWard(el); }
+      else if (/✚/.test(l.src)) { sfx.heal(); animate(el, 'an-heal'); }
+      else if (/\(down\)/.test(l.res)) { sfx.down(); animate(el, 'an-down'); fxPop(el, 'fx-skull', '💀'); }
+      else if (/→/.test(l.res)) { sfx.enemyHit(); fxHit(el); }
+      return;
+    }
+    if (/full HP/.test(l.res)) return;
+    if (/^Saved/.test(l.res)) { sfx.save(); sparks(el); return; }
+    const by = st.players.findIndex(P => l.src.startsWith(P.name));   // the operative acting lunges toward its target
+    if (by >= 0 && /→/.test(l.res) && el && el.dataset.key && el.dataset.key[0] === 'e') animate(document.querySelector(`[data-key="p:${by}"]`), 'an-atk');
+    if (/✖/.test(l.res)) { sfx.kill(); animate(el, 'an-kill'); fxPop(el, 'fx-skull', '💀'); }
+    else if (/Stunned/.test(l.res)) { sfx.stun(); animate(el, 'an-stun'); }
+    else if (/Intent rewritten/.test(l.res)) { sfx.sight(); animate(el, 'an-stun'); }
+    else if (/ward/.test(l.res)) { sfx.ward(); fxWard(el); }
+    else if (/✦$/.test(l.res)) { sfx.charge(); animate(el, 'an-charge'); }
+    else if (/Poison/.test(l.src) || /Poisoned/.test(l.res)) { sfx.hit(); fxHit(el); }
+    else if (/✚|self-heal/.test(s) || /Back up/.test(l.res)) { sfx.heal(); animate(el, 'an-heal'); }
+    else if (/ ✦ /.test(l.src)) { sfx.cast(); fxHit(el); }
+    else if (/⚡/.test(l.src)) { sfx.zap(); fxHit(el); }
+    else if (/➹/.test(l.src)) { sfx.pierce(); fxHit(el); }
+    else if (/→/.test(l.res)) { sfx.shot(); fxHit(el); }
+  }, k * 140));
+}
+let bannerTimer = null;
+function showBanner(title, sub) {
+  const b = $('banner'); if (!b) return;
+  b.innerHTML = `${esc(title)}${sub ? `<small>${esc(sub)}</small>` : ''}`;
+  b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+  clearTimeout(bannerTimer); bannerTimer = setTimeout(() => b.classList.remove('show'), 2700);
+}
+function postRender() {
+  if (!st || screen !== 'game') { renderCache.vals = {}; renderCache.sig = null; return; }
+  const sig = { rollN: st.rollN, resolveN: st.resolveN, phase: st.phase, floor: st.floor, logN: st.logN || 0, turn: st.turn };
+  const prev = renderCache.sig;
+  if (prev) {
+    if (sig.rollN !== prev.rollN) sfx.roll();
+    if (st.phase === 'battle' && st.turn > 1 && prev.turn !== st.turn) sfx.turn();
+    replayEvents(prev.logN || 0);
+    if (sig.phase !== prev.phase) {
+      if (sig.phase === 'upgrade') { sfx.clear(); showBanner(`Floor ${st.floor} cleared`, 'Pick your upgrade'); }
+      if (sig.phase === 'over') st.result === 'won' ? sfx.win() : sfx.lose();
+    }
+    if (sig.phase === 'battle' && (prev.phase !== 'battle' || prev.floor !== sig.floor)) showBanner(`Floor ${st.floor}`, floorDef(st).name);
+  }
+  renderCache.sig = sig;
+  Object.assign(renderCache.roll, renderCache.rollNext);
+  const vals = {};
+  st.players.forEach((P, p) => vals['p:' + p] = P.hp);
+  st.enemies.forEach((e, i) => vals['e:' + i] = e.hp);
+  if (prev && prev.floor === sig.floor && st.phase !== 'lobby') {
+    for (const k in vals) {
+      const old = renderCache.vals[k]; if (old == null || old === vals[k]) continue;
+      const el = document.querySelector(`[data-key="${k}"]`); if (!el) continue;
+      const r = el.getBoundingClientRect(), f = document.createElement('div'), dv = vals[k] - old;
+      f.className = 'float'; f.textContent = (dv > 0 ? '+' : '') + dv; f.style.color = dv > 0 ? 'var(--heal)' : 'var(--dmg)';
+      f.style.left = (r.left + r.width / 2 - 14) + 'px'; f.style.top = (r.top + 24) + 'px';
+      document.body.appendChild(f); setTimeout(() => f.remove(), 1200);
+    }
+  }
+  renderCache.vals = vals;
+}
+
+// ================= LOGO =================
+function logoSvg(size) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4 L56 12 V31 C56 45 45 55 32 60 C19 55 8 45 8 31 V12 Z" fill="#243049" stroke="#f0b23c" stroke-width="3"/><rect x="20" y="20" width="24" height="24" rx="5" fill="#e4e8f0" transform="rotate(-8 32 32)"/><g fill="#0e131d" transform="rotate(-8 32 32)"><circle cx="26" cy="26" r="2.7"/><circle cx="32" cy="32" r="2.7"/><circle cx="38" cy="38" r="2.7"/></g><path d="M47 2 L41 14 H49 L43 26" stroke="#c77dff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function logoBig() {
+  return `<svg width="380" height="120" viewBox="0 0 380 120" role="img" aria-label="Kevlar and Cantrips"><g transform="translate(4,14) scale(1.45)">${logoSvg(64).replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g><text x="110" y="54" font-family="Chakra Petch, Trebuchet MS, sans-serif" font-weight="700" font-size="40" fill="#f0b23c" letter-spacing="1">KEVLAR</text><text x="110" y="96" font-family="Chakra Petch, Trebuchet MS, sans-serif" font-weight="700" font-size="34" fill="#e4e8f0" letter-spacing="1">&amp; <tspan fill="#c77dff">CANTRIPS</tspan></text></svg>`;
+}
+
+// ================= HELP =================
+function showHelp() {
+  const o = $('overlay');
+  const faces = ['D2', 'W2', 'H2', 'C2', 'B'].map(c => { const { t } = parse(c); return `<tr><td>${codeHtml(c)}</td><td><b>${FACE[t].name}</b></td><td>${FACE[t].text('N')}</td></tr>`; }).join('');
+  const kws = Object.values(KW).sort((a, b) => a.name.localeCompare(b.name)).map(k => `<tr><td class="mono" style="color:var(--arcane)">${k.g}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
+  o.innerHTML = `<div class="box">
+    <div class="row" style="justify-content:space-between">${logoBig()}<button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <h3>How to play</h3>
+    <ul>
+      <li>You are one operative with <b>3 class dice</b>. Up to 4 friends breach a 10-floor tower; each floor is one fight, and bosses wait on floors 5 and 10.</li>
+      <li><b>Each turn</b> every enemy shows its intent (what it will do and to whom). Everyone rolls at once: tap dice to 🔒 lock them, then Reroll rolls only the unlocked ones (2 rerolls). Locking all three moves on automatically; Undo goes back while you have rerolls.</li>
+      <li><b>Use dice whenever you like:</b> click a die, then its target. It happens right away, and everyone sees it. Press <b>End turn</b> when you're done (it checks with you if dice are left).</li>
+      <li>When the whole squad is ready, every enemy that's still standing and not stunned acts. Ward lasts until then.</li>
+      <li><b>✦ Charge</b> pays for your class signature and any abilities your gear grants.</li>
+      <li>At 0 HP you're <b>down</b>. You're back next floor at 50% HP. The run ends if the whole squad is down.</li>
+      <li><b>After each floor</b> everyone heals half their missing HP. After floors 2, 5 and 8 a random die of yours is upgraded, you pick which of its two + versions it becomes, and you gain 2 max HP. After the others you pick an item for a die (up to 3 per die). Then press Ready; the next floor starts when the whole squad is ready.</li>
+    </ul>
+    <h3>Faces</h3><p class="muted" style="margin:0;font-size:.85rem">Numbers are shown as pips, like Slice &amp; Dice: each short tick is 1 and each tall bar is 5 (${faceChip(parse('D7'))} is 7 damage). Hover any face for the exact number.</p><table>${faces}</table>
+    <h3>Keywords</h3><p class="muted" style="margin:0;font-size:.85rem">Class dice show built-in keyword pairings as their own icon (🪓 Cleaving Strike = ⚔ + Cleave). Small purple symbols mean gear added that keyword.</p><table>${kws}</table>
+    <h3>Built-in pairings</h3><table>${Object.entries(COMBO).map(([k, c]) => { const [t, kw] = k.split(':'); return `<tr><td>${c.icon}</td><td><b>${c.name}</b></td><td>${FACE[t].name} + ${KW[kw].name}</td></tr>`; }).join('')}</table>
+    <p class="muted" style="font-size:.85rem">Hover anything for details. Solo runs autosave. Add ?dev to the URL for test buttons.</p>
+  </div>`;
+  o.classList.remove('hidden');
+}
+function showText(title, text, importing) {
+  const o = $('overlay');
+  o.innerHTML = `<div class="box"><h3>${esc(title)}</h3><textarea id="saveTxt" aria-label="Save text">${esc(text)}</textarea><div class="row">${importing ? '<button class="btn" data-ui="importok">Import</button>' : ''}<button class="btn ghost" data-ui="closehelp">Close</button><span id="saveErr" class="err"></span></div></div>`;
+  o.classList.remove('hidden');
+}
+
+// ================= INPUT =================
+let autoTimer = null;
+const touchUI = matchMedia('(hover: none)').matches;
+document.addEventListener('toggle', e => { if (e.target.classList && e.target.classList.contains('logd')) ui.logOpen = e.target.open; }, true);
+document.addEventListener('click', e => {
+  if (touchUI) {   // no hover on phones: tapping a face, badge or label shows its tooltip
+    const t = e.target.closest('[data-tip]');
+    if (t && !t.closest('button,.die.mine,[data-tk].tg-ok,[data-inspect],[data-offer],[data-plusv],[data-sigup],[data-gear]')) {
+      const r = t.getBoundingClientRect(); tipEl.textContent = t.dataset.tip; tipEl.style.display = 'block';
+      tipEl.style.left = Math.max(8, Math.min(r.left, innerWidth - tipEl.offsetWidth - 8)) + 'px';
+      tipEl.style.top = (r.bottom + 6 + tipEl.offsetHeight > innerHeight ? r.top - tipEl.offsetHeight - 6 : r.bottom + 6) + 'px';
+      clearTimeout(ui.tipTimer); ui.tipTimer = setTimeout(() => tipEl.style.display = 'none', 3500);
+    }
+  }
+  if (e.target.id === 'overlay') { $('overlay').classList.add('hidden'); return; }   // click outside the box closes it
+  if (touchUI && st && st.phase === 'battle') {   // tap a hero (not a die or button) to light up who is attacking them; tap again to clear
+    const op = e.target.closest('.op');
+    if (op && !op.classList.contains('tg-ok') && !e.target.closest('button,.die,[data-inspect]')) { const mp = +op.dataset.ti; ui.markP = ui.markP === mp ? null : mp; markAttackers(ui.markP); }
+  }
+  const el = e.target.closest('[data-ui],[data-cls],[data-clsinfo],[data-die],[data-cast],[data-offer],[data-plusv],[data-sigup],[data-gear],[data-mv],[data-dev],[data-inspect],[data-foedie]');
+  ac();
+  if (el) {
+    const d = el.dataset;
+    if (d.ui) return uiAction(d.ui);
+    if (d.dev) return devAction(d.dev);
+    if (d.cls) { sfx.click(); return dispatch({ t:'class', cls: d.cls }); }
+    if (d.clsinfo) return showClass(d.clsinfo);
+    if (d.foedie != null && ui.sel == null) return showEnemyDie(+d.foedie);   // while aiming, a click on the card targets it instead
+    if (d.mv) {
+      const m = ui.moveSel;
+      if (d.mv === 'pick') { ui.moveSel = m && m.d === +d.d && m.g === +d.g ? null : { d: +d.d, g: +d.g }; return render(); }
+      if (d.mv === 'up') { sfx.click(); return dispatch({ t:'move', d: +d.d, g: +d.g, to: +d.d, pos: +d.g - 1 }); }
+      if (d.mv === 'here' && m) { ui.moveSel = null; sfx.click(); return dispatch({ t:'move', d: m.d, g: m.g, to: +d.to }); }
+      if (d.mv === 'swap' && m) { ui.moveSel = null; sfx.click(); return dispatch({ t:'move', d: m.d, g: m.g, to: +d.to, swap: +d.swap }); }
+    }
+    if (d.cast) { ui.sel = null; return dispatch({ t:'cast', s: d.cast }); }
+    if (d.die != null && +d.p === me && st && st.phase === 'battle') {
+      const P = st.players[me], di = +d.die;
+      if (P.roll[di].winding || (P.step === 'roll' && P.roll[di].released)) return;
+      if (P.step === 'roll') { sfx.click(); return dispatch({ t:'keep', i: di }); }
+      if (P.step === 'use') {
+        const dd = P.roll[di]; if (dd.used) return;
+        const f = effFace(st, me, di, dd.fi);
+        if (f.t === 'B') return;
+        if (!needsTarget(f.t) || windsUp(P, di, f)) { ui.sel = null; return dispatch({ t:'use', i: di }); }
+        ui.sel = ui.sel === di ? null : di; return render();
+      }
+    }
+    if (d.offer != null) {
+      const P = st.players[me], o = P.offers[+d.offer];
+      ui.pend = +d.offer; return render();
+    }
+    if (d.plusv != null) { sfx.click(); ui.plusSel = +d.plusv; return render(); }
+    if (d.sigup) { sfx.click(); ui.sigSel = d.sigup; return render(); }
+    if (d.inspect) { const [ip, idi] = d.inspect.split(':').map(Number); return showDie(ip, idi); }
+    if (d.gear != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, d: +d.gear, r: d.r != null ? +d.r : undefined }); }
+    if (d.equip != null) { const i = ui.pend; ui.pend = null; return dispatch({ t:'take', i, r: +d.equip }); }
+  }
+  const card = e.target.closest('[data-tk]');
+  if (card && ui.sel != null && canTarget(card.dataset.tk, +card.dataset.ti)) {
+    const i = ui.sel; ui.sel = null;
+    return dispatch({ t:'use', i, tg: { k: card.dataset.tk, i: +card.dataset.ti } });
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'nameIn') store.set('kc-name', e.target.value.trim().slice(0, 14));
+  if (e.target.id === 'codeIn') ui.joinCode = e.target.value.toUpperCase();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { $('overlay').classList.add('hidden'); if (ui.sel != null) { ui.sel = null; render(); } }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.die.mine')) { e.preventDefault(); e.target.click(); }
+  if (e.key === 'Enter' && e.target.id === 'codeIn') uiAction('join');
+});
+function devAction(k) {
+  if (!st || st.phase !== 'battle') return;
+  if (k === 'win') { st.enemies.forEach(x => x.hp = 0); floorCleared(st); }
+  if (k === 'charge') st.players[me].charge = CHARGE_MAX;
+  if (k === 'heal') st.players.forEach((P, p) => { if (!P.gone) { P.hp = maxHp(st, p); } });
+  if (k === 'auto') { clearInterval(autoTimer); autoTimer = setInterval(() => { if (!st || net.role === 'client') return clearInterval(autoTimer); const a = botNext(st, me); if (a) dispatch(a); else if (st.phase === 'over') clearInterval(autoTimer); }, 250); return; }
+  afterChange();
+}
+function uiAction(k) {
+  switch (k) {
+    case 'solo':
+      teardown(); st = newRun('solo', (Math.random() * 2 ** 31) | 0); addPlayer(st, myName());
+      me = 0; screen = 'game'; ui.err = ''; renderCache.sig = null; afterChange(); break;
+    case 'continue': try { const s = JSON.parse(store.get(SAVE_KEY)); if (s.v !== 3) throw 0; st = s; me = 0; screen = 'game'; renderCache.sig = null; afterChange(); } catch { ui.err = 'That save is from an older version and can\'t be loaded.'; render(); } break;
+    case 'export': showText('Export save', exportSave()); break;
+    case 'import': showText('Paste a save', '', true); break;
+    case 'importok': try { importSave($('saveTxt').value); $('overlay').classList.add('hidden'); render(); } catch (err) { $('saveErr').textContent = err.message; } break;
+    case 'host': ui.joinCode = ''; startHost(); break;
+    case 'join': startJoin(ui.joinCode || ($('codeIn') && $('codeIn').value)); break;
+    case 'leave':
+      clearInterval(autoTimer);
+      if (st && st.mode === 'solo') saveSolo();
+      if (net.peer) endSession('');
+      else { st = null; screen = 'menu'; ui.err = ''; render(); }
+      break;
+    case 'randname': { const n = randomCallsign(myName()); store.set('kc-name', n); const el = $('nameIn'); if (el) el.value = n; sfx.click(); break; }
+    case 'help': showHelp(); break;
+    case 'closehelp': $('overlay').classList.add('hidden'); break;
+    case 'mute': muted = !muted; store.set('kc-mute', muted ? '1' : '0'); applyVol(); render(); break;
+    case 'music': musicOn = !musicOn; store.set('kc-music', musicOn ? '1' : '0'); applyVol(); render(); break;
+    case 'start': dispatch({ t:'start' }); break;
+    case 'reroll': dispatch({ t:'reroll' }); break;
+    case 'done': dispatch({ t:'done' }); break;
+    case 'ready': {   // ask first if dice are left, so a stray click doesn't waste a turn
+      ui.sel = null;
+      const P = st.players[me], left = P.roll.filter((d, di) => !d.used && effFace(st, me, di, d.fi).t !== 'B').length;
+      if (left) { ui.confirmEnd = true; render(); } else dispatch({ t:'ready' });
+      break;
+    }
+    case 'endnow': ui.confirmEnd = false; dispatch({ t:'ready' }); break;
+    case 'keepgoing': ui.confirmEnd = false; render(); break;
+    case 'unready': ui.confirmEnd = false; dispatch({ t:'unready' }); break;
+    case 'desel': ui.sel = null; ui.confirmEnd = false; render(); break;
+    case 'undo': dispatch({ t:'undo' }); break;
+    case 'unpend': ui.pend = null; render(); break;
+    case 'cont': {   // a die upgrade locks in here, so you can change your mind until you press Ready
+      sfx.click(); ui.moveSel = null;
+      const P = st.players[me];
+      if (!P.picked && P.offers[0].k === 'plus') { if (ui.plusSel == null) break; dispatch({ t:'take', i: 0, v: ui.plusSel }); if (ui.sigSel) dispatch({ t:'sigup', id: ui.sigSel }); }
+      dispatch({ t:'cont' }); break;
+    }
+    case 'uncont': dispatch({ t:'cont', on: false }); break;
+    case 'restart': dispatch({ t:'restart' }); break;
+  }
+}
+
+// tooltips
+const tipEl = $('tip');
+function diePreview(p, di) {
+  const P = st.players[p], d = P.dice[di];
+  return `<b>${esc(dieName(P, di))}</b>${netHtml(effFaces(p, di), '3.2rem')}${d.gear.length ? `<div>${d.gear.map(g => ITEMS[g].icon + ' ' + ITEMS[g].name).join('<br>')}</div>` : ''}<div class="muted">Click to inspect each side</div>`;
+}
+document.addEventListener('mouseover', e => {
+  const aimAt = st && st.phase === 'battle' ? e.target.closest('.foe.tg-ok') : null;
+  if (aimAt !== ui.aimAt) { ui.aimAt = aimAt; clearHitPreview(); if (aimAt) showHitPreview(+aimAt.dataset.ti); }
+  if (!touchUI) { const op = st && st.phase === 'battle' ? e.target.closest('.op') : null, mp = op ? +op.dataset.ti : null; if (mp !== ui.markP) { ui.markP = mp; markAttackers(mp); } }
+  const ins = e.target.closest('[data-inspect]');
+  if (ins && st && screen === 'game') {
+    const [ip, idi] = ins.dataset.inspect.split(':').map(Number);
+    if (st.players[ip] && st.players[ip].dice[idi]) { tipEl.innerHTML = diePreview(ip, idi); tipEl.style.display = 'block'; return; }
+  }
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tipEl.style.display = 'none'; return; }
+  tipEl.textContent = t.dataset.tip; tipEl.style.display = 'block';
+});
+document.addEventListener('mousemove', e => {
+  if (tipEl.style.display !== 'block') return;
+  tipEl.style.left = Math.min(e.clientX + 14, innerWidth - tipEl.offsetWidth - 8) + 'px';
+  tipEl.style.top = (e.clientY + 18 + tipEl.offsetHeight > innerHeight ? e.clientY - tipEl.offsetHeight - 10 : e.clientY + 18) + 'px';
+});
+document.addEventListener('focusin', e => {
+  const t = e.target.closest('[data-tip]'); if (!t) return;
+  const r = t.getBoundingClientRect(); tipEl.textContent = t.dataset.tip; tipEl.style.display = 'block';
+  tipEl.style.left = Math.min(r.left, innerWidth - tipEl.offsetWidth - 8) + 'px'; tipEl.style.top = (r.bottom + 6) + 'px';
+});
+document.addEventListener('focusout', () => tipEl.style.display = 'none');
+
+// exposed for the playtest harness
+window.KC = { TUNE, HP_MULT, SIG_UPS, SIGS, get st() { return st; }, set st(v) { st = v; }, act, botNext, newRun, addPlayer, dispatch, uiAction, CLASSES, RULES, ITEMS, ENEMIES, effFace, faceValue, incomingParts, previewHits, enemyPhase, startFloor };
+// Injected by build-compact-mock.py: the real game with a compact battle layout (after Slice & Dice).
+// Heroes as slim bars on the left, enemies as slim bars on the right facing them, your dice in the middle tray,
+// buttons along the bottom. Tap or hover a hero to light up the enemies attacking them.
+saveSolo = function () {};   // never touch a real save
+(function () {
+  const inner = new URLSearchParams(location.search).has('inner') || matchMedia('(max-height:500px) and (orientation:landscape)').matches;
+  if (!inner) {
+    document.head.insertAdjacentHTML('beforeend', `<style>
+      body{padding:16px}.mk{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+      .mk h1{font:700 1.4rem var(--display);color:var(--hud)}.mk p{color:var(--muted);max-width:760px;margin:0}
+      .phone{border:10px solid #2a3142;border-radius:28px;background:#000;overflow:hidden;box-shadow:0 10px 30px #0008}
+      .phone iframe{display:block;border:0}.mk h3{font:600 1rem var(--display)}
+    </style>`);
+    document.body.innerHTML = `<div class="mk">
+      <h1>Compact battle layout mockup</h1>
+      <p>After the Slice &amp; Dice layout: heroes as slim bars on the left, enemies on the right facing them, your dice in the middle, buttons along the bottom. Hover or tap a hero to light up the enemies attacking them. Everything is playable.</p>
+      <p><a href="?inner&mute" style="color:var(--hud)">Open the desktop version full size →</a> · On a phone, turn it sideways and open this page.</p>
+      <h3>iPhone 14 (844 × 390)</h3><div class="phone" style="width:864px"><iframe src="?inner&mute" width="844" height="390"></iframe></div>
+      <h3>Small Android (740 × 360)</h3><div class="phone" style="width:760px"><iframe src="?inner&mute" width="740" height="360"></iframe></div>
+    </div>`;
+    throw 'mock frame';   // stop the game from starting in the frame page
+  }
+  document.head.insertAdjacentHTML('beforeend', `<style>
+    html{font-size:clamp(11px,2.3vh,17px)}
+    body{overflow-x:hidden}
+    .wrap{max-width:1400px;padding:4px 10px 12px}
+    .topbar{padding-bottom:3px;margin-bottom:4px;gap:6px}.topbar .chip{font-size:.75rem;padding:1px 6px}.icon-btn{width:2.1rem;height:2.1rem}
+    @media (max-width:900px){.topbar .title{font-size:0;gap:0}}
+    .cb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);grid-template-rows:auto auto;gap:8px;align-items:start}
+    .cb-l,.cb-r{display:flex;flex-direction:column;gap:5px;min-width:0}
+    .cb .ops,.cb .enemyrow{display:flex!important;flex-direction:column;gap:5px;margin:0!important}
+    /* heroes: portrait, name and health on the left; teammates' dice on the right */
+    .cb .op{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"hh dice" "hp dice" "sub dice";gap:3px 8px;padding:5px 8px;align-items:center}
+    .cb .op>.hh{grid-area:hh;align-items:center}.cb .op>.hp{grid-area:hp}.cb .op>.sub{grid-area:sub;font-size:.72rem;min-height:0}.cb .op>.dice{grid-area:dice;min-height:0;gap:3px}
+    .cb .op .hh .portrait{width:3.4rem;height:3.4rem}
+    .cb .op .hh b{font-size:1rem}.cb .op .status{font-size:.62rem}
+    .cb .op>.sigtxt,.cb .op .dname,.cb .op .tg{display:none}
+    .cb .op .dcol{width:auto}.cb .op .die{width:2.2rem;height:2.2rem;--s:2.2rem;border-radius:6px}
+    .cb .op.me{border-width:2px}
+    /* enemies: intent dice on the left (facing the squad), info in the middle, portrait on the right */
+    .cb .foe{width:auto!important;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"ints nm art" "ints hp art" "ints bd art";gap:2px 8px;padding:5px 8px;align-items:center}
+    .cb .foe>.portrait{grid-area:art;width:3.4rem;height:3.4rem}.cb .foe>.nm{grid-area:nm;text-align:left;font-size:.9rem}
+    .cb .foe>.hp{grid-area:hp}.cb .foe>.row{grid-area:bd;justify-content:flex-start!important;min-height:0!important;font-size:.75rem}
+    .cb .foe>.ints{grid-area:ints;flex-direction:column;gap:3px}.cb .foe .die{width:2.4rem;height:2.4rem;--s:2.4rem}
+    .cb .foe.dead{opacity:.35}
+    /* middle tray: your dice, big */
+    .cb-m{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px;border:1px dashed var(--line);border-radius:8px;min-height:100%;justify-content:center;background:rgba(255,255,255,.015)}
+    .cb-m .dice{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .cb-m .dcol{display:flex;flex-direction:column;align-items:center;gap:3px;width:5.2rem}
+    .cb-m .die{width:4.4rem;height:4.4rem;--s:4.4rem}
+    .cb-m .dname{font-size:.68rem}.cb-m .tg{font:500 .65rem var(--mono);color:var(--muted)}
+    .cb-m .hint{font-size:.78rem;color:var(--muted);text-align:center;max-width:22rem}
+    .cb-m .who{font:600 .8rem var(--display);color:var(--arcane);letter-spacing:.06em;text-transform:uppercase}
+    /* bottom bar: rolling buttons, abilities, end turn */
+    .cbar{grid-column:1 / -1;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--line)}
+    .cbar .ctrl{display:flex;gap:8px}.cbar .btn{padding:.5rem .9rem}
+    .cbar .sigwhy{display:none}
+    .cb-rest .phase{display:none}.cb-rest{max-width:760px;margin:8px auto 0}
+  </style>`);
+  const realRender = render;
+  render = function () {
+    realRender();
+    if (!st || st.phase !== 'battle') return;
+    const app = $('app'), hs = app.querySelectorAll(':scope > h4'), foes = app.querySelector(':scope > .enemyrow'), ops = app.querySelector(':scope > .ops');
+    if (!foes || !ops) return;
+    hs.forEach(h => h.remove());
+    const cb = document.createElement('div'); cb.className = 'cb';
+    const L = document.createElement('div'), M = document.createElement('div'), R = document.createElement('div'), bar = document.createElement('div');
+    L.className = 'cb-l'; M.className = 'cb-m'; R.className = 'cb-r'; bar.className = 'cbar';
+    const mine = ops.querySelector('.op.me'); if (mine) ops.prepend(mine);
+    L.append(ops); R.append(foes);
+    if (mine) {
+      const who = document.createElement('div'); who.className = 'who'; who.textContent = 'Your dice'; M.append(who);
+      const dice = mine.querySelector(':scope > .dice'); if (dice) M.append(dice);
+      const hint = mine.querySelector('.ctrlwrap .hint'); if (hint) M.append(hint);
+      const ctrl = mine.querySelector('.ctrlwrap .ctrl'); if (ctrl) bar.append(ctrl);
+      const sig = mine.querySelector(':scope > .row, :scope > .sigtxt'); if (sig) bar.append(sig);
+      mine.querySelector('.ctrlwrap')?.remove();
+    }
+    cb.append(L, M, R, bar);
+    const rest = app.querySelector(':scope > .center');
+    app.insertBefore(cb, rest); if (rest) rest.classList.add('cb-rest');
+  };
+  // A 3-operative squad on floor 3: you (Precog) plus two teammates who have already rolled.
+  addEventListener('load', () => {
+    teardown(); st = newRun('solo', 4242);
+    ['Blitz', 'Voltage', 'Halo'].forEach(n => addPlayer(st, n));
+    ['breach', 'precog', 'riot'].forEach((c, i) => { st.players[i].cls = c; setupOperative(st, i); });
+    st.floor = 3; startFloor(st);
+    me = 1; screen = 'game'; renderCache.sig = null;
+    act(st, 0, { t:'done' }); act(st, 2, { t:'done' });
+    afterChange();
+  });
+})();
+
+render();
+</script>
+</body>
+</html>

@@ -182,16 +182,31 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 @keyframes an-heal{0%{box-shadow:0 0 0 0 rgba(123,227,154,.9)}50%{box-shadow:0 0 18px 4px rgba(123,227,154,.7)}100%{box-shadow:0 0 0 0 rgba(123,227,154,0)}}
 @keyframes an-ward{0%{box-shadow:0 0 0 0 rgba(127,178,255,.9)}50%{box-shadow:0 0 18px 4px rgba(127,178,255,.75)}100%{box-shadow:0 0 0 0 rgba(127,178,255,0)}}
 @keyframes an-stun{0%{transform:none;filter:brightness(2.2)}30%{transform:rotate(-3deg)}60%{transform:rotate(3deg)}100%{transform:none;filter:none}}
-@keyframes an-kill{0%{transform:scale(1);opacity:1}40%{transform:scale(1.08);filter:brightness(2)}100%{transform:scale(.92);opacity:.3}}
+@keyframes an-kill{0%{transform:scale(1);opacity:1}20%{transform:scale(1.08) rotate(-2deg);filter:brightness(2.4)}50%{transform:scale(1.02) rotate(2deg);filter:brightness(1.4) saturate(0)}100%{transform:scale(.9) translateY(8px);opacity:.3;filter:grayscale(1)}}
 @keyframes an-lunge{0%{transform:none}35%{transform:translateY(14px) scale(1.05)}100%{transform:none}}
 @keyframes an-charge{0%{box-shadow:0 0 0 0 rgba(199,125,255,.9)}50%{box-shadow:0 0 16px 4px rgba(199,125,255,.7)}100%{box-shadow:0 0 0 0 rgba(199,125,255,0)}}
-.an-hit{animation:an-hit .45s ease-out}.an-heal{animation:an-heal .7s ease-out}.an-ward{animation:an-ward .7s ease-out}.an-stun{animation:an-stun .5s ease-out}.an-kill{animation:an-kill .6s ease-out forwards}.an-lunge{animation:an-lunge .35s ease-out}.an-charge{animation:an-charge .6s ease-out}
+.an-hit{animation:an-hit .45s ease-out}.an-heal{animation:an-heal .7s ease-out}.an-ward{animation:an-ward .7s ease-out}.an-stun{animation:an-stun .5s ease-out}.an-kill{animation:an-kill .9s ease-out forwards}.an-lunge{animation:an-lunge .35s ease-out}.an-charge{animation:an-charge .6s ease-out}
 .die.used{transition:opacity .25s,transform .25s}
+#app.holding{pointer-events:none}
+#app.holding .ctrlwrap,#app.holding .sigwhy{visibility:hidden}
+.foe.atk-src{border-color:var(--foe);box-shadow:0 0 0 2px rgba(255,107,91,.55)}
+.foe .die.atk-on{border-color:#ffd166;box-shadow:0 0 0 3px #ffd166,0 0 12px 2px rgba(255,209,102,.6);transform:scale(1.1)}
+.op.atk-me{box-shadow:0 0 0 2px #ffd166}
+.fxpop{position:fixed;pointer-events:none;z-index:52;transform:translate(-50%,-50%);line-height:1}
+.fx-slash{width:90px;height:6px;border-radius:3px;background:linear-gradient(90deg,transparent,#fff 40%,var(--dmg) 70%,transparent);animation:fxslash .35s ease-out forwards}
+@keyframes fxslash{0%{opacity:0;transform:translate(-50%,-50%) rotate(-35deg) scaleX(.2)}40%{opacity:1;transform:translate(-50%,-50%) rotate(-35deg) scaleX(1.1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(-35deg) scaleX(1.3)}}
+.fx-shield{font-size:2.6rem;filter:drop-shadow(0 0 10px rgba(127,178,255,.9));animation:fxshield .7s ease-out forwards}
+@keyframes fxshield{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}35%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+.fx-skull{font-size:2.8rem;animation:fxskull 1s ease-out forwards}
+@keyframes fxskull{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
+@keyframes an-atk{0%{transform:none}30%{transform:translate(10px,-8px) scale(1.04)}100%{transform:none}}
+@keyframes an-down{0%{transform:none;filter:none}25%{transform:translateY(-4px) rotate(-2deg);filter:brightness(1.8)}100%{transform:translateY(4px) rotate(1deg);filter:grayscale(1) brightness(.7)}}
+.an-atk{animation:an-atk .3s ease-out}.an-down{animation:an-down .8s ease-out forwards}
 #banner{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:55;pointer-events:none;font:700 2rem var(--display);letter-spacing:.06em;color:var(--hud);text-shadow:0 3px 12px #000;background:rgba(14,19,29,.85);border:1px solid var(--hud-dim);border-radius:8px;padding:.5rem 1.4rem;opacity:0}
-#banner.show{animation:bannerin 1.5s ease-out forwards}
+#banner.show{animation:bannerin 2.6s ease-out forwards}
 #banner small{display:block;font:500 .9rem var(--body);color:var(--muted);letter-spacing:0;text-align:center}
 @keyframes bannerin{0%{opacity:0;transform:translate(-50%,-40%) scale(.9)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-56%)}}
-@media (prefers-reduced-motion:reduce){.an-hit,.an-stun,.an-lunge,.an-kill{animation:none}#banner.show{animation-duration:.01s}}
+@media (prefers-reduced-motion:reduce){.an-hit,.an-stun,.an-lunge,.an-kill,.an-atk,.an-down{animation:none}.fxpop{display:none}#banner.show{animation-duration:.01s}}
 
 /* tiles (lobby, upgrades) */
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:10px}
@@ -798,6 +813,18 @@ function incomingParts(st, p) {
   return { hit, psn };
 }
 const incomingTo = (st, p) => incomingParts(st, p).hit;
+// The enemy intent dice that will hit operative p (taunt, spread and everyone-attacks included), as "enemy:intent" keys.
+function attackersOf(st, p) {
+  const out = [], lv = living(st), taunt = st.taunt != null && st.players[st.taunt] && !st.players[st.taunt].down ? st.taunt : null;
+  st.enemies.forEach((e, i) => { if (e.hp <= 0 || e.stun) return; e.ints.forEach((it, k) => {
+    const f = parse(it.c);
+    if (f.t === 'X' || ((f.t === 'D' || f.t === 'K') && f.kw.includes('all'))) return out.push(i + ':' + k);
+    if (f.t !== 'D' && f.t !== 'K') return;
+    const tg = taunt != null && f.t === 'D' ? taunt : it.tg, pos = lv.indexOf(tg);
+    if (tg === p || (f.kw.includes('spread') && pos >= 0 && (lv[pos - 1] === p || lv[pos + 1] === p))) out.push(i + ':' + k);
+  }); });
+  return out;
+}
 // Saves: a teammate's bar said they'd go down, and this action took that away.
 const isDoomed = (st, q) => { const T = st.players[q], inc = incomingParts(st, q); return Math.max(0, inc.hit - T.ward) + inc.psn >= T.hp; };
 const doomedMates = (st, p) => living(st).filter(q => q !== p && isDoomed(st, q));
@@ -1486,9 +1513,21 @@ function render() {
   if (screen === 'menu') app.innerHTML = menuHtml();
   else if (screen === 'lobby') app.innerHTML = connectingHtml();
   else if (st) {
-    const body = { lobby: lobbyHtml, battle: battleHtml, upgrade: upgradeHtml, over: overHtml }[st.phase]();
+    // When a floor ends, keep the battle on screen ~2.6 s so the last kills play out under the banner.
+    if (ui.lastPhase === 'battle' && (st.phase === 'upgrade' || st.phase === 'over')) {
+      const snap = JSON.parse(JSON.stringify(st)); snap.phase = 'battle'; snap.players.forEach(x => { if (!x.down) x.step = 'wait'; });
+      ui.hold = { snap, until: Date.now() + 2600 }; setTimeout(render, 2650);
+    }
+    ui.lastPhase = st.phase;
+    const holding = ui.hold && st.phase !== 'battle' && Date.now() < ui.hold.until;
+    if (!holding) ui.hold = null;
+    let body;
+    if (holding) { const real = st; st = ui.hold.snap; try { body = battleHtml(); } finally { st = real; } }
+    else body = { lobby: lobbyHtml, battle: battleHtml, upgrade: upgradeHtml, over: overHtml }[st.phase]();
+    app.classList.toggle('holding', !!holding);
     app.innerHTML = topbar() + (ui.reconnecting ? '<div class="banner" style="margin-bottom:8px">Connection lost. Reconnecting to the host…</div>' : '') + (ui.err ? `<div class="banner err" style="margin-bottom:8px">${esc(ui.err)}</div>` : '') + body;
   }
+  if (ui.markP != null) markAttackers(ui.markP);
   // Keep the hit preview on the enemy under the cursor through re-renders.
   if (ui.aimAt) { const k = ui.aimAt.dataset.ti; ui.aimAt = st && st.phase === 'battle' ? document.querySelector(`.foe.tg-ok[data-ti="${k}"]`) : null; if (ui.aimAt) showHitPreview(+k); }
   postRender();
@@ -1593,13 +1632,13 @@ function lobbyHtml() {
 
 function foeCard(i) {
   const e = st.enemies[i], E = ENEMIES[e.type], dead = e.hp <= 0;
-  const ints = dead ? '' : e.ints.map(it => {
+  const ints = dead ? '' : e.ints.map((it, k) => {
     const f0 = parse(it.c), f = { t: f0.t, n: intentValue(st, e, f0), kw: [], base: [] };
     const all = f0.kw.includes('all');
     const to = (f.t === 'D' || f.t === 'K') ? (all ? '→ everyone' : `→ ${pname(st.taunt != null && f.t === 'D' ? st.taunt : it.tg)}`) : f.t === 'W' ? (all ? '→ all allies' : `→ ${foeLabel(it.tg, true)}`) : (f.t === 'H' || f.t === 'P') ? `→ ${foeLabel(it.tg, true)}` : f.t === 'X' ? '→ everyone' : f.t === 'U' ? 'summon' : '';
     const tags = f0.kw.filter(k => k !== 'all');
-    const tip = 'Intent: ' + faceTip(f) + tags.map(k => `\n${k[0].toUpperCase() + k.slice(1)}: ${ENEMY_KW[k]}`).join('');
-    return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-foedie="${i}" data-tip="${esc(tip + '\nClick to see every side.')}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div><span class="to">${to}</span></div>`;
+    const tip = 'Intent: ' + faceTip(f) + (to ? `\nTarget: ${to.replace('→ ', '')}` : '') + tags.map(k => `\n${k[0].toUpperCase() + k.slice(1)}: ${ENEMY_KW[k]}`).join('');
+    return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-foedie="${i}" data-int="${i}:${k}" data-tip="${esc(tip + '\nClick to see every side.')}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div></div>`;
   }).join('');
   const ok = canTarget('e', i) ? 'tg-ok' : '';
   return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
@@ -1639,8 +1678,8 @@ function opCard(p) {
   const equip = (P.poison ? `<span class="psnb" data-tip="Poison: you take this much at the end of every turn this floor.">☠${P.poison}</span>` : '') + (P.regen ? `<span class="psnb" data-tip="Regen: you heal this much at the start of every turn this floor.">✿${P.regen}</span>` : '') + (P.curse ? '<span class="stunb" data-tip="Cursed: your highest face is blank next turn.">CURSED</span>' : '') + (P.away ? '<span class="stunb" data-tip="Disconnected. Their turns are skipped until they reconnect.">AWAY</span>' : '');
   const ok = canTarget('p', p) ? 'tg-ok' : '';
   return `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
-    <div class="hh"><b>${pname(p)}</b><span class="status ${status}">${statusTxt}</span></div>
-    <div class="sub">${portrait(P.cls, 26)}<span>${C.name}</span><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
+    <div class="hh"><span class="row" style="gap:10px;align-items:center">${portrait(P.cls, 52)}<span class="stack" style="gap:1px"><b>${pname(p)}</b><span class="muted" style="font-size:.8rem">${C.name}</span></span></span><span class="status ${status}">${statusTxt}</span></div>
+    <div class="sub"><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
     ${hpBar(p)}
     <div class="dice">${dice}</div>
     ${sig}
@@ -1676,6 +1715,13 @@ function showHitPreview(i) {
   const pv = previewHits(st, me, ui.sel, f, i);
   Object.keys(pv).forEach(j => { const el = document.querySelector(`[data-key="e:${j}"] .hp`); if (el) el.outerHTML = foeHp(+j, pv[j]); });
 }
+function markAttackers(p) {
+  document.querySelectorAll('.atk-on,.atk-src,.atk-me').forEach(el => el.classList.remove('atk-on', 'atk-src', 'atk-me'));
+  if (p == null || !st || st.phase !== 'battle' || !st.players[p]) return;
+  const keys = attackersOf(st, p); if (!keys.length) return;
+  document.querySelector(`[data-key="p:${p}"]`)?.classList.add('atk-me');
+  keys.forEach(k => { const d = document.querySelector(`[data-int="${k}"]`); if (d) { d.classList.add('atk-on'); d.closest('.foe')?.classList.add('atk-src'); } });
+}
 function clearHitPreview() { if (!st || !st.enemies) return; st.enemies.forEach((_, j) => { const el = document.querySelector(`[data-key="e:${j}"] .hp`); if (el) el.outerHTML = foeHp(j); }); }
 function logTable(lines, title) {
   const rows = lines.map(l => l.side === 'sys' ? `<tr class="sys"><td colspan="3">${esc(l.src)}</td></tr>` : `<tr><td style="color:${l.side === 'ally' ? 'var(--ally)' : 'var(--foe)'}">${esc(l.src)}</td><td>${esc(l.tgt)}</td><td>${esc(l.res)}</td></tr>`).join('');
@@ -1706,7 +1752,7 @@ function battleHtml() {
   }
   ui.controls = buttons; ui.hint = hint;
   return `
-    <h4>Enemies · intent and target</h4>
+    <h4>Enemies · intent</h4>
     <div class="enemyrow" style="margin-top:6px">${st.enemies.map((_, i) => foeCard(i)).join('')}</div>
     <h4 style="margin-top:14px">Squad</h4>
     <div class="ops" style="margin-top:6px">${st.players.map((_, p) => opCard(p)).join('')}</div>
@@ -1859,6 +1905,13 @@ function sparks(card) {   // a teammate was just saved: sparks fly off their hea
     document.body.appendChild(s); setTimeout(() => s.remove(), 1600);
   }
 }
+function fxPop(el, cls, glyph) {
+  if (!el) return; const r = el.getBoundingClientRect(), f = document.createElement('div');
+  f.className = 'fxpop ' + cls; f.textContent = glyph || ''; f.style.left = (r.left + r.width / 2) + 'px'; f.style.top = (r.top + r.height / 2) + 'px';
+  document.body.appendChild(f); setTimeout(() => f.remove(), 1100);
+}
+const fxHit = el => { animate(el, 'an-hit'); fxPop(el, 'fx-slash'); };
+const fxWard = el => { animate(el, 'an-ward'); fxPop(el, 'fx-shield', '🛡'); };
 function animate(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
 function replayEvents(fromN) {
   const fresh = st.log.filter(l => l.n > fromN && l.side !== 'sys').slice(-10);
@@ -1869,25 +1922,27 @@ function replayEvents(fromN) {
       const atk = st.enemies.findIndex((x, i) => l.src.startsWith(en(st, i)));
       if (atk >= 0) animate(document.querySelector(`[data-key="e:${atk}"]`), 'an-lunge');
       if (/Summoned/.test(l.res)) sfx.summon();
-      else if (/ward/.test(l.res)) { sfx.ward(); animate(el, 'an-ward'); }
+      else if (/ward/.test(l.res)) { sfx.ward(); fxWard(el); }
       else if (/✚/.test(l.src)) { sfx.heal(); animate(el, 'an-heal'); }
-      else if (/\(down\)/.test(l.res)) { sfx.down(); animate(el, 'an-hit'); }
-      else if (/→/.test(l.res)) { sfx.enemyHit(); animate(el, 'an-hit'); }
+      else if (/\(down\)/.test(l.res)) { sfx.down(); animate(el, 'an-down'); fxPop(el, 'fx-skull', '💀'); }
+      else if (/→/.test(l.res)) { sfx.enemyHit(); fxHit(el); }
       return;
     }
     if (/full HP/.test(l.res)) return;
     if (/^Saved/.test(l.res)) { sfx.save(); sparks(el); return; }
-    if (/✖/.test(l.res)) { sfx.kill(); animate(el, 'an-kill'); }
+    const by = st.players.findIndex(P => l.src.startsWith(P.name));   // the operative acting lunges toward its target
+    if (by >= 0 && /→/.test(l.res) && el && el.dataset.key && el.dataset.key[0] === 'e') animate(document.querySelector(`[data-key="p:${by}"]`), 'an-atk');
+    if (/✖/.test(l.res)) { sfx.kill(); animate(el, 'an-kill'); fxPop(el, 'fx-skull', '💀'); }
     else if (/Stunned/.test(l.res)) { sfx.stun(); animate(el, 'an-stun'); }
     else if (/Intent rewritten/.test(l.res)) { sfx.sight(); animate(el, 'an-stun'); }
-    else if (/ward/.test(l.res)) { sfx.ward(); animate(el, 'an-ward'); }
+    else if (/ward/.test(l.res)) { sfx.ward(); fxWard(el); }
     else if (/✦$/.test(l.res)) { sfx.charge(); animate(el, 'an-charge'); }
-    else if (/Poison/.test(l.src) || /Poisoned/.test(l.res)) { sfx.hit(); animate(el, 'an-hit'); }
+    else if (/Poison/.test(l.src) || /Poisoned/.test(l.res)) { sfx.hit(); fxHit(el); }
     else if (/✚|self-heal/.test(s) || /Back up/.test(l.res)) { sfx.heal(); animate(el, 'an-heal'); }
-    else if (/ ✦ /.test(l.src)) { sfx.cast(); animate(el, 'an-hit'); }
-    else if (/⚡/.test(l.src)) { sfx.zap(); animate(el, 'an-hit'); }
-    else if (/➹/.test(l.src)) { sfx.pierce(); animate(el, 'an-hit'); }
-    else if (/→/.test(l.res)) { sfx.shot(); animate(el, 'an-hit'); }
+    else if (/ ✦ /.test(l.src)) { sfx.cast(); fxHit(el); }
+    else if (/⚡/.test(l.src)) { sfx.zap(); fxHit(el); }
+    else if (/➹/.test(l.src)) { sfx.pierce(); fxHit(el); }
+    else if (/→/.test(l.res)) { sfx.shot(); fxHit(el); }
   }, k * 140));
 }
 let bannerTimer = null;
@@ -1895,7 +1950,7 @@ function showBanner(title, sub) {
   const b = $('banner'); if (!b) return;
   b.innerHTML = `${esc(title)}${sub ? `<small>${esc(sub)}</small>` : ''}`;
   b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
-  clearTimeout(bannerTimer); bannerTimer = setTimeout(() => b.classList.remove('show'), 1600);
+  clearTimeout(bannerTimer); bannerTimer = setTimeout(() => b.classList.remove('show'), 2700);
 }
 function postRender() {
   if (!st || screen !== 'game') { renderCache.vals = {}; renderCache.sig = null; return; }
@@ -1982,6 +2037,10 @@ document.addEventListener('click', e => {
     }
   }
   if (e.target.id === 'overlay') { $('overlay').classList.add('hidden'); return; }   // click outside the box closes it
+  if (touchUI && st && st.phase === 'battle') {   // tap a hero (not a die or button) to light up who is attacking them; tap again to clear
+    const op = e.target.closest('.op');
+    if (op && !op.classList.contains('tg-ok') && !e.target.closest('button,.die,[data-inspect]')) { const mp = +op.dataset.ti; ui.markP = ui.markP === mp ? null : mp; markAttackers(ui.markP); }
+  }
   const el = e.target.closest('[data-ui],[data-cls],[data-clsinfo],[data-die],[data-cast],[data-offer],[data-plusv],[data-sigup],[data-gear],[data-mv],[data-dev],[data-inspect],[data-foedie]');
   ac();
   if (el) {
@@ -2101,6 +2160,7 @@ function diePreview(p, di) {
 document.addEventListener('mouseover', e => {
   const aimAt = st && st.phase === 'battle' ? e.target.closest('.foe.tg-ok') : null;
   if (aimAt !== ui.aimAt) { ui.aimAt = aimAt; clearHitPreview(); if (aimAt) showHitPreview(+aimAt.dataset.ti); }
+  if (!touchUI) { const op = st && st.phase === 'battle' ? e.target.closest('.op') : null, mp = op ? +op.dataset.ti : null; if (mp !== ui.markP) { ui.markP = mp; markAttackers(mp); } }
   const ins = e.target.closest('[data-inspect]');
   if (ins && st && screen === 'game') {
     const [ip, idi] = ins.dataset.inspect.split(':').map(Number);
