@@ -4,10 +4,10 @@
 
 A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operative with 3 class dice, built up with items as the squad climbs. The squad breaches a cursed corporate tower in the near-future city of Halcyon, one floor per round, for 10 floors. The tone follows Tactical Breach Wizards: wizards in tactical gear, police jargon applied to magic, and dry humor. Keywords follow Slice & Dice. All names and characters are original.
 
-**Play:** https://miraclewhip3.github.io/kevlar-cantrips/
+**Play:** https://miraclewhip3.github.io/kevlar-cantrips/ (public copy). Source of truth: `cheezy-games/kevlar-cantrips/`.
 
 ## Vision
-*Pillars from the user's words (2026/11/01). The full design is in the private design document.*
+*Pillars from the user's words (2026/11/01). The full design is in the [design document](DESIGN.md).*
 
 1. **Build options come first.** The game must have good options for builds and a lot of flexibility. Everything else serves this.
 2. **Start basic, get really powerful.** You choose a character who starts out basic and ends up really powerful.
@@ -40,7 +40,7 @@ A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operativ
 3. **Everyone rolls at once.** Tap dice to 🔒 lock them (a padlock badge and gold frame show it; unlocked dice have a dashed outline), then Reroll rolls only the unlocked ones (2 rerolls). Locking all three moves on automatically; **Undo** goes back while you have rerolls. Cantrip faces fire as soon as they land.
 4. **Use dice in real time.** Click a die, then its target; it happens right away. ✦ dice charge on click (charge maxes at **4**). Abilities fire once per turn each.
    - Your health bar shows what's coming before your next turn: red stripes for attacks left after your ward, green for poison, and the HP you'll end on (`6/8 → 2`).
-   - Enemy health bars stripe the poison due this turn. Pick a die and each enemy you can hit shows what it would take; hover one to see it on the bar, including Cleave and Chain splash. A tick marks where it enrages or changes phase.
+   - Enemy health bars stripe the poison due this turn. Pick a die and hover an enemy: its health bar shows the chunk it would lose (striped yellow, like your own bar shows incoming damage), including Cleave and Chain splash and a ✺ if it would be stunned. A tick marks where it enrages or changes phase.
    - Dice show their number as it stands right now, so Charged, Steel, Patient and the like change the pips, which turn gold.
    - Click an enemy's intent die to see every side it can roll (each boss phase separately).
 5. **End turn.** It asks first if dice are left. When the whole squad is done, every enemy that isn't stunned acts. Ward lasts until then; poison ticks at the end of the turn.
@@ -171,6 +171,7 @@ Each extra operative adds one boss escort. Enemy HP also grows 11% per floor, an
 ## Phones
 - One column, bigger dice and buttons, the combat log collapsed by default (tap "Combat log" to open), and a compact top bar.
 - Tap any face, badge or label to read its tooltip (there's no hover on phones). Tap a die's name to inspect all six sides.
+- On a phone, your operative is always the top card in the squad, with teammates below. A sideways (landscape) layout is mocked up in [mockups-mobile-landscape.html](mockups-mobile-landscape.html): squad on the left, enemies on the right.
 
 ## Saving, audio, dev tools
 - Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before the first-draft update can't be loaded.

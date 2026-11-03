@@ -160,7 +160,6 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 .hp .inc.psn{background:repeating-linear-gradient(135deg,rgba(155,227,123,.95) 0 4px,rgba(155,227,123,.4) 4px 8px)}
 .hp .inc.prev{background:repeating-linear-gradient(135deg,rgba(255,209,102,.98) 0 4px,rgba(255,209,102,.5) 4px 8px)}
 .hp .mark{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;opacity:.85}
-.pvb{font:700 .78rem var(--mono);color:#ffd166;border:1px solid #ffd166;border-radius:3px;padding:0 5px}
 .enrb{font:700 .68rem var(--mono);color:#ffb86b}
 .die.boosted .pips{color:#ffd166}
 .spark{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--hud);pointer-events:none;z-index:60;animation:sparkup 1.6s ease-out forwards}
@@ -237,6 +236,7 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
   .foe .portrait{width:40px;height:40px}
   .foe .die{width:2.6rem;height:2.6rem}
   .ops{grid-template-columns:1fr}
+  .op.me{order:-1}
   .op .dice{justify-content:space-between;gap:6px}
   .op .dcol{width:31%}
   .die{width:4.2rem;height:4.2rem}
@@ -1489,6 +1489,8 @@ function render() {
     const body = { lobby: lobbyHtml, battle: battleHtml, upgrade: upgradeHtml, over: overHtml }[st.phase]();
     app.innerHTML = topbar() + (ui.reconnecting ? '<div class="banner" style="margin-bottom:8px">Connection lost. Reconnecting to the host…</div>' : '') + (ui.err ? `<div class="banner err" style="margin-bottom:8px">${esc(ui.err)}</div>` : '') + body;
   }
+  // Keep the hit preview on the enemy under the cursor through re-renders.
+  if (ui.aimAt) { const k = ui.aimAt.dataset.ti; ui.aimAt = st && st.phase === 'battle' ? document.querySelector(`.foe.tg-ok[data-ti="${k}"]`) : null; if (ui.aimAt) showHitPreview(+k); }
   postRender();
 }
 function topbar() {
@@ -1600,12 +1602,10 @@ function foeCard(i) {
     return `<div class="int"><div class="die f-${f.t} ${e.stun ? 'stun' : ''}" data-foedie="${i}" data-tip="${esc(tip + '\nClick to see every side.')}">${dieInner(f)}${tags.length ? `<em class="kws etag">${tags.map(k => k === 'spread' ? '↔' : k === 'poison' ? '☠' : k === 'growth' ? '↑' : 'ϟ').join('')}</em>` : ''}</div><span class="to">${to}</span></div>`;
   }).join('');
   const ok = canTarget('e', i) ? 'tg-ok' : '';
-  const sf = ok ? selFace() : null, pvd = sf && sf.t === 'D' ? previewHits(st, me, ui.sel, sf, i)[i] : null;
-  const aim = pvd ? `<span class="pvb" data-tip="This die would deal ${pvd.dmg} to it${pvd.psn ? ` and add ${pvd.psn} poison` : ''}${pvd.stun ? ' and stun it' : ''}.">−${pvd.dmg}${pvd.psn ? ` +☠${pvd.psn}` : ''}${pvd.stun ? ' ✺' : ''}</span>` : '';
   return `<div class="foe ${E.boss ? 'boss' : ''} ${dead ? 'dead' : ''} ${ok}" data-tk="e" data-ti="${i}" data-key="e:${i}">
     ${enemyArt(e.type, E.boss ? 64 : 52)}<span class="nm">${foeLabel(i)}</span>
     ${foeHp(i)}
-    <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${aim}${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}${enraged(e) && !dead ? '<span class="stunb" data-tip="Enraged: +2 to every attack below half HP.">ENRAGED</span>' : enrageBelow(e) && !dead ? `<span class="enrb" data-tip="At less than half HP it gets +2 to every attack. The tick on its health bar marks the spot.">Enrages below ${enrageBelow(e)}</span>` : ''}${e.buff && !dead ? `<span class="wardb" data-tip="Empowered: attacks +${e.buff} this floor.">📈${e.buff}</span>` : ''}${E.shatter && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Shatters for ${E.shatter} damage to every operative when killed.">shatters</span>` : ''}</div>
+    <div class="row" style="gap:6px;min-height:1rem;justify-content:center">${e.ward ? `<span class="wardb" data-tip="Ward: blocks the squad's damage this turn (Pierce ignores it).">🛡${e.ward}</span>` : ''}${e.poison && !dead ? `<span class="psnb" data-tip="Poison: takes this much damage at the end of every turn.">☠${e.poison}</span>` : ''}${e.stun ? '<span class="stunb">STUNNED</span>' : ''}${E.selfWard && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Gains 🛡${E.selfWard} every turn">+🛡${E.selfWard}/turn</span>` : ''}${enraged(e) && !dead ? '<span class="stunb" data-tip="Enraged: +2 to every attack below half HP.">ENRAGED</span>' : enrageBelow(e) && !dead ? `<span class="enrb" data-tip="At less than half HP it gets +2 to every attack. The tick on its health bar marks the spot.">Enrages below ${enrageBelow(e)}</span>` : ''}${e.buff && !dead ? `<span class="wardb" data-tip="Empowered: attacks +${e.buff} this floor.">📈${e.buff}</span>` : ''}${E.shatter && !dead ? `<span class="muted" style="font-size:.72rem" data-tip="Shatters for ${E.shatter} damage to every operative when killed.">shatters</span>` : ''}</div>
     <div class="ints">${ints}</div>
   </div>`;
 }
@@ -1667,8 +1667,9 @@ function foeHp(i, pv) {
   const marks = [...(enrageBelow(e) ? [enrageBelow(e) / e.mx] : []), ...(E.phases ? E.phases.filter(x => x.at < 1 && !x.enrage).map(x => x.at) : [])];
   const atk = pv ? Math.min(e.hp, pv.dmg) : 0, psn = Math.min(e.hp - atk, e.poison + (pv ? pv.psn : 0)), left = e.hp - atk - psn;
   const wake = enrageBelow(e) && !enraged(e) && atk && (e.hp - atk) * 2 < e.mx;
-  const tip = atk || psn ? [`After this turn: ${e.hp} → ${left} HP.`, atk ? `This die: ${atk}.` : '', psn ? `Poison at the end of the turn: ${psn}.` : ''].filter(Boolean).join('\n') : '';
-  return `<div class="hp" ${tip ? `data-tip="${esc(tip)}"` : ''}><i style="width:${e.hp / e.mx * 100}%"></i>${stripes(e.hp, e.mx, atk, psn, 'prev')}${marks.map(m => `<b class="mark" style="left:${m * 100}%"></b>`).join('')}<span>${e.hp}/${e.mx}${atk || psn ? ` → ${left || '✖'}` : ''}${wake ? ' ENRAGES' : ''}</span></div>`;
+  const stun = pv && pv.stun;
+  const tip = atk || psn ? [`After this turn: ${e.hp} → ${left} HP.`, atk ? `This die: ${atk}.` : '', psn ? `Poison at the end of the turn: ${psn}.` : '', stun ? 'This die stuns it.' : ''].filter(Boolean).join('\n') : '';
+  return `<div class="hp" ${tip ? `data-tip="${esc(tip)}"` : ''}><i style="width:${e.hp / e.mx * 100}%"></i>${stripes(e.hp, e.mx, atk, psn, 'prev')}${marks.map(m => `<b class="mark" style="left:${m * 100}%"></b>`).join('')}<span>${e.hp}/${e.mx}${atk || psn ? ` → ${left || '✖'}` : ''}${wake ? ' ENRAGES' : ''}${stun ? ' ✺' : ''}</span></div>`;
 }
 function showHitPreview(i) {
   const f = selFace(); if (!f || f.t !== 'D') return;
