@@ -2140,6 +2140,7 @@ saveSolo = function () {};   // never touch a real save
     document.body.innerHTML = `<div class="mk">
       <h1>Mobile landscape mockup</h1>
       <p>The real game with a sideways phone layout and a 3-operative squad. Squad on the left with you on top, enemies on the right. Everything is clickable. Open this page on a phone turned sideways to see it full screen.</p>
+      <p><a href="?inner&mute" style="color:var(--hud)">Open the desktop version full size →</a></p>
       <h3>iPhone 14 (844 × 390)</h3><div class="phone" style="width:864px"><iframe src="?inner&mute" width="844" height="390"></iframe></div>
       <h3>Small Android (740 × 360)</h3><div class="phone" style="width:760px"><iframe src="?inner&mute" width="740" height="360"></iframe></div>
     </div>`;
@@ -2177,6 +2178,24 @@ saveSolo = function () {};   // never touch a real save
     .ls .foe .nm{font-size:.8rem}.ls .foe .die{width:2.2rem;height:2.2rem;--s:2.2rem}
     .ls .foe .row{min-height:0!important}
     .ls-rest .phase{display:none}
+    @media (min-width:1000px){
+      html{font-size:16px}
+      .wrap{max-width:1280px;padding:10px 16px 40px}
+      .topbar .title{font-size:1.15rem;gap:8px}.topbar .chip{font-size:.8rem;padding:2px 8px}.icon-btn{width:2.4rem;height:2.4rem}
+      .ls{gap:16px}.ls h4{margin:0 0 6px!important}
+      .ls .ops{gap:10px}
+      .ls .op{padding:10px;gap:8px}
+      .ls .op.me .die{width:3.9rem;height:3.9rem;--s:3.9rem}.ls .op.me .dcol{width:5rem}.ls .op.me .dname{font-size:.72rem}
+      .ls .op.me .hh b{font-size:1.1rem}.ls .op.me .sub{font-size:.85rem}
+      .ls .op.me .ctrlwrap .hint{font-size:.85rem}.ls .op.me .ctrl .btn{padding:.55rem 1rem;font-size:.95rem}
+      .ls .op.mate{grid-template-columns:8rem minmax(0,1fr) auto;padding:8px 10px}
+      .ls .op.mate .hh b{font-size:1rem}
+      .ls .op.mate .die{width:2.7rem;height:2.7rem;--s:2.7rem}
+      .ls .enemyrow{gap:10px}.ls .foe{padding:10px;gap:6px}
+      .ls .foe .portrait,.ls .foe svg.portrait{width:48px;height:48px}
+      .ls .foe .nm{font-size:.95rem}.ls .foe .die{width:2.9rem;height:2.9rem;--s:2.9rem}
+      .ls-rest{max-width:760px;margin-left:auto;margin-right:auto}
+    }
   </style>`);
   const realRender = render;
   render = function () {
