@@ -2,9 +2,11 @@
 
 # Kevlar & Cantrips
 
-A co-op dice tactics game for 1 to 4 friends. Each player is one wizard operative with 3 class dice, built up with items as the squad climbs. The squad breaches a cursed corporate tower in the near-future city of Halcyon, one floor per round, for 10 floors. The tone follows Tactical Breach Wizards: wizards in tactical gear, police jargon applied to magic, and dry humor. Keywords follow Slice & Dice. All names and characters are original.
+A co-op dice tactics game for 1 to 3 friends (solo runs all 3 operatives). Each player is one wizard operative with 3 class dice, built up with items as the squad climbs. The squad breaches a cursed corporate tower in the near-future city of Halcyon, one floor per round, for 10 floors. The tone follows Tactical Breach Wizards: wizards in tactical gear, police jargon applied to magic, and dry humor. Keywords follow Slice & Dice. All names and characters are original.
 
 **Play:** https://miraclewhip3.github.io/kevlar-cantrips/ (public copy). Source of truth: `cheezy-games/kevlar-cantrips/`.
+
+**Visual guide:** https://miraclewhip3.github.io/kevlar-cantrips/guide.html — every class, die, keyword, item and enemy drawn with the game's own art. Best place to review content. Rebuild it after changes with `python -X utf8 tests/build-guide.py`.
 
 ## Vision
 *Pillars from the user's words (2026/11/01). The full design is in the [design document](DESIGN.md).*
@@ -124,14 +126,81 @@ After floor 5, on top of the die upgrade, each operative picks 1 of 3 upgrades f
 - **Rearranging:** on the between-floors screen, move items to another die (Move → Move here), swap them between full dice (Swap here), or reorder them (↑). Items apply **top to bottom**, so order matters: Tuning Fork above Glass Rune adds 1 before doubling.
 
 ## Items by floor
-| After floor | Items (tier) |
-|---|---|
-| 1 Reception | Duct Tape (rightmost blank → 🛡1), Spare Battery (rightmost blank → ✦1), Laser Sight (left +1), Grip Tape (middle +1), Field Dressing (bottom → ✚1), Kevlar Patch (lowest 🛡 +1), Lucky Keychain (top gains Cantrip) |
-| 3 Open-Plan Office | Serrated Edge (left Cruel), Opening Salvo (left Engage), Stapler Rounds (middle ⚔ Pierce), Toxin Vial (middle ⚔ Poison), Mirror Polish (left Pristine), Med-Gel Cartridge (✚ +1), Spark Spellcard (Zap 3✦: 2 to the lowest-HP enemy) |
-| 4 Server Farm | Tuning Fork (⚔ +1), Broadhead Rounds (left and middle ⚔ Cleave), Capacitor (left Charged), Grounding Coil (Chain hits 2 each side), Leech Coil (left Self-heal), Mainspring (left Wind-up), Hourglass (left Patient), Flare Rune (Flare 3✦: 3 to the highest-HP enemy) |
-| 6 Executive Gym | Ceramic Plate (🛡 +1), Echo Chamber (blanks → ⚔2 Echo), Mirror Shard (rightmost copies the middle), Kevlar Lining (⚔ Self-shield), Bonsai Chip (left and middle Growth), Rampage Rounds (left ⚔ Rampage), Triage Sigil (Triage 3✦: heal 3) |
-| 7 R&D Ritual Lab | Glass Rune (⚔ doubles; 6+ gain Pain), Overclock Chip (all +1, Exert), Spellwire (left Cantrip), Bloodlust Sigil (⚔ Bloodlust), Duelist's Badge (⚔ Duel), Focus Lens (⚔ Focus), Regen Weave (🛡 Regen) |
-| 9 Glass Atrium | Flashbang Pin (middle ⚔ Stun), Neural Taser (Stun Burst 5✦), Twin-Barrel Mod (left Copycat +2), Phoenix Sigil (left Deathwish +1), Singularity Core (left → ⚔8 Single-use), Arcane Amplifier (all +1), Share Link (🛡 and ✚ Share) |
+
+Pick 1 of 3 after each floor without a die upgrade. For pictures of which face each item changes, see the [visual guide](guide.html).
+
+### After floor 1 · Reception
+
+| | Item | What it does |
+|---|---|---|
+| 🩹 | **Duct Tape** | The rightmost blank becomes 🛡1. |
+| 🔋 | **Spare Battery** | The rightmost blank becomes ✦1. |
+| 🔴 | **Laser Sight** | The left face +1. |
+| 🧤 | **Grip Tape** | The middle face +1. |
+| 💉 | **Field Dressing** | The bottom face becomes ✚1. |
+| 🧷 | **Kevlar Patch** | The lowest 🛡 face +1. |
+| 🔑 | **Lucky Keychain** | The top face gains Cantrip. |
+
+### After floor 3 · Open-Plan Office
+
+| | Item | What it does |
+|---|---|---|
+| 🪚 | **Serrated Edge** | The left face gains Cruel. |
+| 🎺 | **Opening Salvo** | The left face gains Engage. |
+| 📌 | **Stapler Rounds** | The middle face gains Pierce. |
+| 🧪 | **Toxin Vial** | The middle face gains Poison. |
+| 🪞 | **Mirror Polish** | The left face gains Pristine. |
+| 🧴 | **Med-Gel Cartridge** | All ✚ faces +1. |
+| 💳 | **Spark Spellcard** (ability) | Grants Zap (3✦): 2 damage to the lowest-HP enemy. |
+
+### After floor 4 · Server Farm
+
+| | Item | What it does |
+|---|---|---|
+| 🎚️ | **Tuning Fork** | All ⚔ faces +1. |
+| 🪓 | **Broadhead Rounds** | The left and middle ⚔ faces gain Cleave. |
+| 🔌 | **Capacitor** | The left face gains Charged. |
+| 🧲 | **Grounding Coil** | Chain faces hit 2 enemies on each side. |
+| 🩸 | **Leech Coil** | The left face gains Self-heal. |
+| ⏳ | **Hourglass** | The left face gains Patient. |
+| 🕰️ | **Mainspring** | The left face gains Wind-up. |
+| 🎇 | **Flare Rune** (ability) | Grants Flare (3✦): 3 damage to the enemy with the most HP. |
+
+### After floor 6 · Executive Gym
+
+| | Item | What it does |
+|---|---|---|
+| 🧱 | **Ceramic Plate** | All 🛡 faces +1. |
+| 🔁 | **Echo Chamber** | Blanks become ⚔2 Echo. |
+| 🔷 | **Mirror Shard** | The rightmost face becomes a copy of the middle face. |
+| 🦺 | **Kevlar Lining** | All ⚔ faces gain Self-shield. |
+| 🌱 | **Bonsai Chip** | The left and middle faces gain Growth. |
+| 🐗 | **Rampage Rounds** | The left ⚔ face gains Rampage. |
+| ⚕️ | **Triage Sigil** (ability) | Grants Triage (3✦): heal the most hurt operative 3. |
+
+### After floor 7 · R&D Ritual Lab
+
+| | Item | What it does |
+|---|---|---|
+| 🔮 | **Glass Rune** | ⚔ numbers double; any that reach 6 or more gain Pain. |
+| ⚙️ | **Overclock Chip** | All faces +1; they gain Exert. |
+| 🧵 | **Spellwire** | The left face gains Cantrip. |
+| 🩸 | **Bloodlust Sigil** | All ⚔ faces gain Bloodlust. |
+| 🎖️ | **Duelist's Badge** | All ⚔ faces gain Duel. |
+| 🔍 | **Focus Lens** | All ⚔ faces gain Focus. |
+| 🕸️ | **Regen Weave** | All 🛡 faces gain Regen. |
+
+### After floor 9 · Glass Atrium
+
+| | Item | What it does |
+|---|---|---|
+| 📍 | **Flashbang Pin** | The middle ⚔ face gains Stun. |
+| ⚡ | **Neural Taser** (ability) | Grants Stun Burst (4✦): stun a random enemy. |
+| 🔫 | **Twin-Barrel Mod** | The left face gains Copycat and +2. |
+| 🔥 | **Phoenix Sigil** | The left face gains Deathwish and +1. |
+| 🕳️ | **Singularity Core** | The left face becomes ⚔8 Single-use. |
+| 📡 | **Arcane Amplifier** | All faces +1. |
+| 🔗 | **Share Link** | All 🛡 and ✚ faces gain Share. |
 
 ## Enemies and floors
 Two new enemies arrive on each regular floor and mix with earlier ones (new ones are twice as likely). HP below is solo, before floor growth (+10% per floor) and squad scaling.
