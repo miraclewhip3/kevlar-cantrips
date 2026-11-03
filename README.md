@@ -194,3 +194,7 @@ Each extra operative adds one boss escort. Enemy HP also grows 11% per floor, an
 - Boss numbers were lowered from the draft (Vex 20 → 13, Grieve 36 → 24 per operative, fewer boss actions in big squads) so runs don't stall on floor 5.
 - Storm Witch and Precog are weaker than the other two classes in solo bot play; the bot underplays Future, Copycat and Echo.
 - Floor 7 (Ritual Acolyte curses and Hex Construct spread) is the biggest difficulty spike.
+
+## Planned
+- **Tutorial:** add a short first-run tutorial that teaches rolling, locking, rerolling and using dice.
+- **Remove the rolling hint** ("Tap a die to 🔒 lock it. Locked dice stay as they are; Reroll only rolls the unlocked ones.") once the tutorial covers it.
