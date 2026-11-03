@@ -173,8 +173,8 @@ Each extra operative adds one boss escort. Enemy HP also grows 11% per floor, an
 - Tap any face, badge or label to read its tooltip (there's no hover on phones). Tap a die's name to inspect all six sides.
 - Hover a hero (tap on a phone) to light up the enemies attacking them and their intent dice. An enemy's target is also in its intent die's tooltip.
 - Animations: hits flash a slash and shake the target, the attacker lunges, wards pop a shield, kills and downed operatives show a skull and fade to grey. When a floor ends, the battle stays on screen about 2.5 seconds under the banner before moving on.
-- A compact layout after Slice & Dice is mocked up in [mockups-compact-layout.html](mockups-compact-layout.html): heroes as slim bars on the left, enemies on the right, your dice in the middle tray, buttons along the bottom.
-- On a phone, your operative is always the top card in the squad, with teammates below. A sideways (landscape) layout is mocked up in [mockups-mobile-landscape.html](mockups-mobile-landscape.html): squad on the left, enemies on the right.
+- **Battle layout** (after Slice & Dice, built 2026/11/03): heroes as slim bars on the left with you first, your dice big in the middle tray, enemies as slim bars on the right with their intent dice facing the squad, and Reroll, Done, End turn and abilities along the bottom. Text scales with the window height, so a whole turn fits on a sideways phone. Upright phones stack it: enemies, your dice, buttons, then the squad. The approved mockup is [mockups-compact-layout.html](mockups-compact-layout.html).
+- Your operative is always the top hero, with teammates below.
 
 ## Saving, audio, dev tools
 - Solo runs **autosave**. Export/Import uses a `KC1:` text string. Saves from before the first-draft update can't be loaded.

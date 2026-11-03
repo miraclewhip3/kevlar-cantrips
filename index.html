@@ -183,7 +183,6 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 @keyframes an-ward{0%{box-shadow:0 0 0 0 rgba(127,178,255,.9)}50%{box-shadow:0 0 18px 4px rgba(127,178,255,.75)}100%{box-shadow:0 0 0 0 rgba(127,178,255,0)}}
 @keyframes an-stun{0%{transform:none;filter:brightness(2.2)}30%{transform:rotate(-3deg)}60%{transform:rotate(3deg)}100%{transform:none;filter:none}}
 @keyframes an-kill{0%{transform:scale(1);opacity:1}20%{transform:scale(1.08) rotate(-2deg);filter:brightness(2.4)}50%{transform:scale(1.02) rotate(2deg);filter:brightness(1.4) saturate(0)}100%{transform:scale(.9) translateY(8px);opacity:.3;filter:grayscale(1)}}
-@keyframes an-lunge{0%{transform:none}35%{transform:translateY(14px) scale(1.05)}100%{transform:none}}
 @keyframes an-charge{0%{box-shadow:0 0 0 0 rgba(199,125,255,.9)}50%{box-shadow:0 0 16px 4px rgba(199,125,255,.7)}100%{box-shadow:0 0 0 0 rgba(199,125,255,0)}}
 .an-hit{animation:an-hit .45s ease-out}.an-heal{animation:an-heal .7s ease-out}.an-ward{animation:an-ward .7s ease-out}.an-stun{animation:an-stun .5s ease-out}.an-kill{animation:an-kill .9s ease-out forwards}.an-lunge{animation:an-lunge .35s ease-out}.an-charge{animation:an-charge .6s ease-out}
 .die.used{transition:opacity .25s,transform .25s}
@@ -199,7 +198,7 @@ input{font:inherit;background:var(--panel2);color:var(--fg);border:1px solid var
 @keyframes fxshield{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}35%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
 .fx-skull{font-size:2.8rem;animation:fxskull 1s ease-out forwards}
 @keyframes fxskull{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
-@keyframes an-atk{0%{transform:none}30%{transform:translate(10px,-8px) scale(1.04)}100%{transform:none}}
+@keyframes an-atk{0%{transform:none}30%{transform:translateX(12px) scale(1.04)}100%{transform:none}}
 @keyframes an-down{0%{transform:none;filter:none}25%{transform:translateY(-4px) rotate(-2deg);filter:brightness(1.8)}100%{transform:translateY(4px) rotate(1deg);filter:grayscale(1) brightness(.7)}}
 .an-atk{animation:an-atk .3s ease-out}.an-down{animation:an-down .8s ease-out forwards}
 #banner{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:55;pointer-events:none;font:700 2rem var(--display);letter-spacing:.06em;color:var(--hud);text-shadow:0 3px 12px #000;background:rgba(14,19,29,.85);border:1px solid var(--hud-dim);border-radius:8px;padding:.5rem 1.4rem;opacity:0}
@@ -261,6 +260,44 @@ textarea{width:100%;min-height:6rem;font:.8rem var(--mono);background:#0b1018;co
   .net{--s:2.6rem}
   .overlay{padding:12px 8px}
   .log table{font-size:.78rem}
+}
+/* compact battle layout */
+html.inbattle{font-size:clamp(11px,2.3vh,17px)}
+html.inbattle .wrap{max-width:1400px;padding:4px 10px 12px}
+html.inbattle .topbar{padding-bottom:3px;margin-bottom:4px;gap:6px}
+.cb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,1fr);gap:8px;align-items:stretch}
+.cb-l,.cb-r{display:flex;flex-direction:column;gap:5px;min-width:0}
+.cb .ops,.cb .enemyrow{display:flex;flex-direction:column;gap:5px;margin:0}
+.cb .op{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"hh dice" "hp dice" "sub dice";gap:3px 8px;padding:5px 8px;align-items:center}
+.cb .op>.hh{grid-area:hh;align-items:center}.cb .op>.hp{grid-area:hp}.cb .op>.sub{grid-area:sub;font-size:.72rem;min-height:0}.cb .op>.dice{grid-area:dice;min-height:0;gap:3px}
+.cb .op .hh .portrait{width:3.4rem;height:3.4rem}
+.cb .op .hh b{font-size:1rem}.cb .op .status{font-size:.62rem}
+.cb .op>.sigtxt,.cb .op .dname,.cb .op .tg{display:none}
+.cb .op .dcol{width:auto}.cb .op .die{width:2.2rem;height:2.2rem;--s:2.2rem;border-radius:6px}
+.cb .op.me{border-width:2px}
+.cb .foe{width:auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"ints nm art" "ints hp art" "ints bd art";gap:2px 8px;padding:5px 8px;align-items:center}
+.cb .foe>.portrait{grid-area:art;width:3.4rem;height:3.4rem}.cb .foe>.nm{grid-area:nm;text-align:left;font-size:.9rem}
+.cb .foe>.hp{grid-area:hp;max-width:9rem;height:.8rem}.cb .foe>.hp span{font-size:.58rem;line-height:.68rem}
+.cb .foe>.row{grid-area:bd;justify-content:flex-start!important;min-height:0!important;font-size:.75rem}
+.cb .foe>.ints{grid-area:ints;flex-direction:column;gap:3px}.cb .foe .die{width:2.4rem;height:2.4rem;--s:2.4rem}
+.cb-m{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px;border:1px dashed var(--line);border-radius:8px;justify-content:center;background:rgba(255,255,255,.015)}
+.cb-m .dice{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cb-m .dcol{display:flex;flex-direction:column;align-items:center;gap:3px;width:5.2rem}
+.cb-m .die{width:4.4rem;height:4.4rem;--s:4.4rem}
+.cb-m .dname{font-size:.68rem}.cb-m .tg{font:500 .65rem var(--mono);color:var(--muted);text-align:center}
+.cb-m .hint{font-size:.78rem;color:var(--muted);text-align:center;max-width:22rem}
+.cb-m .who{font:600 .8rem var(--display);color:var(--arcane);letter-spacing:.06em;text-transform:uppercase}
+.cbar{grid-column:1 / -1;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--line)}
+.cbar .ctrl{display:flex;gap:8px}.cbar .btn{padding:.5rem .9rem}.cbar .sigwhy{display:none}
+.cb-rest{max-width:760px;margin:8px auto 0}.cb-rest .phase{display:none}
+@keyframes an-lunge{0%{transform:none}35%{transform:translateX(-14px) scale(1.05)}100%{transform:none}}
+/* upright phone: one column (enemies, your dice, buttons, squad with you first) */
+@media (max-width:640px) and (orientation:portrait){
+  html.inbattle{font-size:15px}
+  .cb{grid-template-columns:1fr}
+  .cb-r{order:1}.cb-m{order:2}.cbar{order:3}.cb-l{order:4}
+  .cb .foe>.hp{max-width:none}
+  .cbar::before{content:'Tip: turn your phone sideways for the best view.';flex-basis:100%;text-align:center;font-size:.72rem;color:var(--muted)}
 }
 details.logd summary{cursor:pointer;font:600 .9rem var(--display);color:var(--muted);padding:2px 0}
 </style>
@@ -1525,6 +1562,7 @@ function render() {
     if (holding) { const real = st; st = ui.hold.snap; try { body = battleHtml(); } finally { st = real; } }
     else body = { lobby: lobbyHtml, battle: battleHtml, upgrade: upgradeHtml, over: overHtml }[st.phase]();
     app.classList.toggle('holding', !!holding);
+    document.documentElement.classList.toggle('inbattle', st.phase === 'battle' || !!holding);
     app.innerHTML = topbar() + (ui.reconnecting ? '<div class="banner" style="margin-bottom:8px">Connection lost. Reconnecting to the host…</div>' : '') + (ui.err ? `<div class="banner err" style="margin-bottom:8px">${esc(ui.err)}</div>` : '') + body;
   }
   if (ui.markP != null) markAttackers(ui.markP);
@@ -1677,14 +1715,14 @@ function opCard(p) {
   } else sig = `<span class="sigtxt">${abil.map(s => `<span data-tip="${esc(sigText(P, s))}">✦ ${SIGS[s].name} ${sigCost(st, p, s)}</span>`).join(' · ')}</span>`;
   const equip = (P.poison ? `<span class="psnb" data-tip="Poison: you take this much at the end of every turn this floor.">☠${P.poison}</span>` : '') + (P.regen ? `<span class="psnb" data-tip="Regen: you heal this much at the start of every turn this floor.">✿${P.regen}</span>` : '') + (P.curse ? '<span class="stunb" data-tip="Cursed: your highest face is blank next turn.">CURSED</span>' : '') + (P.away ? '<span class="stunb" data-tip="Disconnected. Their turns are skipped until they reconnect.">AWAY</span>' : '');
   const ok = canTarget('p', p) ? 'tg-ok' : '';
-  return `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
+  const card = `<div class="op ${mine ? 'me' : ''} ${P.down || P.gone ? 'down' : ''} ${ok}" data-tk="p" data-ti="${p}" data-key="p:${p}">
     <div class="hh"><span class="row" style="gap:10px;align-items:center">${portrait(P.cls, 52)}<span class="stack" style="gap:1px"><b>${pname(p)}</b><span class="muted" style="font-size:.8rem">${C.name}</span></span></span><span class="status ${status}">${statusTxt}</span></div>
     <div class="sub"><span style="color:var(--chg)" data-tip="Charge: spend it on your abilities. Resets each floor.">✦${P.charge}</span>${P.ward ? `<span class="wardb" data-tip="Ward: blocks enemy damage this turn.">🛡${P.ward}</span>` : ''}${equip}</div>
     ${hpBar(p)}
-    <div class="dice">${dice}</div>
-    ${sig}
-    ${mine && st.phase === 'battle' ? `<div class="ctrlwrap">${ui.hint ? `<div class="hint" style="text-align:left">${ui.hint}</div>` : ''}<div class="row ctrl">${ui.controls || ''}</div></div>` : ''}
+    ${mine && st.phase === 'battle' ? '' : `<div class="dice">${dice}</div>${sig}`}
   </div>`;
+  if (mine) { ui.myDice = dice; ui.mySig = sig; }
+  return card;
 }
 // Operative health bar with the damage expected before your next turn striped on top
 // (enemy attacks aimed at you, after your ward, plus poison).
@@ -1752,11 +1790,8 @@ function battleHtml() {
   }
   ui.controls = buttons; ui.hint = hint;
   return `
-    <h4>Enemies · intent</h4>
-    <div class="enemyrow" style="margin-top:6px">${st.enemies.map((_, i) => foeCard(i)).join('')}</div>
-    <h4 style="margin-top:14px">Squad</h4>
-    <div class="ops" style="margin-top:6px">${st.players.map((_, p) => opCard(p)).join('')}</div>
-    <div class="center">
+    ${battleGrid()}
+    <div class="center cb-rest">
       <div class="phase"><span>Turn ${st.turn}</span><span class="on">Squad rolls &amp; acts</span><span>Enemies act when all are ready</span></div>
       ${st.msg ? `<div class="banner">${esc(st.msg)}</div>` : ''}
       ${waiting.length && P && P.step === 'ready' ? `<div class="hint">Waiting for ${waiting.join(', ')}…</div>` : ''}
@@ -1764,6 +1799,21 @@ function battleHtml() {
     <details class="log box logd" ${ui.logOpen ?? !matchMedia('(max-width:640px)').matches ? 'open' : ''}><summary>Combat log</summary>${logTable(st.log.slice(-16), '') || '<span class="muted">Dice you use show up here as they land.</span>'}</details>`;
 }
 
+// Compact battle layout (after Slice & Dice): heroes as slim bars on the left (you first), your dice in the
+// middle tray, enemies on the right facing the squad, buttons along the bottom.
+function battleGrid() {
+  ui.myDice = ''; ui.mySig = '';
+  const order = st.players.map((_, p) => p).sort((a, b) => (b === me) - (a === me));
+  const heroes = order.map(opCard).join(''), foes = st.enemies.map((_, i) => foeCard(i)).join('');
+  const P = st.players[me], active = P && !P.down && !P.gone;
+  const tray = active && ui.myDice ? `<div class="who">Your dice</div><div class="dice">${ui.myDice}</div>` : '';
+  return `<div class="cb">
+    <div class="cb-l"><div class="ops">${heroes}</div></div>
+    <div class="cb-m">${tray}${ui.hint ? `<div class="hint">${ui.hint}</div>` : ''}</div>
+    <div class="cb-r"><div class="enemyrow">${foes}</div></div>
+    <div class="cbar"><div class="row ctrl">${ui.controls || ''}</div>${active ? ui.mySig : ''}</div>
+  </div>`;
+}
 function offerDesc(o) {
   if (o.k === 'plus') return { icon:'⬆', name:'Die upgrade', tag:'A random die becomes +', text:'Pick one of two + versions.' };
   return { icon: ITEMS[o.id].icon, name: ITEMS[o.id].name, tag: ITEMS[o.id].ability ? 'Item · ability' : 'Item', text: ITEMS[o.id].text };
