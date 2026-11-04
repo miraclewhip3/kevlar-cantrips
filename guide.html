@@ -313,7 +313,7 @@ html.inbattle .topbar{padding-bottom:3px;margin-bottom:4px;gap:6px}
 .tgroups{display:flex;flex-wrap:wrap;gap:12px 22px;justify-content:center}
 .tgroup{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
 .tgroup .dice{flex-wrap:nowrap!important;gap:8px!important}.tgroup .dcol{width:4.2rem!important}.tgroup .die{width:3.6rem!important;height:3.6rem!important;--s:3.6rem}
-.tgroup .dname{white-space:normal;line-height:1.1}
+.tgroup .dname{white-space:normal;line-height:1.1;font-size:.82rem}
 .cb-m .who{font-size:.72rem}
 .lastdie{display:flex;align-items:center;gap:8px;font:600 .74rem var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:.2rem .55rem}
 .lastdie b{color:var(--hud);font-size:.95rem}
@@ -340,35 +340,37 @@ details.logd summary{cursor:pointer;font:600 .9rem var(--display);color:var(--mu
 // A face code is a primary (D damage, W ward, H heal, C charge, B blank) + number + optional keywords: 'D2:cleave'.
 const POS_TOP = 0, POS_LEFT = 1, POS_MID = 2, POS_RIGHT = 3, POS_RM = 4, POS_BOT = 5;
 const F = (L, M, T, R, B, RM) => [T, L, M, R, RM, B];   // dice are written in design-doc order: left, middle, top, right, bottom, rightmost
+// Starting dice rules (2026/11/04, see DESIGN.md): a keyword is part of the face's own art, never a small symbol. At most 2 keyword
+// faces per die and one keyword per face. Pair, Trio, Inspired, Boost and Vitality are 1 at most; Engage, Cruel and the like 2 at most.
 const CLASSES = {
   breach:{ name:'Breach Mage', icon:'💥', hp:6, role:'Piercing burst', blurb:'Door-kicker in ceramic plate. Hex rounds that punch straight through enemy wards.', sig:'doorkick', dice:[
-    { name:'Scattershot',      faces:F('D2:cleave','D1:cleave','D1','W1','D1','B'),   plus:[{ label:'+', faces:F('D3:cleave','D2:cleave','D2','W1','D2','D1') }, { label:'Slug Choke', faces:F('D4:pierce','D3:pierce','D2','W1','D2','B') }] },
-    { name:'Breaching Charge', faces:F('D3:engage','D2:pierce','D1','C1','D1','B'),   plus:[{ label:'+', faces:F('D4:engage','D3:pierce','D2','C1','D2','D1') }, { label:'Thermite Charge', faces:F('D2:poison','D2:poison','D1:pierce','C1','D1:pierce','D1') }] } ] },
+    { name:'Scattershot',      faces:F('D2','D1:cleave','D1','W1','D1','B'),          plus:[{ label:'+', faces:F('D3','D2:cleave','D2','W1','D2','D1') }, { label:'Slug Choke', faces:F('D3:pierce','D2:pierce','D2','W1','D2','B') }] },
+    { name:'Breaching Charge', faces:F('D2:pierce','D2','D1','C1','D1','B'),          plus:[{ label:'+', faces:F('D3:pierce','D2:engage','D2','C1','D2','D1') }, { label:'Thermite Charge', faces:F('D2:poison','D1:poison','D1:pierce','C1','D1:pierce','D1') }] } ] },
   storm:{ name:'Storm Witch', icon:'⚡', hp:5, role:'Chain damage', blurb:'Ex-Navy weather witch. Lightning that jumps from target to target.', sig:'thunder', dice:[
-    { name:'Arc Lash', faces:F('D2:chain','D2:chain','D1','C1','D1','B'),             plus:[{ label:'+', faces:F('D3:chain','D2:chain','D2:chain','C1','D2:chain','D1') }, { label:'Overcharge', faces:F('D3:charged','D2:charged','D1','C2','D1','C1') }] },
-    { name:'Squall',   faces:F('C2:cantrip','C2','W1','C1','W1','B'),                 plus:[{ label:'+', faces:F('C3:cantrip','C2:cantrip','W2','C1','W2','C1') }, { label:'Static Build-up', faces:F('D2:charged','C2:cantrip','C1','D1:charged','C1','D1') }] } ] },
+    { name:'Arc Lash', faces:F('D2:chain','D1','D1','C1','D1','B'),                   plus:[{ label:'+', faces:F('D3:chain','D2:chain','D2','C1','D2','D1') }, { label:'Overcharge', faces:F('D2:charged','D2','D1','C2','D1','C1') }] },
+    { name:'Squall',   faces:F('C2','C1:cantrip','W1','C1','W1','B'),                 plus:[{ label:'+', faces:F('C3','C1:cantrip','W2','C1','W2','C1') }, { label:'Static Build-up', faces:F('D2:charged','C1:cantrip','C1','D1','C1','D1') }] } ] },
   precog:{ name:'Precog', icon:'👁', hp:5, role:'Combo and setup', blurb:'Sees the next five seconds. Sets up hits for next turn and copies what just worked.', sig:'toldyou', dice:[
-    { name:'Foresight', faces:F('D3:future','W2:future','D1:copycat','C1','D1:copycat','B'), plus:[{ label:'+', faces:F('D4:future','W3:future','D2:copycat','C1','D2:copycat','D1') }, { label:'Precognition', faces:F('D2:copycat','D2:future','W2:future','C1:cantrip','W2:future','D1') }] },
-    { name:'Sidearm',   faces:F('D3:patient','D2:windup','D1:echo','W1','D1:echo','B'),       plus:[{ label:'+', faces:F('D4:patient','D3:windup','D2:echo','W1','D2:echo','D1') }, { label:'Called Shot', faces:F('D3:focus','D3:patient,windup','D2:focus','W1','D2:focus','D1:echo') }] } ] },
+    { name:'Foresight', faces:F('D2:future','D1:copycat','D1','C1','D1','B'),        plus:[{ label:'+', faces:F('D3:future','D2:copycat','D2','C1','D2','D1') }, { label:'Precognition', faces:F('D2:copycat','W2:future','D1','C1:cantrip','D1','D1') }] },
+    { name:'Sidearm',   faces:F('D2:patient','D1:echo','D1','W1','D1','B'),           plus:[{ label:'+', faces:F('D3:patient','D2:echo','D2','W1','D2','D1') }, { label:'Called Shot', faces:F('D2:focus','D2:windup','D1:focus','W1','D1:focus','D1:echo') }] } ] },
   riot:{ name:'Riot Cleric', icon:'🛡️', hp:7, role:'Wards, heals, taunt', blurb:'Shield-first riot chaplain. Wards the squad, patches wounds and pulls enemy fire onto herself.', sig:'riotline', dice:[
-    { name:'Riot Ward', faces:F('W3','W2:share','W1','H1','W1','B'),                  plus:[{ label:'+', faces:F('W4','W2:share','W2:share','H1','W2:share','W1') }, { label:'Bastion', faces:F('W2:share','W2:share','D2:steel','H1:regen','D2:steel','W1') }] },
-    { name:'Censure',   faces:F('D2:steel','H2','D1','C1','D1','B'),                  plus:[{ label:'+', faces:F('D3:steel','H3','D2','C1','D2','H1') }, { label:'Absolution', faces:F('H3:share','H2:regen','H2','C1','H2','D1:steel') }] } ] },
+    { name:'Riot Ward', faces:F('W2','W1:share','W1','H1','W1','B'),                  plus:[{ label:'+', faces:F('W3','W2:share','W2','H1','W2','W1') }, { label:'Bastion', faces:F('W2:share','D2:steel','W1','H1:regen','W1','W1') }] },
+    { name:'Censure',   faces:F('D1:steel','H2','D1','C1','D1','B'),                  plus:[{ label:'+', faces:F('D2:steel','H3','D2','C1','D2','H1') }, { label:'Absolution', faces:F('H3:share','H2:regen','H1','C1','H1','D1:steel') }] } ] },
   medic:{ name:'Combat Medic', icon:'⚕️', hp:6, role:'Heals and revives', blurb:'Field medic with a hex-charged trauma kit. Keeps everyone standing, then gets them back up.', sig:'medevac', dice:[
-    { name:'Trauma Kit',  faces:F('H3:vitality','H2','H1:regen','C1','H1:regen','B'), plus:[{ label:'+', faces:F('H4:vitality','H3','H2:regen','C1','H2:regen','H1') }, { label:'Field Surgery', faces:F('H2:share','H2:cleanse','H2:vitality','C1','H2:vitality','H1') }] },
-    { name:'Stim Pistol', faces:F('D2:selfheal','H1:boost','D1','C1','D1','B'),       plus:[{ label:'+', faces:F('D3:selfheal','H2:boost','D2','C1','D2','D1') }, { label:'Combat Stims', faces:F('H1:boost','H1:boost','D2:selfheal','C1','D2:selfheal','H1') }] } ] },
+    { name:'Trauma Kit',  faces:F('H2','H1:vitality','H1','C1','H1','B'),             plus:[{ label:'+', faces:F('H3','H2:vitality','H2','C1','H2','H1') }, { label:'Field Surgery', faces:F('H2:share','H2:cleanse','H1:regen','C1','H1:regen','H1') }] },
+    { name:'Stim Pistol', faces:F('D2','D1:selfheal','D1','C1','D1','B'),             plus:[{ label:'+', faces:F('D3','D2:selfheal','D2','C1','D2','D1') }, { label:'Combat Stims', faces:F('H1:boost','D2:selfheal','D1','C1','D1','H1') }] } ] },
   assassin:{ name:'Hex Assassin', icon:'🗡️', hp:5, role:'Poison and finishers', blurb:'Corporate wetwork, now freelance. Poisons the big ones, finishes the weak ones and is gone before the alarm.', sig:'timebomb', dice:[
-    { name:'Silenced Pistol', faces:F('D2:cruel','D1:ranged','D1:poison','W1:cover','D1:poison','B'), plus:[{ label:'+', faces:F('D3:cruel','D2:ranged','D2:poison','W1:cover','D2:poison','D1') }, { label:'Wetwork', faces:F('D3:ranged,cruel','D2:silenced','D1:tracer','W1:cover','D1:tracer','B') }] },
-    { name:'Smoke Hex',       faces:F('W2:cover','C2','D1:poison','C1','D1:poison','B'),              plus:[{ label:'+', faces:F('W3:cover','C2','D2:poison','C1','D2:poison','C1') }, { label:'Black Bag', faces:F('D2:ricochet','D2:poison','C1','W1:cover','C1','D1') }] } ] },
+    { name:'Silenced Pistol', faces:F('D2:cruel','D1:ranged','D1','W1','D1','B'),     plus:[{ label:'+', faces:F('D3:cruel','D2:ranged','D2','W1','D2','D1') }, { label:'Wetwork', faces:F('D2:ranged','D2:silenced','D1:tracer','W1','D1:tracer','B') }] },
+    { name:'Smoke Hex',       faces:F('D1:poison','W1:cover','C1','C1','C1','B'),     plus:[{ label:'+', faces:F('D2:poison','W2:cover','C1','C1','C1','C1') }, { label:'Black Bag', faces:F('D2:ricochet','D1:poison','C1','W1:cover','C1','D1') }] } ] },
   gambler:{ name:'Dice Runner', icon:'🎲', hp:6, role:'Big swings', blurb:'Runs numbers for the hex underground. One huge face and a lot of nothing, unless the squad sets it up.', sig:'doubledown', dice:[
-    { name:'Hot Hand', faces:F('D5','D1:pair','D1:pair','B','D1:pair','B'),           plus:[{ label:'+', faces:F('D7','D2:pair','D2:pair','B','D2:pair','D1') }, { label:'Loaded Dice', faces:F('D4:doubleuse','D2:pair','D2:trio','B','D2:trio','B') }] },
-    { name:'Side Bet', faces:F('D2:pair','W2:pair','C1','C1','C1','B'),               plus:[{ label:'+', faces:F('D3:pair','W3:pair','C2','C1','C2','D1') }, { label:'House Money', faces:F('D2:trio','D1:overcast','C2','C1','C2','W2') }] } ] },
+    { name:'Hot Hand', faces:F('D4','D1:pair','D1','B','D1','B'),                     plus:[{ label:'+', faces:F('D6','D2:pair','D1','B','D1','D1') }, { label:'Loaded Dice', faces:F('D3:doubleuse','D1:pair','D1:trio','B','D1:trio','B') }] },
+    { name:'Side Bet', faces:F('D1:pair','W1:pair','C1','C1','C1','B'),               plus:[{ label:'+', faces:F('D2:pair','W1:pair','C2','C1','C2','D1') }, { label:'House Money', faces:F('D1:trio','D1:overcast','C2','C1','C2','W1') }] } ] },
   commander:{ name:'Field Commander', icon:'📡', hp:7, role:'Buffs the squad', blurb:'Runs the op over comms with a hex-tapped radio. Hits harder when the squad moves together.', sig:'rally', dice:[
-    { name:'Comms Array',    faces:F('W2:boost','H1:boost','D1:comms','C1','D1:comms','B'), plus:[{ label:'+', faces:F('W3:boost','H2:boost','D2:comms','C1','D2:comms','W1') }, { label:'Battle Net', faces:F('W1:boost','W1:boost','D1:comms,inspired','C2','D1:comms,inspired','W1') }] },
-    { name:'Service Pistol', faces:F('D2:comms','D2:inspired','W1','C1','W1','B'),          plus:[{ label:'+', faces:F('D3:comms','D3:inspired','W2','C1','W2','D1') }, { label:'Last Order', faces:F('D2:vigil','D3:heavy','D1:suppress','C1','D1:suppress','D1') }] } ] },
+    { name:'Comms Array',    faces:F('W2','W1:boost','D1','C1','D1','B'),             plus:[{ label:'+', faces:F('W3','W1:boost','D2','C1','D2','W1') }, { label:'Battle Net', faces:F('W1:boost','H1:boost','D1:comms','C2','D1:comms','W1') }] },
+    { name:'Service Pistol', faces:F('D2','D1:comms','W1','C1','W1','B'),             plus:[{ label:'+', faces:F('D3','D2:comms','W2','C1','W2','D1') }, { label:'Last Order', faces:F('D2:vigil','D3:heavy','D1:suppress','C1','D1:suppress','D1') }] } ] },
   // AI only: fills the third seat when two people play. Plain dice so a simple AI plays it well.
   intern:{ name:'Field Intern', icon:'📋', hp:6, ai:true, role:'AI teammate (2-player games)', blurb:'Unpaid, over-caffeinated and somehow still alive. Does exactly what the manual says.', sig:'coffee', dice:[
     { name:'Stapler',     faces:F('D2','D1','D1','W1','D1','B'), plus:[{ label:'+', faces:F('D3','D2','D2','W1','D2','D1') }, { label:'Nail Gun', faces:F('D3:pierce','D2:pierce','D1','W1','D1','D1') }] },
-    { name:'Coffee Cart', faces:F('C2','H2','H1','W1','H1','B'), plus:[{ label:'+', faces:F('C2','H3','H2','W2','H2','H1') }, { label:'Double Shot', faces:F('C2','C2','H2','H1:boost','H2','D1') }] } ] },
+    { name:'Coffee Cart', faces:F('C1','H2','H1','W1','H1','B'), plus:[{ label:'+', faces:F('C2','H3','H2','W2','H2','H1') }, { label:'Double Shot', faces:F('C2','C1','H2','H1:boost','H2','D1') }] } ] },
 };
 const SIGS = {
   coffee:  { name:'Coffee Run',  cost:2, text:'Heal every operative 1.' },
@@ -454,7 +456,7 @@ const KW = {
   era:       { g:'⌛', name:'Era',         text:'+1 for each turn that has passed this floor.' },
   heavy:     { g:'⛰', name:'Heavy',       text:'Must target the enemy with the most HP.' },
   flesh:     { g:'☗', name:'Flesh',       text:'+1 for each HP you have.' },
-  ranged:    { g:'⌖', name:'Ranged',      text:'Can target enemies in the back row.' },
+  ranged:    { g:'⌖', name:'Homing',      text:'Can target enemies in the back row.' },
   suppress:  { g:'⤓', name:'Suppress',    text:'The target\'s attacks also get -N this turn.' },
   tracer:    { g:'➶', name:'Tracer',      text:'The target also takes +N from each hit for the rest of this turn.' },
   ricochet:  { g:'↯', name:'Ricochet',    text:'Also hits a random other enemy for half.' },
@@ -479,7 +481,7 @@ const ENEMY_KW = {
 const ENEMY_KW_G = { spread:'↔', poison:'☠', growth:'↑', charged:'ϟ', heavy:'⛰', elim:'⌖', weaken:'⤓', jam:'✕', backlash:'✶' };
 // Enemy traits, shown as chips on the card.
 const TRAITS = {
-  back:    { name:'Back row', text:'While an enemy is in front of it, only Ranged faces, Scatter, Chain and abilities can reach it.' },
+  back:    { name:'Back row', text:'While an enemy is in front of it, only Homing faces, Scatter, Chain and abilities can reach it.' },
   armor:   { name:'Kevlar', text:'Takes 1 less from each hit. Pierce ignores this.' },
   reactive:{ name:'Reactive', text:'Hits back when a die hits it. Silenced faces don\'t set it off.' },
   glass:   { name:'Brittle', text:'A single hit of 4 or more kills it.' },
@@ -555,7 +557,7 @@ const ITEMS = {
   flarerune:{ floor:4, name:'Flare Rune',     icon:'🎆', text:'Grants Flare (3✦): 3 damage to the enemy with the most HP.', ability:'flare' },
   coil:     { floor:4, cls:'storm', name:'Grounding Coil', icon:'🧲', text:'Storm Witch only. Chain faces on this die hit 2 enemies on each side.', coil:true, fx:() => {} },
   crash:    { floor:4, cls:'medic', name:'Crash Cart', icon:'🚑', text:'Combat Medic only. The middle ✚ face gains Share and +1.', fx:both(gain([POS_MID], 'share', ['H']), addPips([POS_MID], 1, ['H'])) },
-  garrote:  { floor:4, cls:'assassin', name:'Hex Garrote', icon:'➰', text:'Hex Assassin only. The left ⚔ face gains Ranged and Silenced.', fx:gain([POS_LEFT], ['ranged', 'silenced'], ['D']) },
+  garrote:  { floor:4, cls:'assassin', name:'Hex Garrote', icon:'➰', text:'Hex Assassin only. The left ⚔ face gains Homing and Silenced.', fx:gain([POS_LEFT], ['ranged', 'silenced'], ['D']) },
   markedcard:{ floor:4, cls:'gambler', name:'Marked Card', icon:'🃏', text:'Dice Runner only. The rightmost blank becomes ⚔5 Single-use.', fx:blankTo([POS_RM], 'D5:singleuse') },
   headset:  { floor:4, cls:'commander', name:'Tactical Headset', icon:'🎧', text:'Field Commander only. The left face gains Comms and +1.', fx:both(gain([POS_LEFT], 'comms'), addPips([POS_LEFT], 1)) },
   // after floor 6 · Executive Gym: a keyword on two faces, passives
@@ -638,17 +640,17 @@ const ENEMIES = {
   intern:   { name:'Intern Familiar',   size:'tiny', spawn:true, hp:2, ints:['D1','D1','D2','D2','D1','D1'] },
   blob:     { name:'Protein Blob',      size:'tiny', spawn:true, hp:3, ints:['D2','D2','D1','D2','D1','D2'] },
   // floor 5: one of three
-  vex:      { name:'Regional Manager Vex', hp:33, boss:5, summon:'intern', phases:[
+  vex:      { name:'Regional Manager Vex', hp:28, boss:5, summon:'intern', phases:[
     { at:1,  ints:['D3','W3','U','D3','W3','U'] },
     { at:.5, enrage:true, ints:['D2:spread','D3','U','D2:spread','D3','D2:spread'] } ] },
-  auditor:  { name:'Auditor General',   hp:30, boss:5, phases:[
+  auditor:  { name:'Auditor General',   hp:26, boss:5, phases:[
     { at:1,  ints:['D3:elim','K','D4:heavy','W3','K','D3:elim'] },
     { at:.5, ints:['D4:elim','K:all','D4:heavy','D3:weaken','K:all','D4:elim'] } ] },
-  hrhead:   { name:'Head of People',    hp:28, boss:5, summon:'temp', phases:[
+  hrhead:   { name:'Head of People',    hp:24, boss:5, summon:'temp', phases:[
     { at:1,  ints:['U','D3:weaken','D3','U','D2:spread','D3:weaken'] },
     { at:.5, ints:['U','U','D3:spread','D4:weaken','D3:spread','D4'] } ] },
   // floor 10
-  grieve:   { name:'Halcyon Grieve, CEO', hp:60, boss:10, phases:[
+  grieve:   { name:'Halcyon Grieve, CEO', hp:54, boss:10, phases:[
     { at:1,    ints:['D5','W4','D5','W4','D5','D6'] },
     { at:.667, ints:['D5','K:all','W4','D5','K:all','D6'] },
     { at:.334, ints:['X3','D5:growth','K:all','X3','D6:growth','X3'] } ] },
@@ -700,7 +702,7 @@ const UPGRADE_FLOORS = [2, 5];   // die upgrades (2 dice, 2 upgrades); floor 8 g
 const PROMO_FLOOR = 8;
 const RULES = { floors:10, rerolls:2, maxPlayers:3, squad:3, gearPerDie:3, hpPerUpgrade:2, abilityFloor:5 };
 const CHARGE_MAX = 4;   // charge never goes above this
-const TUNE = { hpByPlayers:[.5, .75, 1], hpPerFloor:.03, lockdownTurn:10, budget:[9, 11, 14, 16, 0, 21, 24, 28, 31, 0], atkByFloor:[0,0,0,0,0,0,0,0,0,0], bossEscort:[0,0,0,0,4,0,0,0,0,6] };
+const TUNE = { hpByPlayers:[.5, .75, 1], hpPerFloor:.03, lockdownTurn:10, budget:[8, 10, 12, 14, 0, 18, 21, 24, 27, 0], atkByFloor:[0,0,0,0,0,0,0,0,0,0], bossEscort:[0,0,0,0,4,0,0,0,0,6] };
 const PREFIX = 'cheezy-kc-';
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const DEV = new URLSearchParams(location.search).has('dev');
@@ -727,6 +729,26 @@ const COMBO = {
   'D:echo':    { icon:'🔁', name:'Echo Round' },
   'D:patient': { icon:'🎯', name:'Aimed Round' },
   'D:focus':   { icon:'🔍', name:'Focused Round' },
+  'D:cruel':   { icon:'✂', name:'Finisher Round' },
+  'D:windup':  { icon:'⟳', name:'Spin-Up Round' },
+  'D:selfheal':{ icon:'♥', name:'Stim Round' },
+  'D:ranged':  { icon:'⌖', name:'Homing Round' },
+  'D:silenced':{ icon:'∅', name:'Silenced Round' },
+  'D:tracer':  { icon:'➶', name:'Tracer Round' },
+  'D:ricochet':{ icon:'↯', name:'Ricochet Round' },
+  'D:pair':    { icon:'⚁', name:'Matched Round' },
+  'D:trio':    { icon:'⚂', name:'Three-Round Burst' },
+  'D:overcast':{ icon:'✴', name:'Overcast Round' },
+  'D:doubleuse':{ icon:'②', name:'Double Tap' },
+  'D:comms':   { icon:'⌬', name:'Called-In Round' },
+  'D:vigil':   { icon:'✟', name:'Memorial Round' },
+  'D:heavy':   { icon:'⛰', name:'Anti-Armor Slug' },
+  'D:suppress':{ icon:'⤓', name:'Suppressing Fire' },
+  'W:cover':   { icon:'⛨', name:'Smoke Cover' },
+  'W:boost':   { icon:'⇈', name:'Rally Ward' },
+  'W:pair':    { icon:'⚁', name:'Matched Ward' },
+  'H:vitality':{ icon:'❤', name:'Vital Dose' },
+  'H:boost':   { icon:'⇈', name:'Stim Shot' },
   'W:share':   { icon:'⇄', name:'Shared Ward' },
   'W:cleanse': { icon:'❋', name:'Cleansing Ward' },
   'W:regen':   { icon:'✿', name:'Living Ward' },
@@ -950,7 +972,7 @@ function healPlayer(st, pi, v, src) {
 }
 const lowestMate = (st, p) => { const m = living(st).filter(i => i !== p); return m.length ? m.reduce((b, i) => st.players[i].hp / maxHp(st, i) < st.players[b].hp / maxHp(st, b) ? i : b) : null; };
 const blockedByRow = (st, i) => ENEMIES[st.enemies[i].type].back && foesAlive(st).some(j => !ENEMIES[st.enemies[j].type].back);
-// Whether a face is allowed to aim at an enemy: Heavy must take the most HP; the back row needs Ranged while anyone's in front.
+// Whether a face is allowed to aim at an enemy: Heavy must take the most HP; the back row needs Homing while anyone's in front.
 function faceCanHit(st, f, i) {
   const e = st.enemies[i]; if (!e || e.hp <= 0) return false;
   if (f.kw.includes('heavy')) return e.hp === Math.max(...foesAlive(st).map(j => st.enemies[j].hp));
@@ -1565,6 +1587,31 @@ Object.assign(ART, {
   K: '<path d="M7 4a4 4 0 0 1 0 8M17 4a4 4 0 0 0 0 8M7 12a4 4 0 0 0 0 8M17 12a4 4 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M7 12h10" stroke="currentColor" stroke-width="2.2"/>',
   P: '<path d="M3 19l6-6 4 3 7-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>',
 });
+// A unique face for every keyword a class die can start with or upgrade into: a keyword is never just a small symbol there.
+const ARROW_UP = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-4 1L0 -4L4 1M-4 6L0 1L4 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+const LIL_HEART = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 5C-6 1 -6 -4 -3 -4C-1.500 -4 -.5 -3 0 -2C.5 -3 1.500 -4 3 -4C6 -4 6 1 0 5Z" fill="currentColor"/></g>`;
+const EQUALS = (x, y) => `<path d="M${x - 3} ${y - 1.800}h6M${x - 3} ${y + 1.800}h6" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/>`;
+Object.assign(ART, {
+  'D:windup':   BULLET(8, 13, .9) + '<path d="M15 5h5l-5 3.500h5l-5 3.500h5l-5 3.500h5" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/>',
+  'D:selfheal': BULLET(8, 13, .9) + CROSS(18, 7.500, .58),
+  'D:ranged':   BULLET(7, 15, .72) + '<path d="M7 5.500C11 .5 20 1.500 20.500 10" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round"/><path d="M17.500 8l3 3.500l2.500 -3.800" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"/>',
+  'D:silenced': BULLET(7.500, 13, .9) + '<rect x="14" y="4" width="6.500" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.900"/><path d="M14 8h6.500M14 12.500h6.500" stroke="currentColor" stroke-width="1.300"/>',
+  'D:tracer':   BULLET(14.500, 12.500, .9, 35) + '<path d="M3 6l6 4M2 12l6 2M4 18l5 -1" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/>',
+  'D:ricochet': BULLET(7.500, 14, .8) + '<path d="M13 15l4 -7l4 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.500 13.500l2.700 0l-.2 -2.700" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"/>',
+  'D:pair':     BULLET(4.500, 12, .72) + BULLET(19.500, 12, .72) + EQUALS(12, 11),
+  'D:trio':     BULLET(5, 13, .68) + BULLET(12, 13, .68) + BULLET(19, 13, .68),
+  'D:overcast': BULLET(7.500, 13.500, .85) + '<path d="M18 2l1.300 3.700l3.700 1.300l-3.700 1.300l-1.300 3.700l-1.300 -3.700l-3.700 -1.300l3.700 -1.300z" fill="currentColor"/>',
+  'D:doubleuse':BULLET(7, 13, .85) + '<path d="M14 6l3.500 5.500l-3.500 5.500M18.500 6l3.500 5.500l-3.500 5.500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  'D:comms':    BULLET(7.500, 14, .85) + '<circle cx="14.500" cy="9" r="1.500" fill="currentColor"/><path d="M14.500 5A4 4 0 0 1 18.500 9M14.500 1.800A7.200 7.200 0 0 1 21.700 9" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round"/>',
+  'D:vigil':    BULLET(7.500, 13.500, .85) + '<path d="M18 2.500v12M14 6.500h8" stroke="currentColor" stroke-width="2.400" stroke-linecap="round"/>',
+  'D:heavy':    '<path d="M6 19V8Q6 2 12 1Q18 2 18 8V19Z" fill="currentColor"/><rect x="4.500" y="20" width="15" height="3" rx=".8" fill="currentColor" opacity=".75"/>',
+  'D:suppress': BULLET(7.500, 13, .85) + '<path d="M14 5L18 10L22 5M14 11L18 16L22 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  'W:cover':    '<path d="M3 21V12M7 21V8M11 21V12" stroke="currentColor" stroke-width="2.800" stroke-linecap="round" opacity=".55"/>' + MINI_SHIELD(15.500, 11, .95),
+  'W:boost':    MINI_SHIELD(8, 12.500, .95) + ARROW_UP(18, 9, .9),
+  'W:pair':     MINI_SHIELD(5, 11, .58) + MINI_SHIELD(19, 11, .58) + EQUALS(12, 11),
+  'H:vitality': CROSS(9, 13, .85) + LIL_HEART(18.500, 6.500, .95),
+  'H:boost':    CROSS(8.500, 13, .85) + ARROW_UP(18.500, 8.500, .9),
+});
 // New enemy portraits (48×48), same palette as the rest.
 const BG = '<rect width="48" height="48" rx="10" fill="#2a1a1e"/>';
 Object.assign(ENEMY_ART, {
@@ -2107,7 +2154,7 @@ function dieHtml(p, di) {
   const cls = ['die', 'f-' + f.t, usable ? 'mine' : '', locked ? 'kept' : '', p === me && ui.sel === di ? 'sel' : '', d.used ? 'used' : '', isRoll ? 'roll' : '', boosted ? 'boosted' : ''].join(' ');
   const wound = d.winding ? 'sits out, back next turn' : P.dice[di].wind ? 'winding up, back in 2 turns' : d.released ? 'wound up: triple' : '';
   const state = wound ? `<span class="lockhint on">⟳ ${wound}</span>` : d.used ? 'used' : '';
-  const tip = dieName(P, di) + '\n' + faceTip(live) + (boosted ? `\nWorth ${live.n} right now (${f.n} before modifiers).` : '') + (mine && rolling ? (locked ? '\nLocked: Reroll skips it. Tap to send it back to the middle.' : '\nTap to lock it: it moves to its hero on the left, and Reroll skips it.') : '');
+  const tip = faceTip(live) + (boosted ? `\nWorth ${live.n} right now (${f.n} before modifiers).` : '');
   return `<div class="dcol"><div class="${cls}" data-die="${di}" data-p="${p}" tabindex="0" data-tip="${esc(tip)}">${dieInner(live)}</div><button class="dname" data-inspect="${p}:${di}">${esc(dieName(P, di))}</button><span class="tg">${state}</span></div>`;
 }
 function opCard(p) {
@@ -2189,7 +2236,6 @@ function battleHtml() {
   else if (!ops.length) hint = solo ? '' : 'You\'re down. Your squad fights on, and you\'re back next floor at 50% HP.';
   else if (rolling.length) {
     const unlocked = rolling.reduce((n, p) => n + st.players[p].roll.filter(d => !d.k).length, 0), left = Math.max(...rolling.map(p => st.players[p].rerolls));
-    hint = 'Tap a die to lock it: it moves to its hero on the left. Reroll rolls whatever is still in the middle.';
     buttons = `<button class="btn" data-ui="reroll" ${left > 0 && unlocked ? '' : 'disabled'}>Reroll ${unlocked} (${left} left)</button><button class="btn ghost" data-ui="done">Done rolling</button>`;
   } else if (using.length) {
     const f = selFace();
@@ -2472,7 +2518,7 @@ function showHelp() {
   const faces = ['D2', 'W2', 'H2', 'C2', 'B'].map(c => { const { t } = parse(c); return `<tr><td>${codeHtml(c)}</td><td><b>${FACE[t].name}</b></td><td>${FACE[t].text('N')}</td></tr>`; }).join('');
   const kws = Object.values(KW).sort((a, b) => a.name.localeCompare(b.name)).map(k => `<tr><td class="mono" style="color:var(--arcane)">${k.g}</td><td><b>${k.name}</b></td><td>${k.text}</td></tr>`).join('');
   o.innerHTML = `<div class="box">
-    <div class="row" style="justify-content:space-between">${logoBig()}<button class="btn ghost" data-ui="closehelp">Close</button></div>
+    <div class="row" style="justify-content:space-between">${logoBig()}<div class="row"><a class="btn ghost" href="https://miraclewhip3.github.io/kevlar-cantrips/wiki.html" target="_blank" rel="noopener">Wiki</a><button class="btn ghost" data-ui="closehelp">Close</button></div></div>
     <h3>How to play</h3>
     <ul>
       <li>You are one operative with <b>2 class dice</b> in a squad of 3 (solo, you run all three). Friends breach a 10-floor tower; each floor is one fight, and bosses wait on floors 5 and 10.</li>

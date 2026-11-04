@@ -8,6 +8,8 @@ A co-op dice tactics game for 1 to 3 friends (solo runs all 3 operatives). Each 
 
 **Visual guide:** https://miraclewhip3.github.io/kevlar-cantrips/guide.html — every class, die, keyword, item and enemy drawn with the game's own art. Best place to review content. Rebuild it after changes with `python -X utf8 tests/build-guide.py`.
 
+**Wiki:** https://miraclewhip3.github.io/kevlar-cantrips/wiki.html — this README as a wiki site, with a page for every class, item, enemy and keyword drawn with the game's art. Also linked from the in-game help. Rebuild it after changes with `python -X utf8 tests/build-wiki.py`.
+
 ## Vision
 *Pillars from the user's words (2026/11/01). The full design is in the [design document](DESIGN.md).*
 
@@ -84,6 +86,7 @@ Keywords come from Slice & Dice, with our own twist. **"The last die" means the 
 | ⏭ | Future | Lands at the start of your next turn, with +1. |
 | ↑ | Growth | This face gets +1 every time it is used, for the rest of the floor. |
 | ⛰ | Heavy | Must target the enemy with the most HP. |
+| ⌖ | Homing | Can target enemies in the back row. |
 | ⤴ | Inspired | Double if the last die anyone in the party used this turn had a higher number. |
 | ✴ | Overcast | Spends all your ✦ for +2 each. |
 | ✶ | Pain | You take 1 damage when you use it. |
@@ -94,7 +97,6 @@ Keywords come from Slice & Dice, with our own twist. **"The last die" means the 
 | ☠ | Poison | Adds poison equal to its number. A poisoned target takes damage equal to its poison at the end of every turn this floor; more poison stacks on top. Works on stunned enemies too. |
 | ✧ | Pristine | Double if you are at full HP. |
 | ↻ | Rampage | If it kills, this die rerolls and can be used again (once a turn). |
-| ⌖ | Ranged | Can target enemies in the back row. |
 | ✿ | Regen | The target heals 1 at the start of each turn this floor (stacks). |
 | ⟲ | Reload | Also brings back this die's spent Single-use faces. |
 | ⚇ | Return Fire | Double against an enemy that is targeting you. |
@@ -120,6 +122,8 @@ Keywords come from Slice & Dice, with our own twist. **"The last die" means the 
 
 ## Classes and dice
 
+Starting dice follow strict rules: no small keyword symbols, at most 2 keyword faces per die, and low numbers on strong keywords. See the [design document](DESIGN.md#classes-and-dice) and [specimens.html](specimens.html).
+
 Faces are listed **Left · Middle · Top · Right · Bottom · Rightmost**. Each class has 2 dice, and each die has 2 upgrades.
 
 ### Breach Mage
@@ -130,12 +134,12 @@ HP 6 · Piercing burst. Door-kicker in ceramic plate. Hex rounds that punch stra
 
 | Die | Faces |
 | --- | --- |
-| Scattershot | ⚔2 Scatter · ⚔1 Scatter · ⚔1 · 🛡1 · ⚔1 · ✕ |
-| → Scattershot+ | ⚔3 Scatter · ⚔2 Scatter · ⚔2 · 🛡1 · ⚔2 · ⚔1 |
-| → Slug Choke | ⚔4 Pierce · ⚔3 Pierce · ⚔2 · 🛡1 · ⚔2 · ✕ |
-| Breaching Charge | ⚔3 Engage · ⚔2 Pierce · ⚔1 · ✦1 · ⚔1 · ✕ |
-| → Breaching Charge+ | ⚔4 Engage · ⚔3 Pierce · ⚔2 · ✦1 · ⚔2 · ⚔1 |
-| → Thermite Charge | ⚔2 Poison · ⚔2 Poison · ⚔1 Pierce · ✦1 · ⚔1 Pierce · ⚔1 |
+| Scattershot | ⚔2 · ⚔1 Scatter · ⚔1 · 🛡1 · ⚔1 · ✕ |
+| → Scattershot+ | ⚔3 · ⚔2 Scatter · ⚔2 · 🛡1 · ⚔2 · ⚔1 |
+| → Slug Choke | ⚔3 Pierce · ⚔2 Pierce · ⚔2 · 🛡1 · ⚔2 · ✕ |
+| Breaching Charge | ⚔2 Pierce · ⚔2 · ⚔1 · ✦1 · ⚔1 · ✕ |
+| → Breaching Charge+ | ⚔3 Pierce · ⚔2 Engage · ⚔2 · ✦1 · ⚔2 · ⚔1 |
+| → Thermite Charge | ⚔2 Poison · ⚔1 Poison · ⚔1 Pierce · ✦1 · ⚔1 Pierce · ⚔1 |
 
 ### Storm Witch
 
@@ -145,12 +149,12 @@ HP 5 · Chain damage. Ex-Navy weather witch. Lightning that jumps from target to
 
 | Die | Faces |
 | --- | --- |
-| Arc Lash | ⚔2 Chain · ⚔2 Chain · ⚔1 · ✦1 · ⚔1 · ✕ |
-| → Arc Lash+ | ⚔3 Chain · ⚔2 Chain · ⚔2 Chain · ✦1 · ⚔2 Chain · ⚔1 |
-| → Overcharge | ⚔3 Charged · ⚔2 Charged · ⚔1 · ✦2 · ⚔1 · ✦1 |
-| Squall | ✦2 Cantrip · ✦2 · 🛡1 · ✦1 · 🛡1 · ✕ |
-| → Squall+ | ✦3 Cantrip · ✦2 Cantrip · 🛡2 · ✦1 · 🛡2 · ✦1 |
-| → Static Build-up | ⚔2 Charged · ✦2 Cantrip · ✦1 · ⚔1 Charged · ✦1 · ⚔1 |
+| Arc Lash | ⚔2 Chain · ⚔1 · ⚔1 · ✦1 · ⚔1 · ✕ |
+| → Arc Lash+ | ⚔3 Chain · ⚔2 Chain · ⚔2 · ✦1 · ⚔2 · ⚔1 |
+| → Overcharge | ⚔2 Charged · ⚔2 · ⚔1 · ✦2 · ⚔1 · ✦1 |
+| Squall | ✦2 · ✦1 Cantrip · 🛡1 · ✦1 · 🛡1 · ✕ |
+| → Squall+ | ✦3 · ✦1 Cantrip · 🛡2 · ✦1 · 🛡2 · ✦1 |
+| → Static Build-up | ⚔2 Charged · ✦1 Cantrip · ✦1 · ⚔1 · ✦1 · ⚔1 |
 
 ### Precog
 
@@ -160,12 +164,12 @@ HP 5 · Combo and setup. Sees the next five seconds. Sets up hits for next turn 
 
 | Die | Faces |
 | --- | --- |
-| Foresight | ⚔3 Future · 🛡2 Future · ⚔1 Copycat · ✦1 · ⚔1 Copycat · ✕ |
-| → Foresight+ | ⚔4 Future · 🛡3 Future · ⚔2 Copycat · ✦1 · ⚔2 Copycat · ⚔1 |
-| → Precognition | ⚔2 Copycat · ⚔2 Future · 🛡2 Future · ✦1 Cantrip · 🛡2 Future · ⚔1 |
-| Sidearm | ⚔3 Patient · ⚔2 Wind-up · ⚔1 Echo · 🛡1 · ⚔1 Echo · ✕ |
-| → Sidearm+ | ⚔4 Patient · ⚔3 Wind-up · ⚔2 Echo · 🛡1 · ⚔2 Echo · ⚔1 |
-| → Called Shot | ⚔3 Focus · ⚔3 Patient Wind-up · ⚔2 Focus · 🛡1 · ⚔2 Focus · ⚔1 Echo |
+| Foresight | ⚔2 Future · ⚔1 Copycat · ⚔1 · ✦1 · ⚔1 · ✕ |
+| → Foresight+ | ⚔3 Future · ⚔2 Copycat · ⚔2 · ✦1 · ⚔2 · ⚔1 |
+| → Precognition | ⚔2 Copycat · 🛡2 Future · ⚔1 · ✦1 Cantrip · ⚔1 · ⚔1 |
+| Sidearm | ⚔2 Patient · ⚔1 Echo · ⚔1 · 🛡1 · ⚔1 · ✕ |
+| → Sidearm+ | ⚔3 Patient · ⚔2 Echo · ⚔2 · 🛡1 · ⚔2 · ⚔1 |
+| → Called Shot | ⚔2 Focus · ⚔2 Wind-up · ⚔1 Focus · 🛡1 · ⚔1 Focus · ⚔1 Echo |
 
 ### Riot Cleric
 
@@ -175,12 +179,12 @@ HP 7 · Wards, heals, taunt. Shield-first riot chaplain. Wards the squad, patche
 
 | Die | Faces |
 | --- | --- |
-| Riot Ward | 🛡3 · 🛡2 Share · 🛡1 · ✚1 · 🛡1 · ✕ |
-| → Riot Ward+ | 🛡4 · 🛡2 Share · 🛡2 Share · ✚1 · 🛡2 Share · 🛡1 |
-| → Bastion | 🛡2 Share · 🛡2 Share · ⚔2 Plated · ✚1 Regen · ⚔2 Plated · 🛡1 |
-| Censure | ⚔2 Plated · ✚2 · ⚔1 · ✦1 · ⚔1 · ✕ |
-| → Censure+ | ⚔3 Plated · ✚3 · ⚔2 · ✦1 · ⚔2 · ✚1 |
-| → Absolution | ✚3 Share · ✚2 Regen · ✚2 · ✦1 · ✚2 · ⚔1 Plated |
+| Riot Ward | 🛡2 · 🛡1 Share · 🛡1 · ✚1 · 🛡1 · ✕ |
+| → Riot Ward+ | 🛡3 · 🛡2 Share · 🛡2 · ✚1 · 🛡2 · 🛡1 |
+| → Bastion | 🛡2 Share · ⚔2 Plated · 🛡1 · ✚1 Regen · 🛡1 · 🛡1 |
+| Censure | ⚔1 Plated · ✚2 · ⚔1 · ✦1 · ⚔1 · ✕ |
+| → Censure+ | ⚔2 Plated · ✚3 · ⚔2 · ✦1 · ⚔2 · ✚1 |
+| → Absolution | ✚3 Share · ✚2 Regen · ✚1 · ✦1 · ✚1 · ⚔1 Plated |
 
 ### Combat Medic
 
@@ -190,12 +194,12 @@ HP 6 · Heals and revives. Field medic with a hex-charged trauma kit. Keeps ever
 
 | Die | Faces |
 | --- | --- |
-| Trauma Kit | ✚3 Vitality · ✚2 · ✚1 Regen · ✦1 · ✚1 Regen · ✕ |
-| → Trauma Kit+ | ✚4 Vitality · ✚3 · ✚2 Regen · ✦1 · ✚2 Regen · ✚1 |
-| → Field Surgery | ✚2 Share · ✚2 Cleanse · ✚2 Vitality · ✦1 · ✚2 Vitality · ✚1 |
-| Stim Pistol | ⚔2 Self-heal · ✚1 Boost · ⚔1 · ✦1 · ⚔1 · ✕ |
-| → Stim Pistol+ | ⚔3 Self-heal · ✚2 Boost · ⚔2 · ✦1 · ⚔2 · ⚔1 |
-| → Combat Stims | ✚1 Boost · ✚1 Boost · ⚔2 Self-heal · ✦1 · ⚔2 Self-heal · ✚1 |
+| Trauma Kit | ✚2 · ✚1 Vitality · ✚1 · ✦1 · ✚1 · ✕ |
+| → Trauma Kit+ | ✚3 · ✚2 Vitality · ✚2 · ✦1 · ✚2 · ✚1 |
+| → Field Surgery | ✚2 Share · ✚2 Cleanse · ✚1 Regen · ✦1 · ✚1 Regen · ✚1 |
+| Stim Pistol | ⚔2 · ⚔1 Self-heal · ⚔1 · ✦1 · ⚔1 · ✕ |
+| → Stim Pistol+ | ⚔3 · ⚔2 Self-heal · ⚔2 · ✦1 · ⚔2 · ⚔1 |
+| → Combat Stims | ✚1 Boost · ⚔2 Self-heal · ⚔1 · ✦1 · ⚔1 · ✚1 |
 
 ### Hex Assassin
 
@@ -205,12 +209,12 @@ HP 5 · Poison and finishers. Corporate wetwork, now freelance. Poisons the big 
 
 | Die | Faces |
 | --- | --- |
-| Silenced Pistol | ⚔2 Cruel · ⚔1 Ranged · ⚔1 Poison · 🛡1 Cover · ⚔1 Poison · ✕ |
-| → Silenced Pistol+ | ⚔3 Cruel · ⚔2 Ranged · ⚔2 Poison · 🛡1 Cover · ⚔2 Poison · ⚔1 |
-| → Wetwork | ⚔3 Ranged Cruel · ⚔2 Silenced · ⚔1 Tracer · 🛡1 Cover · ⚔1 Tracer · ✕ |
-| Smoke Hex | 🛡2 Cover · ✦2 · ⚔1 Poison · ✦1 · ⚔1 Poison · ✕ |
-| → Smoke Hex+ | 🛡3 Cover · ✦2 · ⚔2 Poison · ✦1 · ⚔2 Poison · ✦1 |
-| → Black Bag | ⚔2 Ricochet · ⚔2 Poison · ✦1 · 🛡1 Cover · ✦1 · ⚔1 |
+| Silenced Pistol | ⚔2 Cruel · ⚔1 Homing · ⚔1 · 🛡1 · ⚔1 · ✕ |
+| → Silenced Pistol+ | ⚔3 Cruel · ⚔2 Homing · ⚔2 · 🛡1 · ⚔2 · ⚔1 |
+| → Wetwork | ⚔2 Homing · ⚔2 Silenced · ⚔1 Tracer · 🛡1 · ⚔1 Tracer · ✕ |
+| Smoke Hex | ⚔1 Poison · 🛡1 Cover · ✦1 · ✦1 · ✦1 · ✕ |
+| → Smoke Hex+ | ⚔2 Poison · 🛡2 Cover · ✦1 · ✦1 · ✦1 · ✦1 |
+| → Black Bag | ⚔2 Ricochet · ⚔1 Poison · ✦1 · 🛡1 Cover · ✦1 · ⚔1 |
 
 ### Dice Runner
 
@@ -220,12 +224,12 @@ HP 6 · Big swings. Runs numbers for the hex underground. One huge face and a lo
 
 | Die | Faces |
 | --- | --- |
-| Hot Hand | ⚔5 · ⚔1 Pair · ⚔1 Pair · ✕ · ⚔1 Pair · ✕ |
-| → Hot Hand+ | ⚔7 · ⚔2 Pair · ⚔2 Pair · ✕ · ⚔2 Pair · ⚔1 |
-| → Loaded Dice | ⚔4 Double Use · ⚔2 Pair · ⚔2 Trio · ✕ · ⚔2 Trio · ✕ |
-| Side Bet | ⚔2 Pair · 🛡2 Pair · ✦1 · ✦1 · ✦1 · ✕ |
-| → Side Bet+ | ⚔3 Pair · 🛡3 Pair · ✦2 · ✦1 · ✦2 · ⚔1 |
-| → House Money | ⚔2 Trio · ⚔1 Overcast · ✦2 · ✦1 · ✦2 · 🛡2 |
+| Hot Hand | ⚔4 · ⚔1 Pair · ⚔1 · ✕ · ⚔1 · ✕ |
+| → Hot Hand+ | ⚔6 · ⚔2 Pair · ⚔1 · ✕ · ⚔1 · ⚔1 |
+| → Loaded Dice | ⚔3 Double Use · ⚔1 Pair · ⚔1 Trio · ✕ · ⚔1 Trio · ✕ |
+| Side Bet | ⚔1 Pair · 🛡1 Pair · ✦1 · ✦1 · ✦1 · ✕ |
+| → Side Bet+ | ⚔2 Pair · 🛡1 Pair · ✦2 · ✦1 · ✦2 · ⚔1 |
+| → House Money | ⚔1 Trio · ⚔1 Overcast · ✦2 · ✦1 · ✦2 · 🛡1 |
 
 ### Field Commander
 
@@ -235,11 +239,11 @@ HP 7 · Buffs the squad. Runs the op over comms with a hex-tapped radio. Hits ha
 
 | Die | Faces |
 | --- | --- |
-| Comms Array | 🛡2 Boost · ✚1 Boost · ⚔1 Comms · ✦1 · ⚔1 Comms · ✕ |
-| → Comms Array+ | 🛡3 Boost · ✚2 Boost · ⚔2 Comms · ✦1 · ⚔2 Comms · 🛡1 |
-| → Battle Net | 🛡1 Boost · 🛡1 Boost · ⚔1 Comms Inspired · ✦2 · ⚔1 Comms Inspired · 🛡1 |
-| Service Pistol | ⚔2 Comms · ⚔2 Inspired · 🛡1 · ✦1 · 🛡1 · ✕ |
-| → Service Pistol+ | ⚔3 Comms · ⚔3 Inspired · 🛡2 · ✦1 · 🛡2 · ⚔1 |
+| Comms Array | 🛡2 · 🛡1 Boost · ⚔1 · ✦1 · ⚔1 · ✕ |
+| → Comms Array+ | 🛡3 · 🛡1 Boost · ⚔2 · ✦1 · ⚔2 · 🛡1 |
+| → Battle Net | 🛡1 Boost · ✚1 Boost · ⚔1 Comms · ✦2 · ⚔1 Comms · 🛡1 |
+| Service Pistol | ⚔2 · ⚔1 Comms · 🛡1 · ✦1 · 🛡1 · ✕ |
+| → Service Pistol+ | ⚔3 · ⚔2 Comms · 🛡2 · ✦1 · 🛡2 · ⚔1 |
 | → Last Order | ⚔2 Vigil · ⚔3 Heavy · ⚔1 Suppress · ✦1 · ⚔1 Suppress · ⚔1 |
 
 ### Field Intern
@@ -253,9 +257,9 @@ HP 6 · AI teammate (2-player games). Unpaid, over-caffeinated and somehow still
 | Stapler | ⚔2 · ⚔1 · ⚔1 · 🛡1 · ⚔1 · ✕ |
 | → Stapler+ | ⚔3 · ⚔2 · ⚔2 · 🛡1 · ⚔2 · ⚔1 |
 | → Nail Gun | ⚔3 Pierce · ⚔2 Pierce · ⚔1 · 🛡1 · ⚔1 · ⚔1 |
-| Coffee Cart | ✦2 · ✚2 · ✚1 · 🛡1 · ✚1 · ✕ |
+| Coffee Cart | ✦1 · ✚2 · ✚1 · 🛡1 · ✚1 · ✕ |
 | → Coffee Cart+ | ✦2 · ✚3 · ✚2 · 🛡2 · ✚2 · ✚1 |
-| → Double Shot | ✦2 · ✦2 · ✚2 · ✚1 Boost · ✚2 · ⚔1 |
+| → Double Shot | ✦2 · ✦1 · ✚2 · ✚1 Boost · ✚2 · ⚔1 |
 
 ## Ability upgrades
 
@@ -357,7 +361,7 @@ Move and reorder items freely between floors. Items apply top to bottom. Then ev
 | 🎆 | Flare Rune | Grants Flare (3✦): 3 damage to the enemy with the most HP. |
 | 🧲 | Grounding Coil | Storm Witch only. Chain faces on this die hit 2 enemies on each side. |
 | 🚑 | Crash Cart | Combat Medic only. The middle ✚ face gains Share and +1. |
-| ➰ | Hex Garrote | Hex Assassin only. The left ⚔ face gains Ranged and Silenced. |
+| ➰ | Hex Garrote | Hex Assassin only. The left ⚔ face gains Homing and Silenced. |
 | 🃏 | Marked Card | Dice Runner only. The rightmost blank becomes ⚔5 Single-use. |
 | 🎧 | Tactical Headset | Field Commander only. The left face gains Comms and +1. |
 
@@ -422,7 +426,7 @@ Enemies have less HP and hit harder than before, so each fight is about who to k
 
 | Floor | 1 | 2 | 3 | 4 | 6 | 7 | 8 | 9 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Threat budget | 9 | 11 | 14 | 16 | 21 | 24 | 28 | 31 |
+| Threat budget | 8 | 10 | 12 | 14 | 18 | 21 | 24 | 27 |
 
 ### From floor 1 · Reception
 
@@ -516,15 +520,15 @@ Enemies have less HP and hit harder than before, so each fight is about who to k
 
 Every run is 3 operatives. If players leave a multiplayer run, enemy HP scales to 75% or 50%. Enemy HP grows 3% per floor, and floors get harder mainly through their Threat budgets.
 
-**Bot results (300 runs each, 2026/11/03, `tests/bots.js`):**
+**Bot results (300 runs each, 2026/11/04, `tests/bots.js`):**
 
 | Bot | Wins | Most run-ends |
 | --- | ---: | --- |
-| No plan (takes the first item) | 28% | Floors 7 to 9 |
-| Sensible build | 46% | Floor 9 |
-| Sees the whole item pool | 23% | Floors 7 and 8 |
+| No plan (takes the first item) | 21% | Floors 5 and 9 |
+| Sensible build | 42% | Floors 5 and 9 |
+| Sees the whole item pool | 39% | Floors 5 and 7 |
 
-Floors 1 to 3 almost never end a run, which matches the goal. **The third bot doesn't show pillar 3 yet:** it should thrash, but it wins less than the sensible bot. It picks items by a simple power score and doesn't play combos, so this measures the bot more than the game. Judge broken builds by playing.
+Floors 1 to 3 almost never end a run, which matches the goal. **The third bot doesn't show pillar 3 yet:** it should thrash, but it wins no more than the sensible bot. It picks items by a simple power score and doesn't play combos, so this measures the bot more than the game. Judge broken builds by playing.
 
 The bots also underplay Pair, Future, Echo and Copycat, so classes built on them (Precog, Dice Runner, Hex Assassin) look weaker in these numbers than they may be.
 
@@ -568,7 +572,6 @@ The bots also underplay Pair, Future, Echo and Copycat, so classes built on them
 
 ## Planned
 - **Tutorial:** add a short first-run tutorial that teaches rolling, locking, rerolling and using dice.
-- **Remove the rolling hint** ("Tap a die to lock it: it moves to its hero on the left. Reroll rolls whatever is still in the middle.") once the tutorial covers it.
 - **Fierce and Guilt keywords:** add these two Slice & Dice keywords later. They need definitions first: neither is on the wiki, which covers version 2.0.
 
 ## Ideas
