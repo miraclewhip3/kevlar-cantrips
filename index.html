@@ -1995,7 +1995,7 @@ function menuHtml() {
   return `<div class="menu">
     ${towerArt()}
     <div class="logo">${logoBig()}</div>
-    <p class="muted" style="text-align:center;margin:0">Wizards in kevlar breach a cursed corporate tower, one floor at a time. Co-op dice tactics for 1 to 4 friends.</p>
+    <p class="muted" style="text-align:center;margin:0">Wizards in kevlar breach a cursed corporate tower, one floor at a time. Co-op dice tactics for 1 to 3 friends.</p>
     ${ui.err ? `<div class="banner err">${esc(ui.err)}</div>` : ''}
     <div class="box">
       <h3>Your callsign</h3>
@@ -2003,7 +2003,7 @@ function menuHtml() {
     </div>
     <div class="box">
       <h3>Solo</h3>
-      <p class="muted" style="margin:0">One operative, 10 floors. The tower scales to a squad of one.</p>
+      <p class="muted" style="margin:0">Run a squad of 3 operatives yourself, 10 floors.</p>
       <div class="row">
         <button class="btn" data-ui="solo">New run</button>
         ${hasSave ? '<button class="btn ghost" data-ui="continue">Continue run</button>' : ''}
